@@ -4,9 +4,7 @@ const Nconf = require('nconf');
 module.exports = {
 	
 	main: function(req, res, next) {
-		
 		Api.call(req, res, next, 'roomsByEnumID');
-		
 	},
 	
 	onemore: function(req, res, next) {

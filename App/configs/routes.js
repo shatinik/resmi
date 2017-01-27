@@ -5,12 +5,21 @@
 */
 
 module.exports.routes = [
-	{
-		path: '/api/rooms/get',
-		type: 'get',
-		controller: 'api_rooms',
-		defaultAction: 'main',
-		enableAllActions: true,
-		enable: true
-	}
+    {
+        path: '/example',
+        type: 'get',
+        control_module: 'HandledAction',
+        enabled: true,
+
+        handler: 'example',
+        defaultAction: 'main',
+    },
+    {
+        path: '/api/rooms/get',
+        type: 'get',
+        control_module: 'DataQuery',
+        enabled: true,
+
+        query: 'roomsByEnumID',
+    },
 ];
