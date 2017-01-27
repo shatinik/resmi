@@ -7,6 +7,7 @@
 
 const Routes = require('../App/configs/routes').routes;
 const HandleAction = require('../core/controlUnits/HandledAction');
+const DataQuery = require('../core/controlUnits/DataQuery');
 
 module.exports.Init = function(App) {
 
@@ -28,10 +29,9 @@ module.exports.Init = function(App) {
                 HandleAction(Route, App);
                 break;
             case 'DataQuery':
+                DataQuery(Route, App);
                 break;
         }
-
-        
 	}	
 
 	/*

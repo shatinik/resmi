@@ -27,14 +27,13 @@
     <Compile Include="core\Resmi.main.js" />
     <Compile Include="core\Resmi.mas.js" />
     <Compile Include="core\Resmi.routing.js" />
-    <Content Include="App\configs\api.json" />
+    <Content Include="App\configs\api.js" />
     <Compile Include="App\configs\database.js" />
     <Compile Include="App\configs\routes.js" />
     <Content Include="App\controllers\test.json" />
-    <Compile Include="App\controllers\controller.example.js" />
-    <Compile Include="core\Api\Resmi.api.getByEnumID.js" />
-    <Compile Include="core\Api\Resmi.api.js" />
-    <Compile Include="core\Api\Resmi.api.messages.js" />
+    <Compile Include="App\Api\Resmi.api.getByEnumID.js" />
+    <Compile Include="App\Api\Resmi.api.js" />
+    <Compile Include="App\Api\Resmi.api.messages.js" />
     <Compile Include="core\configs\server.development.js" />
     <Compile Include="core\configs\server.production.js" />
   </ItemGroup>
@@ -44,7 +43,7 @@
     <Folder Include="App\handlers\" />
     <Folder Include="App\logs" />
     <Folder Include="core" />
-    <Folder Include="core\Api" />
+    <Folder Include="App\Api\" />
     <Folder Include="core\configs" />
     <Folder Include="core\controlUnits\" />
     <Folder Include="Resmi" />
