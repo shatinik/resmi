@@ -30,7 +30,6 @@
     <Content Include="App\configs\api.js" />
     <Compile Include="App\configs\database.js" />
     <Compile Include="App\configs\routes.js" />
-    <Content Include="App\controllers\test.json" />
     <Compile Include="App\Api\Resmi.api.getByEnumID.js" />
     <Compile Include="App\Api\Resmi.api.js" />
     <Compile Include="App\Api\Resmi.api.messages.js" />
