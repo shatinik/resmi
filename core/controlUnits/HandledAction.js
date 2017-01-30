@@ -4,13 +4,13 @@
     var Path = '';
 
     for (let Action in Handler) {
-        if (Route.defaultActionOnly === true && Route.defaultAction !== Action) {
+        if (Action === Route.defaultAction) {
+            App[Route.type](Route.path, function (req, res, next) {
+                Handler[Action](req, res, next);
+            });
+        } else if (Route.defaultActionOnly) {
             continue;
         }
-
-        App[Route.type](Route.path, function (req, res, next) {
-            Handler[Action](req, res, next);
-        });
 
         if (Route.path[Route.path.length - 1] === '/') {
             Path = Route.path + Action;
@@ -22,7 +22,7 @@
             Handler[Action](req, res, next);
         });
 
-        if (Route.defaultActionOnly === true) {
+        if (Route.defaultActionOnly) {
             break;
         }
     }
