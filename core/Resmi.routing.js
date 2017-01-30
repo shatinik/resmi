@@ -38,6 +38,7 @@ module.exports.Init = function(App) {
 	* Code 404
 	*/
 	App.use(function(req, res, next) {
-	    res.send('404');
+        res.send('404');
+        next();
 	});
 };
