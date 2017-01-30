@@ -26,12 +26,18 @@ const App = Express();
 /*
 * Middleware
 */
-App.use(Compression());
-
-/*
-* Routing initialization
-*/
-ResmiRouting.Init(App);
+App.use(function (req, res, next) {
+    req.executed = false; // Will set to `true` if request will be processed
+    next();
+});
+App.use(Compression()); // Compression
+ResmiRouting.Init(App); // Routing
+App.use(function (req, res, next) {
+    if (!req.executed) {
+        res.send('404');
+    }
+    next();
+});
 
 /*
 * Server listen

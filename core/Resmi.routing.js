@@ -32,13 +32,5 @@ module.exports.Init = function(App) {
                 DataQuery(Route, App);
                 break;
         }
-	}	
-
-	/*
-	* Code 404
-	*/
-	App.use(function(req, res, next) {
-        res.send('404');
-        next();
-	});
+	}
 };

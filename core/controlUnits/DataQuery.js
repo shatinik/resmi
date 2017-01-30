@@ -7,6 +7,7 @@ module.exports = function (Route, App) {
     }
 
     App[Route.type](Route.path, function (req, res, next) {
+        req.executed = true;
         var Api = _Api[Route.query];
         var Unit = require(`../../App/Api/Resmi.api.${Api.Unit}`);
         var Input = {};
