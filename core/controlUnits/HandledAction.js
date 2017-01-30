@@ -5,7 +5,8 @@
     for (let Action in Handler) {
         if (Action === Route.defaultAction) {
             App[Route.type](Route.path, function (req, res, next) {
-                Handler[Action](req, res, next);
+                Handler[Action](req, res);
+                next();
             });
         } else if (Route.defaultActionOnly) {
             continue;
@@ -20,7 +21,8 @@
         }
 
         App[Route.type](Path, function (req, res, next) {
-            Handler[Action](req, res, next);
+            Handler[Action](req, res);
+            next();
         });
 
         if (Route.defaultActionOnly) {

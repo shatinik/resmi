@@ -17,5 +17,6 @@ module.exports = function (Route, App) {
         var Result = Unit(Input, res, Api, Api.availableFields, Api.requiredFields, Api.maxRowsToGet, Api.tableTitle);
         if (Result)
             res.json(Result);
+        next();
     });
 };

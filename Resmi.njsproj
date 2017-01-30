@@ -18,10 +18,10 @@
   <ItemGroup>
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Compile Include="App\handlers\handler.api_rooms.js" />
     <Compile Include="App\handlers\handler.example.js" />
     <Compile Include="core\controlUnits\DataQuery.js" />
     <Compile Include="core\controlUnits\HandledAction.js" />
+    <Compile Include="core\Resmi.rbac.js" />
     <Compile Include="start.js" />
     <Compile Include="core\Resmi.knex.js" />
     <Compile Include="core\Resmi.main.js" />
@@ -31,7 +31,6 @@
     <Compile Include="App\configs\database.js" />
     <Compile Include="App\configs\routes.js" />
     <Compile Include="App\Api\Resmi.api.getByEnumID.js" />
-    <Compile Include="App\Api\Resmi.api.js" />
     <Compile Include="App\Api\Resmi.api.messages.js" />
     <Compile Include="core\configs\server.development.js" />
     <Compile Include="core\configs\server.production.js" />
