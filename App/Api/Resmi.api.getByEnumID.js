@@ -49,9 +49,9 @@ module.exports = function (Input, res, settings, available, required, maxRowsToG
 	/*
 		Set required fields
 	*/
-	for (let i = 0; i < required.length; i++) {
-		fields = Mas.pushFirst(fields, required[i]);	
-	}
+    for (let i = 0; i < required.length; i++) {
+        fields.unshift(required[i]);
+    }
 
 	/*
 		Get from the base
