@@ -20,9 +20,6 @@ module.exports = function (Route, App) {
             let field = Api.fields[_field];
             Input[_field] = req.query[field];
         }
-        var Result = Unit(Input, res, Api, Api.availableFields, Api.requiredFields, Api.maxRowsToGet, Api.tableTitle);
-        if (Result)
-            res.json(Result);
-        next();
+        Unit(Input, res, Api, Api.availableFields, Api.requiredFields, Api.maxRowsToGet, Api.tableTitle, next);
     });
 };

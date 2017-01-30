@@ -7,7 +7,7 @@ module.exports = {
 			fields: "fields"
 		},
 		requiredFields: ["id"],
-		availableFields: ["title", "photo", "views"],
+		availableFields: ["title", "registered"],
 		maxRowsToGet: 3
 	}
 }

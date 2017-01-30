@@ -2,12 +2,14 @@ const Knex = require('../../core/Resmi.knex');
 const Mas = require('../../core/Resmi.mas');
 const Messages = require('./Resmi.api.messages');
 
-module.exports = function (Input, res, settings, available, required, maxRowsToGet, table) {
+module.exports = function (Input, res, settings, available, required, maxRowsToGet, table, next) {
 	/*
 		Check database connection
 	*/
 	Knex.raw('select 1').catch(function(error) {
-        return Messages.DATABASE_FAIL;
+        res.json(Messages.DATABASE_FAIL);
+        next();
+        return;
 	});
 
 	/*
@@ -20,13 +22,17 @@ module.exports = function (Input, res, settings, available, required, maxRowsToG
 		Inspection of the input data
 	*/
     if (IDs === undefined || fields === undefined) {
-        return Messages.INCORRECT_QUERY;
+        res.json(Messages.INCORRECT_QUERY);
+        next();
+        return;
 	}
 	if (/^(\d{1,},)+(\d{1,})$/.test(IDs) === true) {
 		IDs = IDs.split(',');
 
 		if (IDs.length > maxRowsToGet) {
-            return Messages.TOO_MANY_ROWS;
+            res.json(Messages.TOO_MANY_ROWS);
+            next();
+            return;
 		}
 
 		IDs = Mas.parseMasInt(IDs);
@@ -35,13 +41,17 @@ module.exports = function (Input, res, settings, available, required, maxRowsToG
 		IDs = [ parseInt(IDs) ]; 
 
     } else {
-        return Messages.INCORRECT_QUERY;
+        res.json(Messages.INCORRECT_QUERY);
+        next();
+        return;
 	}
 
 	fields = fields.split(',');
 	if (Mas.masContains(available, fields).length === 0) {
 		// If no one element from fields is not contained in availableFields
-        return Messages.INCORRECT_QUERY;
+        res.json(Messages.INCORRECT_QUERY);
+        next();
+        return;
 	}
 
 	fields = Mas.masContains(available, fields);
@@ -64,6 +74,7 @@ module.exports = function (Input, res, settings, available, required, maxRowsToG
 			context = Messages.INFO_DOESNT_EXIST;
         }
         res.json(context);
+        next();
         return;
 	});
 };
