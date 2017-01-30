@@ -1,11 +1,13 @@
-﻿module.exports = function (Route, App) {
+﻿const Rbac = require('../Resmi.rbac');
+
+module.exports = function (Route, App) {
 
     var Handler = require(`../../App/handlers/handler.${Route.handler}.js`);
 
     for (let Action in Handler) {
         if (Action === Route.defaultAction) {
             App[Route.type](Route.path, function (req, res, next) {
-                if (!req.execute) {
+                if (!Rbac.Check(req, `ACTION__${Route.handler.toUpperCase()}__${Action.toUpperCase()}`)) {
                     next();
                     return;
                 }
@@ -26,7 +28,7 @@
         }
 
         App[Route.type](Path, function (req, res, next) {
-            if (!req.execute) {
+            if (!Rbac.Check(req, `ACTION__${Route.handler.toUpperCase()}__${Action.toUpperCase()}`)) {
                 next();
                 return;
             }

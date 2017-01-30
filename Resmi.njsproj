@@ -18,6 +18,7 @@
   <ItemGroup>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Compile Include="App\configs\Actions.js" />
     <Compile Include="App\handlers\handler.example.js" />
     <Compile Include="core\controlUnits\DataQuery.js" />
     <Compile Include="core\controlUnits\HandledAction.js" />
