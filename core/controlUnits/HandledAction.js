@@ -1,7 +1,6 @@
 ﻿module.exports = function (Route, App) {
 
     var Handler = require(`../../App/handlers/handler.${Route.handler}.js`);
-    var Path = '';
 
     for (let Action in Handler) {
         if (Action === Route.defaultAction) {
@@ -11,6 +10,8 @@
         } else if (Route.defaultActionOnly) {
             continue;
         }
+
+        let Path = '';
 
         if (Route.path[Route.path.length - 1] === '/') {
             Path = Route.path + Action;
