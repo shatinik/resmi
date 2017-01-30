@@ -5,6 +5,10 @@
     for (let Action in Handler) {
         if (Action === Route.defaultAction) {
             App[Route.type](Route.path, function (req, res, next) {
+                if (!req.execute) {
+                    next();
+                    return;
+                }
                 req.executed = true;
                 Handler[Action](req, res);
                 next();
@@ -22,6 +26,10 @@
         }
 
         App[Route.type](Path, function (req, res, next) {
+            if (!req.execute) {
+                next();
+                return;
+            }
             req.executed = true;
             Handler[Action](req, res);
             next();

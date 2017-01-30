@@ -27,6 +27,7 @@ const App = Express();
 * Middleware
 */
 App.use(function (req, res, next) {
+    req.execute = true;
     req.executed = false; // Will set to `true` if request will be processed
     next();
 });
