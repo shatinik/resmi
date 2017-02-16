@@ -1,5 +1,5 @@
 {
-  "author": "Skrypko Pavel",
+  "author": "ex-Miples",
   "dependencies": {
     "compression": "^1.6.2",
     "express": "^4.14.0",
@@ -12,5 +12,5 @@
   "license": "ISC",
   "main": "start.js",
   "name": "resmiengine",
-  "version": "0.9.0"
+  "version": "0.10.0"
 }
