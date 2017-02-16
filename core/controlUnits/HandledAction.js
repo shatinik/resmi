@@ -12,8 +12,7 @@ module.exports = function (Route, App) {
                     return;
                 }
                 req.executed = true;
-                Handler[Action](req, res);
-                next();
+                Handler[Action](req, res, next);
             });
         } else if (Route.defaultActionOnly) {
             continue;
@@ -33,8 +32,7 @@ module.exports = function (Route, App) {
                 return;
             }
             req.executed = true;
-            Handler[Action](req, res);
-            next();
+            Handler[Action](req, res, next);
         });
 
         if (Route.defaultActionOnly) {

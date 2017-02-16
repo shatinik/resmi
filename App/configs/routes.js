@@ -22,4 +22,13 @@ module.exports.routes = [
 
         query: 'roomsByEnumID',
     },
+    {
+        path: '/api/rooms',
+        type: 'get',
+        control_module: 'HandledAction',
+        enabled: true,
+
+        handler: 'room',
+        defaultAction: 'edit',
+    },
 ];
