@@ -18,35 +18,15 @@
   <ItemGroup>
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Compile Include="App\configs\Actions.js" />
-    <Compile Include="App\handlers\handler.room.js" />
-    <Compile Include="App\handlers\handler.example.js" />
-    <Compile Include="core\controlUnits\DataQuery.js" />
-    <Compile Include="core\controlUnits\HandledAction.js" />
-    <Compile Include="core\Resmi.rbac.js" />
-    <Compile Include="start.js" />
-    <Compile Include="core\Resmi.knex.js" />
-    <Compile Include="core\Resmi.main.js" />
-    <Compile Include="core\Resmi.mas.js" />
-    <Compile Include="core\Resmi.routing.js" />
-    <Content Include="App\configs\api.js" />
-    <Compile Include="App\configs\database.js" />
-    <Compile Include="App\configs\routes.js" />
-    <Compile Include="App\Api\Resmi.api.getByEnumID.js" />
-    <Compile Include="App\Api\Resmi.api.messages.js" />
-    <Compile Include="core\configs\server.development.js" />
-    <Compile Include="core\configs\server.production.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App" />
-    <Folder Include="App\configs" />
-    <Folder Include="App\handlers\" />
-    <Folder Include="App\logs" />
-    <Folder Include="core" />
-    <Folder Include="App\Api\" />
-    <Folder Include="core\configs" />
-    <Folder Include="core\controlUnits\" />
-    <Folder Include="Resmi" />
+    <Folder Include="configs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="configs\paths.js" />
+    <Compile Include="configs\requests.js" />
+    <Compile Include="requester.js" />
+    <Compile Include="start.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
