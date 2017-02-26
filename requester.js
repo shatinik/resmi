@@ -11,13 +11,19 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    query: function (_title, attributes, req, res, next) {
-        var request = this.querybyname(_title);
+    query: function (_title, req, res, next, attributes) {
+        let request = this.querybyname(_title);
         if (!request) {
             return false;
         }
-        var query = Knex(request.table);
-        for (let field in request.attrbutes) {
+        let query = Knex(request.table);
+        let _attributes = request.attributes;
+        if (attributes) {
+            for (let field in attributes) {
+                _attributes[field] = attributes[field];
+            }
+        }
+        for (let field in _attributes) {
             let value = request.attributes[field];
             query.where(field, req.query[value]);
         }
