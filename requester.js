@@ -11,7 +11,7 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    query: function (_title, req, res, next, attributes, handler, action) {
+    query: function (_title, req, res, next, attributes, static, handler, action) {
         let request = this.querybyname(_title);
         if (!request) {
             return false;
@@ -24,11 +24,17 @@ module.exports = {
             }
         }
         for (let field in _attributes) {
-            let value = request.attributes[field];
+            let value = _attributes[field];
             query.where(field, req.query[value]);
         }
-        for (let field in request.static) {
-            let value = request.static[field];
+        let _static = request.static;
+        if (static) {
+            for (let field in static) {
+                _static[field] = static[field];
+            }
+        }
+        for (let field in _static) {
+            let value = _static[field];
             query.where(field, value);
         }
         if (handler) {
