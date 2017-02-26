@@ -34,6 +34,7 @@ module.exports = {
                 _where[field] = where[field];
             }
         }
+        let static = {};
         for (let field in _where) {
             let value = _where[field].value;
             let type = _where[field].type;
@@ -41,7 +42,7 @@ module.exports = {
                 case 'var':
                 case 'variable':
                     if (req.query[value]) {
-                        query.where(field, req.query[value]);
+                        static[field] = { type: 'static', value: req.query[value] };
                     } else {
                         res.json('ERROR'); // Недостаточно входных данных
                         next();
@@ -50,11 +51,14 @@ module.exports = {
                     break;
                 case 'stat':
                 case 'static':
-                    query.where(field, value);
+                    static[field] = _where[field];
                     break;
                 case 'query':
                     break;
             }
+        }
+        for (let field in static) {
+            query.where(field, static[field].value);
         }
         if (callback) {
             query.then(function (rows) {
