@@ -11,8 +11,12 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    query: function (_title, req, res, next, where, callback) {
-        let request = this.querybyname(_title);
+    query: function (title, req, res, next, where, callback, _parent, _w, _f, _c) {
+        if (_parent && !_f) {
+            console.log(`Error. Subquery can't be loaded without field name assigned to it`);
+            return false;
+        }
+        let request = this.querybyname(title);
         if (!request) {
             return false;
         }
@@ -35,6 +39,8 @@ module.exports = {
             }
         }
         let static = {};
+        let subquery = false;
+        let subquery_field = '';
         for (let field in _where) {
             let value = _where[field].value;
             let type = _where[field].type;
@@ -54,17 +60,66 @@ module.exports = {
                     static[field] = _where[field];
                     break;
                 case 'query':
+                    if (!subquery) {
+                        let _subquery = _where[field];
+                        if (_subquery.field) {
+                            if (_subquery.rows) {
+                                let count = _subquery.rows.length;
+                                let values = [];
+                                for (let i = 0; i < count; i++) {
+                                    values[i] = _subquery.rows[i][_subquery.field];
+                                }
+                                if (values.count == 1) {
+                                    values = values[0];
+                                }
+                                static[field] = { type: 'static', value:  values};
+                                break;
+                            } else {
+                                subquery = _subquery;
+                                subquery_field = field;
+                            }
+                        } else {
+                            console.log(`Error. Subrequest '${field}' in '${title}' don't have a name of resulting field. Request cannot be processed`);
+                            next();
+                            return;
+                        }
+                    }
+                    static[field] = _where[field];
                     break;
             }
         }
+        if (subquery) {
+            if (this.querybyname(subquery.value)) {
+                this.query(subquery.value, req, res, next, false, function (req, res, next, rows, _title, static, field, callback) {
+                    static[field].rows = rows;
+                    module.exports.query(title, req, res, next, static, callback);
+                }, title, static, subquery_field, callback);
+                return;
+            } else {
+                console.log(`Error. Request '${title}' have undefined subrequest on field '${subquery_field}'`);
+                next();
+                return;
+            }
+        }
         for (let field in static) {
-            query.where(field, static[field].value);
+            let value = static[field].value;
+            if (value instanceof Array) {
+                query.whereIn(field, value);
+            } else {
+                query.where(field, value);
+            }
         }
         if (callback) {
-            query.then(function (rows) {
-                callback(req, res, next, rows);
-                next();
-            });
+            if (_parent) {
+                query.then(function (rows) {
+                    callback(req, res, next, rows, _parent, _w, _f, _c);
+                });
+            } else {
+                query.then(function (rows) {
+                    callback(req, res, next, rows);
+                    next();
+                });
+            }
         } else {
             query.then(function (rows) {
                 res.json(rows);

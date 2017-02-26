@@ -17,7 +17,7 @@
         title: 'rooms list',
         table: 'rooms',
         where: {
-            owner: { type: 'query', value: 'other_query' }
+            author: { type: 'query', value: 'other query', field: 'id' }
         },
         fields: [
             'author',
@@ -25,4 +25,17 @@
             'registered'
         ]
     },
+    {
+        title: 'other query',
+        table: 'users',
+        where: {
+            id: { type: 'static', value: [1, 2] }
+        },
+        fields: [
+            'id',
+            'email',
+            'username',
+            'group'
+        ]
+    }
 ];
