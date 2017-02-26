@@ -1,17 +1,24 @@
 ﻿module.exports = [
+    /*
+        title: '', // query title
+        table: '', // table
+        where: {
+            id: { type: 'variable', value: 'id' } // 'GET' / 'POST' значение в зависимости от связанного с запросом path.type
+            action: { type: 'static', value: 1 } // Статическое значение
+            owner: { type: 'query', value: 'other_query' } // Значения подзапроса
+        },
+        fields: [
+            'author',
+            'title',
+            'registered'
+        ]
+    */
     {
-        title: 'rooms list', // only for logging
-        table: 'rooms', // печенье
-        /*
-        attributes: { // значения, на основании которых будет проводиться выборка WHERE
-            id: 'id', // значение передаётся пользователем через get/post
+        title: 'rooms list',
+        table: 'rooms',
+        where: {
+            owner: { type: 'query', value: 'other_query' }
         },
-        */
-        /*
-        static: {
-            active: 1, // статичные значения, не передаются пользователем
-        },
-        */
         fields: [
             'author',
             'title',

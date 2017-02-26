@@ -11,7 +11,7 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    query: function (_title, req, res, next, attributes, static, handler, action) {
+    query: function (_title, req, res, next, where, handler, action) {
         let request = this.querybyname(_title);
         if (!request) {
             return false;
@@ -23,31 +23,36 @@ module.exports = {
                 query.select(request.fields[i]);
             }
         }
-        let _attributes = [];
-        if (request.attributes) {
-            _attributes = request.attributes;
+        let _where = [];
+        if (request.where) {
+            _where = request.where;
         }
-        if (attributes) {
-            for (let field in attributes) {
-                _attributes[field] = attributes[field];
+        if (where) {
+            for (let field in where) {
+                _where[field] = where[field];
             }
         }
-        for (let field in _attributes) {
-            let value = _attributes[field];
-            query.where(field, req.query[value]);
-        }
-        let _static = [];
-        if (request.static) {
-            _static = request.static;
-        }
-        if (static) {
-            for (let field in static) {
-                _static[field] = static[field];
+        for (let field in _where) {
+            let value = _where[field].value;
+            let type = _where[field].type;
+            switch (type) {
+                case 'var':
+                case 'variable':
+                    if (req.query[value]) {
+                        query.where(field, req.query[value]);
+                    } else {
+                        res.json('ERROR'); // Недостаточно входных данных
+                        next();
+                        return;
+                    }
+                    break;
+                case 'stat':
+                case 'static':
+                    query.where(field, value);
+                    break;
+                case 'query':
+                    break;
             }
-        }
-        for (let field in _static) {
-            let value = _static[field];
-            query.where(field, value);
         }
         if (handler) {
             if (!handler[action]) {
