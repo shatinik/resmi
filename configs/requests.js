@@ -5,7 +5,7 @@
         where: {
             id: { type: 'variable', value: 'id' } // 'GET' / 'POST' значение в зависимости от связанного с запросом path.type
             action: { type: 'static', value: 1 } // Статическое значение
-            owner: { type: 'query', value: 'other_query' } // Значения подзапроса
+            owner: { type: 'query', value: 'other_query' field: 'id'} // Значения подзапроса и значения поля, которое будет подставляться
         },
         fields: [
             'author',
