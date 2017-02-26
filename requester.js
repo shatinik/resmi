@@ -25,7 +25,9 @@ module.exports = {
         }
         let _where = [];
         if (request.where) {
-            _where = request.where;
+            Object.keys(request.where).forEach(function (val) {
+                _where[val] = request.where[val];
+            });
         }
         if (where) {
             for (let field in where) {
