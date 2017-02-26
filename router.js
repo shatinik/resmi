@@ -8,12 +8,12 @@ const DataQuery = require('../core/controlUnits/DataQuery');
 
 module.exports = function (App) {
 
-    var count = routes.length;
+    let count = routes.length;
 
     for (let i = 0; i < count; i++) {
 
-        var route = routes[i];
-
+        let route = routes[i];
+        
         if (route.disabled) {
             continue;
         }
@@ -21,9 +21,9 @@ module.exports = function (App) {
         let handler = false;
         let action = false;
 
-        if (route.handler !== '') {
+        if (route.handler) {
             handler = require(`./handlers/${route.handler}`);
-            if (route.action !== '') {
+            if (route.action) {
                 action = route.action;
             } else {
                 action = 'default';
@@ -35,9 +35,13 @@ module.exports = function (App) {
                 requester.query(route.request, req, res, next, route.request_attr, route.request_stat, handler, action);
             });
         } else {
-            App[route.type](route.path, function (req, res, next) {
-                handler[action](req, res, next, false);
-            });
+            if (handler) {
+                App[route.type](route.path, function (req, res, next) {
+                    handler[action](req, res, next, false);
+                });
+            } else {
+                console.log(`Error. Route #${i} have empty handler name`);
+            }
         }
 
         

@@ -12,10 +12,10 @@
             active: 1, // статичные значения, не передаются пользователем
         },
         */
-        format: {
-            author: true,
-            title: true,
-            registered: true
-        }
+        fields: [
+            'author',
+            'title',
+            'registered'
+        ]
     },
 ];

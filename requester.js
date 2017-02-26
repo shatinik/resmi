@@ -17,7 +17,16 @@ module.exports = {
             return false;
         }
         let query = knex(request.table);
-        let _attributes = request.attributes;
+        if (request.fields && request.fields.length > 0) {
+            let count = request.fields.length;
+            for (let i = 0; i < count; i++) {
+                query.select(request.fields[i]);
+            }
+        }
+        let _attributes = [];
+        if (request.attributes) {
+            _attributes = request.attributes;
+        }
         if (attributes) {
             for (let field in attributes) {
                 _attributes[field] = attributes[field];
@@ -27,7 +36,10 @@ module.exports = {
             let value = _attributes[field];
             query.where(field, req.query[value]);
         }
-        let _static = request.static;
+        let _static = [];
+        if (request.static) {
+            _static = request.static;
+        }
         if (static) {
             for (let field in static) {
                 _static[field] = static[field];
@@ -44,6 +56,7 @@ module.exports = {
             if (handler[action]) {
                 query.then(function (rows) {
                     handler[action](req, res, next, rows);
+                    next();
                 });
             } else {
                 query.then(function (rows) { // no default action in handler
@@ -57,7 +70,6 @@ module.exports = {
                 next();
             });
         }
-        
     },
     querybyname: function (title) {
         for (let i = 0; i < requests.length; i++) {
