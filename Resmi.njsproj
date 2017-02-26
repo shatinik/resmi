@@ -21,11 +21,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="configs\" />
+    <Folder Include="handlers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configs\paths.js" />
     <Compile Include="configs\requests.js" />
+    <Compile Include="handlers\example.js" />
     <Compile Include="requester.js" />
+    <Compile Include="router.js" />
     <Compile Include="start.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
