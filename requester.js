@@ -11,7 +11,7 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    query: function (_title, req, res, next, where, handler, action) {
+    query: function (_title, req, res, next, where, callback) {
         let request = this.querybyname(_title);
         if (!request) {
             return false;
@@ -54,21 +54,11 @@ module.exports = {
                     break;
             }
         }
-        if (handler) {
-            if (!handler[action]) {
-                action = 'default';
-            }
-            if (handler[action]) {
-                query.then(function (rows) {
-                    handler[action](req, res, next, rows);
-                    next();
-                });
-            } else {
-                query.then(function (rows) { // no default action in handler
-                    res.json('ERROR');
-                    next();
-                });
-            }
+        if (callback) {
+            query.then(function (rows) {
+                callback(req, res, next, rows);
+                next();
+            });
         } else {
             query.then(function (rows) {
                 res.json(rows);
