@@ -1,6 +1,8 @@
 ﻿module.exports = [
     /*
         title: '', // query title
+        // TODO: Использовать поле type для определения типа запроса(выборка, добавление, обновление, редактирование) и реализовать их.
+        type: '', // 'select', 'insert', 'update', 'delete'
         table: '', // table
         where: {
             id: { type: 'variable', value: 'id' } // 'GET' / 'POST' значение в зависимости от связанного с запросом path.type
