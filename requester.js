@@ -11,12 +11,12 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    query: function (title, req, res, next, where, callback, _parent, _w, _f, _c) {
+    select: function (title, req, res, next, where, callback, _parent, _w, _f, _c) {
         if (_parent && !_f) {
             console.log(`Error. Subquery can't be loaded without field name assigned to it`);
             return false;
         }
-        let request = this.querybyname(title);
+        let request = this.getConfig(title);
         if (!request) {
             return false;
         }
@@ -89,8 +89,8 @@ module.exports = {
             }
         }
         if (subquery) {
-            if (this.querybyname(subquery.value)) {
-                this.query(subquery.value, req, res, next, subquery.where, function (req, res, next, rows, _title, static, field, callback) {
+            if (this.getConfig(subquery.value)) {
+                this.select(subquery.value, req, res, next, subquery.where, function (req, res, next, rows, _title, static, field, callback) {
                     static[field].rows = rows;
                     module.exports.query(_title, req, res, next, static, callback);
                 }, title, static, subquery_field, callback);
@@ -127,7 +127,7 @@ module.exports = {
             });
         }
     },
-    querybyname: function (title) {
+    getConfig: function (title) {
         for (let i = 0; i < requests.length; i++) {
             if (requests[i].title == title) {
                 return requests[i];

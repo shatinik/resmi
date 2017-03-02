@@ -37,7 +37,7 @@ module.exports = function (App) {
 
         if (route.request) {
             App[route.type](route.path, function (req, res, next) {
-                requester.query(route.request, req, res, next, route.where, handler[action]);
+                requester.select(route.request, req, res, next, route.where, handler[action]);
             });
         } else {
             if (handler) {
