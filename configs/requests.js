@@ -19,25 +19,28 @@
         title: 'rooms list',
         table: 'rooms',
         where: {
-            author: { type: 'query', value: 'other query', field: 'id' }
+            creatorID: {
+                type: 'query',
+                value: 'users list',
+                field: 'id',
+                where: {
+                    id: { type: 'static', value: 1 }
+                }
+            }
         },
         fields: [
-            'author',
-            'title',
-            'registered'
+            'creatorID',
+            'title'
         ]
     },
     {
-        title: 'other query',
+        title: 'users list',
         table: 'users',
-        where: {
-            id: { type: 'static', value: [1, 2] }
-        },
         fields: [
             'id',
             'email',
             'username',
-            'group'
+            'password'
         ]
     }
 ];

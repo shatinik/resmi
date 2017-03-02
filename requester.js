@@ -72,7 +72,7 @@ module.exports = {
                                 if (values.count == 1) {
                                     values = values[0];
                                 }
-                                static[field] = { type: 'static', value:  values};
+                                static[field] = { type: 'static', value: values};
                                 break;
                             } else {
                                 subquery = _subquery;
@@ -90,9 +90,9 @@ module.exports = {
         }
         if (subquery) {
             if (this.querybyname(subquery.value)) {
-                this.query(subquery.value, req, res, next, false, function (req, res, next, rows, _title, static, field, callback) {
+                this.query(subquery.value, req, res, next, subquery.where, function (req, res, next, rows, _title, static, field, callback) {
                     static[field].rows = rows;
-                    module.exports.query(title, req, res, next, static, callback);
+                    module.exports.query(_title, req, res, next, static, callback);
                 }, title, static, subquery_field, callback);
                 return;
             } else {
