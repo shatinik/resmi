@@ -27,16 +27,12 @@ module.exports = {
                 query.select(request.fields[i]);
             }
         }
-        let _where = [];
+        let _where = {};
         if (request.where) {
-            Object.keys(request.where).forEach(function (val) {
-                _where[val] = request.where[val];
-            });
+            _where = Object.assign(request.where);
         }
         if (where) {
-            for (let field in where) {
-                _where[field] = where[field];
-            }
+            _where = Object.assign(_where, where);
         }
         let static = {};
         let subquery = false;
