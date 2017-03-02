@@ -86,9 +86,9 @@ module.exports = {
         }
         if (subquery) {
             if (this.getConfig(subquery.value)) {
-                this.select(subquery.value, req, res, next, subquery.where, function (req, res, next, rows, _title, static, field, callback) {
+                this.select(subquery.value, req, res, next, subquery.where, function (rows, _title, static, field, callback) {
                     static[field].rows = rows;
-                    module.exports.query(_title, req, res, next, static, callback);
+                    module.exports.select(_title, req, res, next, static, callback);
                 }, title, static, subquery_field, callback);
                 return;
             } else {
@@ -108,7 +108,7 @@ module.exports = {
         if (callback) {
             if (_parent) {
                 query.then(function (rows) {
-                    callback(req, res, next, rows, _parent, _w, _f, _c);
+                    callback(rows, _parent, _w, _f, _c);
                 });
             } else {
                 query.then(function (rows) {
