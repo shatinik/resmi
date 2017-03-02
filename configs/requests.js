@@ -44,5 +44,15 @@
             'username',
             'password'
         ]
+    },
+    {
+        title: 'user add',
+        type: 'insert',
+        table: 'users',
+        fields: {
+            email: { type: 'variable', value: 'email' },
+            username: { type: 'variable', value: 'username' },
+            password: { type: 'variable', value: 'password' }
+        }
     }
 ];

@@ -15,7 +15,7 @@ module.exports = {
     * Функция преобразования полей(получения значений) типа 'variable' и 'request' в 'static'.
     * Замена "путей к значениям" на сами значения.
     */
-    loadConditions: function (req, res, next, title, where, callback) {
+    loadConditions: function (req, res, next, where, title, callback, banQueries) {
         let static = {};
         let subquery = false;
         let subquery_field = '';
@@ -31,8 +31,7 @@ module.exports = {
                         // Преобразование объекта 'variable' в 'static'
                         static[field] = { type: 'static', value: req.query[value] };
                     } else {
-                        next(); // Error::NotEnoughData
-                        return false;
+                        return; // Error::NotEnoughData
                     }
                     break;
                 case 'stat':
@@ -40,6 +39,11 @@ module.exports = {
                     static[field] = where[field];
                     break;
                 case 'query':
+                    if (banQueries) {
+                        console.log(`Trying to execute ${title} with subquery while subqueries are banned`);
+                        next(); // Error::WrongField
+                        return;
+                    }
                     if (!subquery) {
                         let _subquery = where[field];
                         if (_subquery.field) {
@@ -66,7 +70,7 @@ module.exports = {
                         } else {
                             console.log(`Error. Subrequest '${field}' in '${title}' don't have a name of resulting field. Request cannot be processed`);
                             next();
-                            return false;
+                            return;
                         }
                     }
                     static[field] = where[field];
@@ -105,52 +109,68 @@ module.exports = {
             where = Object.assign(where, _w);
         }
 
-        let static = this.loadConditions(req, res, next, title, where, callback);
-
-        // Static принимает значение false в случае, если запрос содержит подзапросы, либо в случае возникновения ошибки в процессе обработки запроса
-        if (static) {
-            switch (type) {
-                case 'select':
-                    if (fields && fields.length > 0) {
-                        let count = fields.length;
-                        for (let i = 0; i < count; i++) {
-                            query.select(fields[i]);
-                        }
-                    }
-                    break;
-                case 'insert':
-                    break;
-                case 'update':
-                    break;
-                case 'delete':
-                    break;
-            }
-            // Применение параметров where к запросу
-            for (let field in static) {
-                let value = static[field].value;
-                if (value instanceof Array) {
-                    query.whereIn(field, value);
-                } else {
-                    query.where(field, value);
+        if (type === 'insert') {
+            let data = this.loadConditions(req, res, next, fields, false, false, true);
+            if (data) {
+                let model = {};
+                for (let field in data) {
+                    model[field] = data[field].value;
                 }
-            }
-
-            if (callback) {
-                query.then(function (rows) {
-                    callback(req, res, next, rows);
-                });
+                query.insert(model);
             } else {
-                query.then(function (rows) {
-                    res.json(rows);
-                    next();
-                });
+                next(); // Error::NotEnoughData
+                return;
             }
+        } else {
+
+            let static = this.loadConditions(req, res, next, where, title, callback);
+
+            // Static принимает значение false в случае, если запрос содержит подзапросы, либо в случае возникновения ошибки в процессе обработки запроса
+            if (static) {
+                switch (type) {
+                    case 'select':
+                        if (fields && fields.length > 0) {
+                            let count = fields.length;
+                            for (let i = 0; i < count; i++) {
+                                query.select(fields[i]);
+                            }
+                        }
+                        break;
+                    case 'update':
+                        break;
+                    case 'delete':
+                        break;
+                }
+                // Применение параметров where к запросу
+                for (let field in static) {
+                    let value = static[field].value;
+                    if (value instanceof Array) {
+                        query.whereIn(field, value);
+                    } else {
+                        query.where(field, value);
+                    }
+                }
+            } else if (static !== false) {
+                console.log(`Error was catched while executing of ${title}`);
+                next();
+            }
+        }
+
+        if (callback) {
+            query.then(function (rows) {
+                callback(req, res, next, rows);
+            });
+        } else {
+            query.then(function (rows) {
+                res.json(rows);
+                next();
+            });
         }
     },
 
     getConfig: function (title) {
         for (let i = 0; i < requests.length; i++) {
-            if (requests[i].title == title) {
+            if (requests[i].title === title) {
                 return requests[i];
             }
         }

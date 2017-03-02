@@ -33,10 +33,15 @@
         }
     },
     {
+        path: '/api/user/add',
+        type: 'get',
+        request: 'user add',
+    },
+    {
         path: '/api/users',
         type: 'get',
         request: 'users list',
-    }, 
+    },
     {
         path: '/api/test',
         type: 'get',
