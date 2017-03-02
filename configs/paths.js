@@ -31,6 +31,11 @@
         where: {
             id: { type: 'variable', value: 'id' },
         }
+    },
+    {
+        path: '/api/users',
+        type: 'get',
+        request: 'users list',
     }, 
     {
         path: '/api/test',

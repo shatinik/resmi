@@ -17,6 +17,7 @@
     */
     {
         title: 'rooms list',
+        type: 'select',
         table: 'rooms',
         where: {
             creatorID: {
@@ -35,6 +36,7 @@
     },
     {
         title: 'users list',
+        type: 'select',
         table: 'users',
         fields: [
             'id',

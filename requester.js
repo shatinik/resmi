@@ -11,53 +11,30 @@
 const requests = require('./configs/requests');
 
 module.exports = {
-    select: function (title, req, res, next, where, callback, _parent, _w, _f, _c) {
-        if (_parent && !_f) {
-            console.log(`Error. Subquery can't be loaded without field name assigned to it`);
-            return false;
-        }
-        let request = this.getConfig(title);
-        if (!request) {
-            return false;
-        }
-        let query = knex(request.table);
-        if (request.fields && request.fields.length > 0) {
-            let count = request.fields.length;
-            for (let i = 0; i < count; i++) {
-                query.select(request.fields[i]);
-            }
-        }
-        let _where = {};
-        if (request.where) {
-            _where = Object.assign(request.where);
-        }
-        if (where) {
-            _where = Object.assign(_where, where);
-        }
+    loadConditions: function (req, res, next, title, where, callback) {
         let static = {};
         let subquery = false;
         let subquery_field = '';
-        for (let field in _where) {
-            let value = _where[field].value;
-            let type = _where[field].type;
+        for (let field in where) {
+            let value = where[field].value;
+            let type = where[field].type;
             switch (type) {
                 case 'var':
                 case 'variable':
                     if (req.query[value]) {
                         static[field] = { type: 'static', value: req.query[value] };
                     } else {
-                        res.json('ERROR'); // Недостаточно входных данных
-                        next();
-                        return;
+                        next(); // Error::NotEnoughData
+                        return false;
                     }
                     break;
                 case 'stat':
                 case 'static':
-                    static[field] = _where[field];
+                    static[field] = where[field];
                     break;
                 case 'query':
                     if (!subquery) {
-                        let _subquery = _where[field];
+                        let _subquery = where[field];
                         if (_subquery.field) {
                             if (_subquery.rows) {
                                 let count = _subquery.rows.length;
@@ -68,7 +45,7 @@ module.exports = {
                                 if (values.count == 1) {
                                     values = values[0];
                                 }
-                                static[field] = { type: 'static', value: values};
+                                static[field] = { type: 'static', value: values };
                                 break;
                             } else {
                                 subquery = _subquery;
@@ -77,50 +54,77 @@ module.exports = {
                         } else {
                             console.log(`Error. Subrequest '${field}' in '${title}' don't have a name of resulting field. Request cannot be processed`);
                             next();
-                            return;
+                            return false;
                         }
                     }
-                    static[field] = _where[field];
+                    static[field] = where[field];
                     break;
             }
         }
         if (subquery) {
             if (this.getConfig(subquery.value)) {
-                this.select(subquery.value, req, res, next, subquery.where, function (rows, _title, static, field, callback) {
-                    static[field].rows = rows;
-                    module.exports.select(_title, req, res, next, static, callback);
-                }, title, static, subquery_field, callback);
-                return;
+                this.query(subquery.value, req, res, next, function (req, res, next, rows) {
+                    static[subquery_field].rows = rows;
+                    module.exports.query(title, req, res, next, callback, static);
+                }, subquery.where);
             } else {
                 console.log(`Error. Request '${title}' have undefined subrequest on field '${subquery_field}'`);
                 next();
-                return;
             }
+            return false;
         }
-        for (let field in static) {
-            let value = static[field].value;
-            if (value instanceof Array) {
-                query.whereIn(field, value);
-            } else {
-                query.where(field, value);
+        return static;
+    },
+    query: function (title, req, res, next, callback, _w) {
+        let request = this.getConfig(title);
+        let table = request.table;
+        let type = request.type;
+        let where = {};
+        let fields = request.fields;
+        let query = knex(table);
+
+        if (request.where) {
+            where = Object.assign(request.where);
+        }
+        if (where) {
+            where = Object.assign(where, _w);
+        }
+        let static = this.loadConditions(req, res, next, title, where, callback);
+        if (static) {
+            switch (type) {
+                case 'select':
+                    if (fields && fields.length > 0) {
+                        let count = fields.length;
+                        for (let i = 0; i < count; i++) {
+                            query.select(fields[i]);
+                        }
+                    }
+                    break;
+                case 'insert':
+                    break;
+                case 'update':
+                    break;
+                case 'delete':
+                    break;
             }
-        }
-        if (callback) {
-            if (_parent) {
+            for (let field in static) {
+                let value = static[field].value;
+                if (value instanceof Array) {
+                    query.whereIn(field, value);
+                } else {
+                    query.where(field, value);
+                }
+            }
+            if (callback) {
                 query.then(function (rows) {
-                    callback(rows, _parent, _w, _f, _c);
+                    callback(req, res, next, rows);
                 });
             } else {
                 query.then(function (rows) {
-                    callback(req, res, next, rows);
+                    res.json(rows);
                     next();
                 });
             }
-        } else {
-            query.then(function (rows) {
-                res.json(rows);
-                next();
-            });
         }
     },
     getConfig: function (title) {
