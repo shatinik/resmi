@@ -28,7 +28,9 @@ module.exports = function (App) {
                 console.log(`Error. Route #${i} links to invalid action and handler haven't default action`);
                 continue;
             } else if (!handler[route.action]) {
-                console.log(`Notice. Route #${i} links to invalid action. Default action will be loaded`);
+                if (route.action !== undefined) {
+                    console.log(`Notice. Route #${i} links to invalid action. Default action will be loaded`);
+                }
                 action = 'default';
             } else {
                 action = route.action;
