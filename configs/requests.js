@@ -54,5 +54,24 @@
             username: { type: 'variable', value: 'username' },
             password: { type: 'variable', value: 'password' }
         }
+    },
+    {
+        title: 'user edit password',
+        type: 'update',
+        table: 'users',
+        where: {
+            id: { type: 'variable', value: 'id' },
+        },
+        fields: {
+            password: { type: 'variable', value: 'password' }
+        }
+    },
+    {
+        title: 'user delete',
+        type: 'delete',
+        table: 'users',
+        where: {
+            id: { type: 'variable', value: 'id' },
+        }
     }
 ];

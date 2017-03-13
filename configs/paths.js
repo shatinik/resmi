@@ -43,6 +43,11 @@
         request: 'users list',
     },
     {
+        path: '/api/user/delete',
+        type: 'get',
+        request: 'user delete',
+    },
+    {
         path: '/api/test',
         type: 'get',
         handler: 'example',

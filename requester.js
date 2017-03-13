@@ -95,52 +95,69 @@ module.exports = {
 
     query: function (title, req, res, next, callback, _w) {
         let request = this.getConfig(title);
-        let table = request.table;
-        let type = request.type;
-        let where = {};
-        let fields = request.fields;
-        let query = knex(table);
+        if (request) {
+            let table = request.table;
+            let type = request.type;
+            let where = {};
+            let fields = request.fields;
+            let query = knex(table);
 
-        // Совмещение исходных полей where с данными, переданными через параметр "_w"
-        if (request.where) {
-            where = Object.assign(request.where);
-        }
-        if (where) {
-            where = Object.assign(where, _w);
-        }
-
-        if (type === 'insert') {
-            let data = this.loadConditions(req, res, next, fields, false, false, true);
-            if (data) {
-                let model = {};
-                for (let field in data) {
-                    model[field] = data[field].value;
-                }
-                query.insert(model);
-            } else {
-                next(); // Error::NotEnoughData
-                return;
+            // Совмещение исходных полей where с данными, переданными через параметр "_w"
+            if (request.where) {
+                where = Object.assign(request.where);
             }
-        } else {
+            if (where) {
+                where = Object.assign(where, _w);
+            }
 
-            let static = this.loadConditions(req, res, next, where, title, callback);
-
-            // Static принимает значение false в случае, если запрос содержит подзапросы, либо в случае возникновения ошибки в процессе обработки запроса
-            if (static) {
-                switch (type) {
-                    case 'select':
-                        if (fields && fields.length > 0) {
-                            let count = fields.length;
-                            for (let i = 0; i < count; i++) {
-                                query.select(fields[i]);
-                            }
-                        }
-                        break;
-                    case 'update':
-                        break;
-                    case 'delete':
-                        break;
+            if (type === 'insert') {
+                let data = this.loadConditions(req, res, next, fields, false, false, true);
+                if (data) {
+                    let model = {};
+                    for (let field in data) {
+                        model[field] = data[field].value;
+                    }
+                    query.insert(model);
+                } else {
+                    next(); // Error::NotEnoughData
+                    return;
                 }
+            } else {
+
+                let static = this.loadConditions(req, res, next, where, title, callback);
+
+                // Static принимает значение false в случае, если запрос содержит подзапросы, либо в случае возникновения ошибки в процессе обработки запроса
+                if (static) {
+                    switch (type) {
+                        case 'select':
+                            if (fields && fields.length > 0) {
+                                let count = fields.length;
+                                for (let i = 0; i < count; i++) {
+                                    query.select(fields[i]);
+                                }
+                            }
+                            break;
+                        case 'update':
+                            let data = this.loadConditions(req, res, next, fields, false, false, true);
+                            if (data) {
+                                for (let field in data) {
+                                    query.update(field, data[field].value);
+                                }
+                            } else {
+                                console.log(`Error was catched while executing of '${title}'`);
+                                next();
+                                return; // Error::InvalidQuery_SubqueriesAreNotAllowed
+                            }
+                            break;
+                        case 'delete':
+                            query.del();
+                            break;
+                    }
+                } else if (static !== false) {
+                    console.log(`Error was catched while executing of '${title}'`);
+                    next();
+                }
+
                 // Применение параметров where к запросу
                 for (let field in static) {
                     let value = static[field].value;
@@ -150,21 +167,21 @@ module.exports = {
                         query.where(field, value);
                     }
                 }
-            } else if (static !== false) {
-                console.log(`Error was catched while executing of ${title}`);
-                next();
             }
-        }
 
-        if (callback) {
-            query.then(function (rows) {
-                callback(req, res, next, rows);
-            });
+            if (callback) {
+                query.then(function (rows) {
+                    callback(req, res, next, rows);
+                });
+            } else {
+                query.then(function (rows) {
+                    res.json(rows);
+                    next();
+                });
+            }
         } else {
-            query.then(function (rows) {
-                res.json(rows);
-                next();
-            });
+            console.log(`Wrong request name '${title}'`);
+            next();
         }
     },
 
