@@ -31,7 +31,7 @@ module.exports = {
                         // Преобразование объекта 'variable' в 'static'
                         static[field] = { type: 'static', value: req.query[value] };
                     } else {
-                        return; // Error::NotEnoughData
+                        return false; // Error::NotEnoughData
                     }
                     break;
                 case 'stat':
@@ -40,9 +40,8 @@ module.exports = {
                     break;
                 case 'query':
                     if (banQueries) {
-                        console.log(`Trying to execute ${title} with subquery while subqueries are banned`);
-                        next(); // Error::WrongField
-                        return;
+                        console.log(`Trying to execute ${title} with subquery while subqueries are banned`); 
+                        return false; // Error::WrongField
                     }
                     if (!subquery) {
                         let _subquery = where[field];
@@ -69,8 +68,7 @@ module.exports = {
                             }
                         } else {
                             console.log(`Error. Subrequest '${field}' in '${title}' don't have a name of resulting field. Request cannot be processed`);
-                            next();
-                            return;
+                            return false;
                         }
                     }
                     static[field] = where[field];
@@ -84,11 +82,11 @@ module.exports = {
                     static[subquery_field].rows = rows;
                     module.exports.query(title, req, res, next, callback, static);
                 }, subquery.where);
+                return;
             } else {
                 console.log(`Error. Request '${title}' have undefined subrequest on field '${subquery_field}'`);
-                next();
+                return false;
             }
-            return false;
         }
         return static;
     },
@@ -144,18 +142,23 @@ module.exports = {
                                     query.update(field, data[field].value);
                                 }
                             } else {
-                                console.log(`Error was catched while executing of '${title}'`);
-                                next();
-                                return; // Error::InvalidQuery_SubqueriesAreNotAllowed
+                                if (data === false) {
+                                    console.log(`Error was catched while executing of '${title}'`);
+                                    next(); // Error::InvalidQuery_SubqueriesAreNotAllowed
+                                }
+                                return;
                             }
                             break;
                         case 'delete':
                             query.del();
                             break;
                     }
-                } else if (static !== false) {
+                } else if (static === false) {
                     console.log(`Error was catched while executing of '${title}'`);
                     next();
+                    return;
+                } else {
+                    return;
                 }
 
                 // Применение параметров where к запросу
