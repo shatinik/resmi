@@ -19,15 +19,20 @@
         title: 'rooms list',
         type: 'select',
         table: 'rooms',
+        model: 'example-model',
         where: {
+            id: { type: 'variable', value: 'id' },
+            
             creatorID: {
                 type: 'query',
                 value: 'users list',
                 field: 'id',
                 where: {
-                    id: { type: 'static', value: 1 }
+                    id: { type: 'variable', value: 'author' }
                 }
             }
+            
+           // creatorID: { type: 'variable', value: 'author' }
         },
         fields: [
             'creatorID',

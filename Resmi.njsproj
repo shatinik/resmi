@@ -22,11 +22,14 @@
   <ItemGroup>
     <Folder Include="configs\" />
     <Folder Include="handlers\" />
+    <Folder Include="models\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configs\paths.js" />
     <Compile Include="configs\requests.js" />
+    <Compile Include="configs\types.js" />
     <Compile Include="handlers\example.js" />
+    <Compile Include="models\example-model.js" />
     <Compile Include="requester.js" />
     <Compile Include="router.js" />
     <Compile Include="start.js" />

@@ -51,16 +51,19 @@ module.exports = {
                             if (_subquery.rows) {
                                 let count = _subquery.rows.length;
                                 let values = [];
+                                let value = 0;
                                 for (let i = 0; i < count; i++) {
                                     // Формирование массива из значений поля, которое нужно получить
                                     values[i] = _subquery.rows[i][_subquery.field];
                                 }
-                                if (values.count == 1) {
-                                    values = values[0];
-                                }
 
                                 // Преобразование объекта типа 'query' в 'static'
-                                static[field] = { type: 'static', value: values };
+                                if (values.count == 1) {
+                                    static[field] = { type: 'static', value: values[0] };
+                                } else {
+                                    static[field] = { type: 'static', value: values };
+                                }
+                                
                                 break;
                             } else {
                                 subquery = _subquery;
@@ -75,7 +78,7 @@ module.exports = {
                     break;
             }
         }
-
+        
         if (subquery) {
             if (this.getConfig(subquery.value)) {
                 this.query(subquery.value, req, res, next, function (req, res, next, rows) {
@@ -91,6 +94,21 @@ module.exports = {
         return static;
     },
 
+    modelCheck: function (static, model) {
+        console.log(static);
+        for (let field in static) {
+            if (static[field].type === 'static') {
+                if (model[field] !== undefined) {
+                    if (!static[field].value.match(model[field])) {
+                        console.log('Error::UnexpectedInputValue', static[field].value.match(model[field]));
+                        return false; // Error::UnexpectedInputValue
+                    }
+                }
+            }
+        }
+        return true;
+    },
+
     query: function (title, req, res, next, callback, _w) {
         let request = this.getConfig(title);
         if (request) {
@@ -99,6 +117,7 @@ module.exports = {
             let where = {};
             let fields = request.fields;
             let query = knex(table);
+            let model = this.getModel(request.model);
 
             // Совмещение исходных полей where с данными, переданными через параметр "_w"
             if (request.where) {
@@ -111,6 +130,12 @@ module.exports = {
             if (type === 'insert') {
                 let data = this.loadConditions(req, res, next, fields, false, false, true);
                 if (data) {
+                    if (model) {
+                        if (this.modelCheck(data, model)) {
+                            next();
+                            return;
+                        }
+                    }
                     let model = {};
                     for (let field in data) {
                         model[field] = data[field].value;
@@ -128,6 +153,12 @@ module.exports = {
                 if (static) {
                     switch (type) {
                         case 'select':
+                            if (model) {
+                                if (!this.modelCheck(static, model)) {
+                                    next();
+                                    return;
+                                }
+                            }
                             if (fields && fields.length > 0) {
                                 let count = fields.length;
                                 for (let i = 0; i < count; i++) {
@@ -138,6 +169,12 @@ module.exports = {
                         case 'update':
                             let data = this.loadConditions(req, res, next, fields, false, false, true);
                             if (data) {
+                                if (model) {
+                                    if (!this.modelCheck(data, model)) {
+                                        next();
+                                        return;
+                                    }
+                                }
                                 for (let field in data) {
                                     query.update(field, data[field].value);
                                 }
@@ -195,5 +232,13 @@ module.exports = {
             }
         }
         return false;
+    },
+
+    getModel: function (title) {
+        if (title) {
+            return require(`./models/${title}`);
+        } else {
+            return false;
+        }
     }
 };

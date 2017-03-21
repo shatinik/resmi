@@ -19,10 +19,7 @@
     {
         path: '/api/rooms',
         type: 'get',
-        request: 'rooms list',
-        where: {
-            active: { type: 'static', value: 1 }
-        }
+        request: 'rooms list'
     },
     {
         path: '/api/room',
