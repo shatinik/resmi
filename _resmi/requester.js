@@ -8,7 +8,8 @@
         charset: 'utf8'
     }
 });
-const requests = require('../configs/requests');
+const json = require('./storages').json;
+const file = require('./storages').file;
 
 module.exports = {
     /**
@@ -80,7 +81,7 @@ module.exports = {
         }
         
         if (subquery) {
-            if (this.getConfig(subquery.value)) {
+            if (json.read.reqest(subquery.value)) {
                 this.query(subquery.value, req, res, next, function (req, res, next, rows) {
                     static[subquery_field].rows = rows;
                     module.exports.query(title, req, res, next, callback, static);
@@ -110,14 +111,14 @@ module.exports = {
     },
 
     query: function (title, req, res, next, callback, _w) {
-        let request = this.getConfig(title);
+        let request = json.read.reqest(title);
         if (request) {
             let table = request.table;
             let type = request.type;
             let where = {};
             let fields = request.fields;
             let query = knex(table);
-            let model = this.getModel(request.model);
+            let model = file.read.model(request.model);
 
             // Совмещение исходных полей where с данными, переданными через параметр "_w"
             if (request.where) {
@@ -222,23 +223,6 @@ module.exports = {
         } else {
             console.log(`Wrong request name '${title}'`);
             next();
-        }
-    },
-
-    getConfig: function (title) {
-        for (let i = 0; i < requests.length; i++) {
-            if (requests[i].title === title) {
-                return requests[i];
-            }
-        }
-        return false;
-    },
-
-    getModel: function (title) {
-        if (title) {
-            return require(`../models/${title}`);
-        } else {
-            return false;
         }
     }
 };

@@ -1,4 +1,4 @@
-﻿const routes = require('../configs/paths');
+﻿const json = require('./storages').json;
 const requester = require('./requester');
 
 /*
@@ -7,7 +7,7 @@ const DataQuery = require('../core/controlUnits/DataQuery');
 */
 
 module.exports = function (App) {
-
+    let routes = json.read.routes();
     let count = routes.length;
 
     for (let i = 0; i < count; i++) {

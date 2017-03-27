@@ -1,1 +1,1 @@
-﻿require('./_resmi/init');
+﻿require('./_resmi');

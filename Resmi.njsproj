@@ -24,6 +24,10 @@
     <Folder Include="handlers\" />
     <Folder Include="models\" />
     <Folder Include="_resmi\" />
+    <Folder Include="_resmi\storages\" />
+    <Folder Include="_resmi\storages\db\" />
+    <Folder Include="_resmi\storages\file\" />
+    <Folder Include="_resmi\storages\json\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configs\paths.js" />
@@ -34,7 +38,13 @@
     <Compile Include="_resmi\requester.js" />
     <Compile Include="_resmi\router.js" />
     <Compile Include="start.js" />
-    <Compile Include="_resmi\init.js" />
+    <Compile Include="_resmi\index.js" />
+    <Compile Include="_resmi\storages\db\index.js" />
+    <Compile Include="_resmi\storages\file\index.js" />
+    <Compile Include="_resmi\storages\file\read.js" />
+    <Compile Include="_resmi\storages\index.js" />
+    <Compile Include="_resmi\storages\json\index.js" />
+    <Compile Include="_resmi\storages\json\read.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
