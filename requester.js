@@ -131,16 +131,16 @@ module.exports = {
                 let data = this.loadConditions(req, res, next, fields, false, false, true);
                 if (data) {
                     if (model) {
-                        if (this.modelCheck(data, model)) {
+                        if (!this.modelCheck(data, model)) {
                             next();
                             return;
                         }
                     }
-                    let model = {};
+                    let _model = {};
                     for (let field in data) {
-                        model[field] = data[field].value;
+                        _model[field] = data[field].value;
                     }
-                    query.insert(model);
+                    query.insert(_model);
                 } else {
                     next(); // Error::NotEnoughData
                     return;

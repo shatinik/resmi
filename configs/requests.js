@@ -54,6 +54,7 @@
         title: 'user add',
         type: 'insert',
         table: 'users',
+        model: 'example-model',
         fields: {
             email: { type: 'variable', value: 'email' },
             username: { type: 'variable', value: 'username' },
