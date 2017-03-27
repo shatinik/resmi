@@ -8,7 +8,7 @@
         charset: 'utf8'
     }
 });
-const requests = require('./configs/requests');
+const requests = require('../configs/requests');
 
 module.exports = {
     /**
@@ -236,7 +236,7 @@ module.exports = {
 
     getModel: function (title) {
         if (title) {
-            return require(`./models/${title}`);
+            return require(`../models/${title}`);
         } else {
             return false;
         }

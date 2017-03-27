@@ -1,4 +1,4 @@
-﻿const routes = require('./configs/paths');
+﻿const routes = require('../configs/paths');
 const requester = require('./requester');
 
 /*
@@ -22,7 +22,7 @@ module.exports = function (App) {
         let action = false;
 
         if (route.handler) {
-            handler = require(`./handlers/${route.handler}`);
+            handler = require(`../handlers/${route.handler}`);
 
             if (!route.action && !handler['default']) {
                 console.log(`Error. Route #${i} links to invalid action and handler haven't default action`);
