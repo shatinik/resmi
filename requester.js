@@ -58,12 +58,12 @@ module.exports = {
                                 }
 
                                 // Преобразование объекта типа 'query' в 'static'
-                                if (values.count == 1) {
+                                if (values.length == 1) {
                                     static[field] = { type: 'static', value: values[0] };
                                 } else {
                                     static[field] = { type: 'static', value: values };
                                 }
-                                
+                                _subquery.rows = undefined;
                                 break;
                             } else {
                                 subquery = _subquery;
