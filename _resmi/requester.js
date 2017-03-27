@@ -86,7 +86,10 @@ module.exports = {
         return static;
     },
 
-    modelCheck: function (static, model) {
+    modelCheck: function (static, request) {
+        if (!file.read.model(request.model)) {
+            return true;
+        }
         for (let field in static) {
             if (static[field].type === 'static') {
                 if (model[field] !== undefined) {
@@ -121,11 +124,9 @@ module.exports = {
             if (type === 'insert') {
                 let data = this.loadConditions(req, res, next, fields, false, false, true);
                 if (data) {
-                    if (model) {
-                        if (!this.modelCheck(data, model)) {
-                            next();
-                            return;
-                        }
+                    if (!this.modelCheck(data, request)) {
+                        next();
+                        return;
                     }
                     let _model = {};
                     for (let field in data) {
@@ -144,11 +145,9 @@ module.exports = {
                 if (static) {
                     switch (type) {
                         case 'select':
-                            if (model) {
-                                if (!this.modelCheck(static, model)) {
-                                    next();
-                                    return;
-                                }
+                            if (!this.modelCheck(static, request)) {
+                                next();
+                                return;
                             }
                             if (fields && fields.length > 0) {
                                 let count = fields.length;
@@ -160,11 +159,9 @@ module.exports = {
                         case 'update':
                             let data = this.loadConditions(req, res, next, fields, false, false, true);
                             if (data) {
-                                if (model) {
-                                    if (!this.modelCheck(data, model)) {
-                                        next();
-                                        return;
-                                    }
+                                if (!this.modelCheck(data, request)) {
+                                    next();
+                                    return;
                                 }
                                 for (let field in data) {
                                     query.update(field, data[field].value);
