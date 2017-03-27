@@ -96,7 +96,6 @@ module.exports = {
     },
 
     modelCheck: function (static, model) {
-        console.log(static);
         for (let field in static) {
             if (static[field].type === 'static') {
                 if (model[field] !== undefined) {
