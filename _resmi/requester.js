@@ -1,13 +1,4 @@
-﻿const knex = require('knex')({
-    client: 'mysql',
-    connection: {
-        host: '127.0.0.1',
-        user: 'root',
-        password: '',
-        database: 'videosos',
-        charset: 'utf8'
-    }
-});
+﻿const mysql = require('./storages').db.mysql;
 const json = require('./storages').json;
 const file = require('./storages').file;
 
@@ -116,7 +107,7 @@ module.exports = {
             let type = request.type;
             let where = {};
             let fields = request.fields;
-            let query = knex(table);
+            let query = mysql(table);
             let model = file.read.model(request.model);
 
             // Совмещение исходных полей where с данными, переданными через параметр "_w"

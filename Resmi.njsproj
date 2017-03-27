@@ -40,6 +40,7 @@
     <Compile Include="start.js" />
     <Compile Include="_resmi\index.js" />
     <Compile Include="_resmi\storages\db\index.js" />
+    <Compile Include="_resmi\storages\db\mysql.js" />
     <Compile Include="_resmi\storages\file\index.js" />
     <Compile Include="_resmi\storages\file\read.js" />
     <Compile Include="_resmi\storages\index.js" />
