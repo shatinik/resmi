@@ -1,10 +1,15 @@
-﻿const app = require('express')();
-const router = require('./router')(app);
+﻿const express = require('express');
+const log = require('logger');
 
-const serverStartType = process.env.NODE_ENV || 'development';
 const port = 1337;
+const serverStartType = process.env.NODE_ENV || 'development';
 
+var app = express();
+
+function callback(req, res, next) {
+
+}
 
 app.listen(port, function () {
-    console.log(`Server is running on port ${port} in ${serverStartType} mode.`);
+    log.info('system', `Server is running on port ${port} in ${serverStartType} mode.`);
 });
