@@ -8,7 +8,7 @@ The main ideas of the engine are:
 	— Fast speed of API development
 	— Development of many things by configuration
 
-Developer: Sharakh Tsimafei
+Developer: Sharakh Tsimafei 
 Owner and idea author: Skrypko Pavel
 **
 Only these people have all rights to use this engine.
