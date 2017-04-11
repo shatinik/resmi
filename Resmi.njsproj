@@ -26,27 +26,17 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="handlers\" />
+    <Folder Include="configs\" />
     <Folder Include="_resmi\node_modules\logger\configs\" />
     <Folder Include="_resmi\" />
-    <Folder Include="_resmi%28archive%29\storages\file\" />
-    <Folder Include="_resmi%28archive%29\storages\json\" />
     <Folder Include="_resmi\node_modules\" />
     <Folder Include="_resmi\node_modules\logger\" />
-    <Folder Include="_resmi\node_modules\logger\logs\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="configs%28archive%29\requests.js" />
-    <Compile Include="configs%28archive%29\types.js" />
-    <Compile Include="_resmi%28archive%29\requester.js" />
-    <Compile Include="_resmi%28archive%29\router.js" />
+    <Compile Include="configs\routes.json" />
+    <Compile Include="handlers\test.js" />
     <Compile Include="start.js" />
-    <Compile Include="_resmi%28archive%29\index.js" />
-    <Compile Include="_resmi%28archive%29\storages\db\mysql.js" />
-    <Compile Include="_resmi%28archive%29\storages\file\index.js" />
-    <Compile Include="_resmi%28archive%29\storages\file\read.js" />
-    <Compile Include="_resmi%28archive%29\storages\index.js" />
-    <Compile Include="_resmi%28archive%29\storages\json\index.js" />
-    <Compile Include="_resmi%28archive%29\storages\json\read.js" />
     <Compile Include="_resmi\index.js" />
     <Compile Include="_resmi\node_modules\logger\index.js" />
   </ItemGroup>
