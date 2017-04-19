@@ -10,7 +10,7 @@ app.listen(port, function () {
     log.info('system', `Server is running on port ${port} in ${serverStartType} mode.`);
 });
 
-function construct(handler, action) {
+function construct(handler, action, route) {
     let handle = require(`../handlers/${handler}`)[action];
 
     return function (req, res, next) {
@@ -20,13 +20,13 @@ function construct(handler, action) {
                 // But I don't care what the function returns and it'll just exec the next code
                 after(req, res);
                 next();
-            });
-        });
+            }, route);
+        }, route);
     }
 }
 
-function changelevel(req, res, next, from, to) {
-    let result = from(req, res, to);
+function changelevel(req, res, next, from, to, route) {
+    let result = from(req, res, to, route);
 
     if (result === true) {
         // all OK. Answer has been send
@@ -60,5 +60,5 @@ function after(req, res) {
 
 for (let i in routes) {
     let route = routes[i];
-    app[route.method](route.path, construct(route.handler, route.action));
+    app[route.method](route.uri, construct(route.handler, route.action, route));
 }

@@ -1,8 +1,10 @@
 ﻿[
     {
-        "path":"/api",
+        "uri":"/api",
+        "params": {
+            "query":"rooms list"
+        },
         "method":"get",
-        "handler":"test",
-        "action":"main"
+        "handler":"api"
     }
 ]
