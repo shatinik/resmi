@@ -5,6 +5,7 @@
             "query":"rooms list"
         },
         "method":"get",
-        "handler":"api"
+        "handler":"api",
+        "action":"main"
     }
 ]

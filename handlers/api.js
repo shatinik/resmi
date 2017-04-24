@@ -1,13 +1,7 @@
-﻿const mysql = require('storages').db.mysql;
-const json = require('storages').json;
-const file = require('storages').file;
+﻿const mysql = require('../_resmi/node_modules/storages').db.mysql;
+const json = require('../_resmi/node_modules/storages').json;
 
-module.exports = {
-    main: function (req, res, next, route) {
-        let query = route.params.query;
-        requester.query(query, req, res, next);
-    },
-
+let requester = {
     /**
     * Функция преобразования полей(получения значений) типа 'variable' и 'request' в 'static'.
     * Замена "путей к значениям" на сами значения.
@@ -91,23 +85,6 @@ module.exports = {
         return static;
     },
 
-    modelCheck: function (static, request) {
-        if (!file.read.model(request.model)) {
-            return true;
-        }
-        for (let field in static) {
-            if (static[field].type === 'static') {
-                if (model[field] !== undefined) {
-                    if (!static[field].value.match(model[field])) {
-                        console.log('Error::UnexpectedInputValue', static[field].value.match(model[field]));
-                        return false; // Error::UnexpectedInputValue
-                    }
-                }
-            }
-        }
-        return true;
-    },
-
     query: function (title, req, res, next, callback, _w) {
         let request = json.read.reqest(title);
         if (request) {
@@ -116,7 +93,6 @@ module.exports = {
             let where = {};
             let fields = request.fields;
             let query = mysql(table);
-            let model = file.read.model(request.model);
 
             // Совмещение исходных полей where с данными, переданными через параметр "_w"
             if (request.where) {
@@ -129,10 +105,6 @@ module.exports = {
             if (type === 'insert') {
                 let data = this.loadConditions(req, res, next, fields, false, false, true);
                 if (data) {
-                    if (!this.modelCheck(data, request)) {
-                        next();
-                        return;
-                    }
                     let _model = {};
                     for (let field in data) {
                         _model[field] = data[field].value;
@@ -150,10 +122,6 @@ module.exports = {
                 if (static) {
                     switch (type) {
                         case 'select':
-                            if (!this.modelCheck(static, request)) {
-                                next();
-                                return;
-                            }
                             if (fields && fields.length > 0) {
                                 let count = fields.length;
                                 for (let i = 0; i < count; i++) {
@@ -164,10 +132,6 @@ module.exports = {
                         case 'update':
                             let data = this.loadConditions(req, res, next, fields, false, false, true);
                             if (data) {
-                                if (!this.modelCheck(data, request)) {
-                                    next();
-                                    return;
-                                }
                                 for (let field in data) {
                                     query.update(field, data[field].value);
                                 }
@@ -218,3 +182,11 @@ module.exports = {
         }
     }
 };
+
+module.exports = {
+    main: function (req, res, next, route) {
+        let query = route.params.query;
+        requester.query(query, req, res, next);
+    }
+}
+

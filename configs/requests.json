@@ -3,7 +3,6 @@
         "title": "rooms list",
         "type": "select",
         "table": "rooms",
-        "model": "example-model",
         "where": {
             "id": { 
                 "type": "variable", 
