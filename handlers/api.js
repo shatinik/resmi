@@ -74,7 +74,7 @@ let requester = {
             if (json.read.reqest(subquery.value)) {
                 this.query(subquery.value, req, res, next, function (req, res, next, rows) {
                     static[subquery_field].rows = rows;
-                    module.exports.query(title, req, res, next, callback, static);
+                    requester.query(title, req, res, next, callback, static);
                 }, subquery.where);
                 return;
             } else {
