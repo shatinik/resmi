@@ -8,18 +8,28 @@ function construct(handler, action, route) {
     let handle = require(`../handlers/${handler}`)[action];
 
     return function (req, res, next) {
-        changelevel(req, res, next, events.before, function () {
-            changelevel(req, res, next, handle, function () {
-                // I could write changelevel(req, res, next, after, next)
+        let _if = changelevel(req, res, next, route);
+        
+        _if(events.before) (function(){
+            _if(handle) (function(){
+                // I could write _if(events.after)(next)
                 // But I don't care what the function returns and it'll just exec the next code
-                event.after(req, res);
+                events.after(req, res);
                 next();
-            }, route);
-        }, route);
+            });
+        });
     }
 }
 
-function changelevel(req, res, next, from, to, route) {
+function changelevel(req, res, next, route) {
+    return function (from) {
+        return function (to) {
+            _changelevel(req, res, next, from, to, route);
+        }
+    }
+}
+
+function _changelevel(req, res, next, from, to, route) {
     let result = from(req, res, to, route);
 
     if (result === true) {
