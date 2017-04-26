@@ -1,15 +1,8 @@
 ﻿const express = require('express');
 const log = require('logger');
 const routes = require('../configs/routes');
-const port = 1337;
 const serverStartType = process.env.NODE_ENV || 'development';
 const events = require('./events');
-
-var app = express();
-
-app.listen(port, function () {
-    log.info('system', `Server is running on port ${port} in ${serverStartType} mode.`);
-});
 
 function construct(handler, action, route) {
     let handle = require(`../handlers/${handler}`)[action];
@@ -40,7 +33,15 @@ function changelevel(req, res, next, from, to, route) {
     }
 }
 
-for (let i in routes) {
-    let route = routes[i];
-    app[route.method](route.uri, construct(route.handler, route.action, route));
+module.exports = function(port) {
+    var app = express();
+
+    app.listen(port, function () {
+        log.info('system', `Server is running on port ${port} in ${serverStartType} mode.`);
+    });
+
+    for (let i in routes) {
+        let route = routes[i];
+        app[route.method](route.uri, construct(route.handler, route.action, route));
+    }
 }
