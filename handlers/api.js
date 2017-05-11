@@ -176,7 +176,7 @@ let requester = {
             } else {
                 query.then(function (rows) {
                     res.json({
-                        "kind": GLOBAL.service + '#' + api + method + 'Response',
+                        "kind": global.service + '#' + api + method + 'Response',
                         "items": rows
                     });
                     next();

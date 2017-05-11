@@ -4,7 +4,7 @@ const routes = require('../configs/routes');
 const serverStartType = process.env.NODE_ENV || 'development';
 const events = require('./events');
 
-GLOBAL.service = 'videosos';
+global.service = 'videosos';
 
 function construct(handler, action, route) {
     let handle = require(`../handlers/${handler}`)[action];
