@@ -1,11 +1,8 @@
 ﻿[
     {
-        "uri":"/room/getInfo",
-        "params": {
-            "query":"room#GetInfo"
-        },
+        "uri":"/",
         "method":"get",
-        "handler":"api",
+        "handler":"test",
         "action":"main"
     }
 ]
