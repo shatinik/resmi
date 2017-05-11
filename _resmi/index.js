@@ -58,12 +58,16 @@ module.exports = function(port) {
         switch (route.method) {
             case 'get':
                 app.get(route.uri, construct(route.handler, route.action, route));
+                break;
             case 'post':
                 app.post(route.uri, construct(route.handler, route.action, route));
+                break;
             case 'put':
                 app.put(route.uri, construct(route.handler, route.action, route));
+                break;
             case 'delete':
                 app.delete(route.uri, construct(route.handler, route.action, route));
+                break;
             default:
                 log.warn('router', `Route(id: ${i}) have an unexpectable method`);
         }
