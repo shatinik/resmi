@@ -86,7 +86,10 @@ let requester = {
     },
 
     query: function (title, req, res, next, callback, _w) {
-        let request = json.read.reqest(title);
+        let str = title.split("#");
+        let api = str[0];
+        let method = str[1];
+        let request = json.read.reqest(api, method);
         if (request) {
             let table = request.table;
             let type = request.type;
@@ -172,7 +175,10 @@ let requester = {
                 });
             } else {
                 query.then(function (rows) {
-                    res.json(rows);
+                    res.json({
+                        "kind": GLOBAL.service + '#' + api + method + 'Response',
+                        "items": rows
+                    });
                     next();
                 });
             }
@@ -188,8 +194,9 @@ module.exports = {
         let query = route.params.query;
         requester.query(query, req, res, next);
     },
-    query: function(query, req, res, next) {
-        requester.query(query, req, res, next);
+
+    query: function(query, req, res, next, callback) {
+        requester.query(query, req, res, next, callback);
     }
 }
 

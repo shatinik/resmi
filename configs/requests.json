@@ -1,17 +1,22 @@
 [
     {
-        "title": "rooms list",
-        "type": "select",
-        "table": "rooms",
-        "where": {
-            "id": { 
-                "type": "variable", 
-                "value": "id" 
+        "api": "room",
+        "methods": [
+            {
+                "method": "GetInfo",
+                "type": "select",
+                "table": "rooms",
+                "where": {
+                    "id": { 
+                        "type": "variable", 
+                        "value": "id" 
+                    }
+                },
+                "fields": [
+                    "creatorID",
+                    "title"
+                ]
             }
-        },
-        "fields": [
-            "creatorID",
-            "title"
         ]
     }
 ]

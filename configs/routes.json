@@ -1,8 +1,8 @@
 ﻿[
     {
-        "uri":"/api",
+        "uri":"/room/getInfo",
         "params": {
-            "query":"rooms list"
+            "query":"room#GetInfo"
         },
         "method":"get",
         "handler":"api",
