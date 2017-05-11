@@ -187,6 +187,9 @@ module.exports = {
     main: function (req, res, next, route) {
         let query = route.params.query;
         requester.query(query, req, res, next);
+    },
+    query: function(query, req, res, next) {
+        requester.query(query, req, res, next);
     }
 }
 
