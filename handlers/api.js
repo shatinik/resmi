@@ -195,6 +195,13 @@ module.exports = {
         requester.query(query, req, res, next);
     },
 
+    /*
+    Запрос к БД.
+    query: <api>#<method> согласно файлу /configs/requests
+    req, res, next - передаются из функции-инициатора
+    callback - необязательный параметр, function (req, res, next, rows), где rows - полученный результат.
+    При отсутствии callback - результат будет выведен в виде json
+    */
     query: function(query, req, res, next, callback) {
         requester.query(query, req, res, next, callback);
     }
