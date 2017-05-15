@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const log = require('logger');
 const routes = require('../configs/routes');
 const serverStartType = process.env.NODE_ENV || 'development';

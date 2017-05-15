@@ -1,4 +1,4 @@
-﻿const mysql = require('../_resmi/node_modules/storages').db.mysql;
+const mysql = require('../_resmi/node_modules/storages').db.mysql;
 const json = require('../_resmi/node_modules/storages').json;
 
 let requester = {
@@ -199,4 +199,3 @@ module.exports = {
         requester.query(query, req, res, next, callback);
     }
 }
-
