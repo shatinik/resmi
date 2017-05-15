@@ -1,5 +1,5 @@
-const mysql = require('../_resmi/node_modules/storages').db.mysql;
-const json = require('../_resmi/node_modules/storages').json;
+const mysql = require('storages').db.mysql;
+const json = require('storages').json;
 
 let requester = {
     /**
@@ -190,11 +190,6 @@ let requester = {
 };
 
 module.exports = {
-    main: function (req, res, next, route) {
-        let query = route.params.query;
-        requester.query(query, req, res, next);
-    },
-
     /*
     Запрос к БД.
     query: <api>#<method> согласно файлу /configs/requests
