@@ -3,14 +3,11 @@
         "api": "room",
         "methods": [
             {
-                "method": "GetInfo",
+                "method": "getInfo",
                 "type": "select",
                 "table": "rooms",
                 "where": {
-                    "id": { 
-                        "type": "variable", 
-                        "value": "id" 
-                    }
+                    "id": { "type": "variable", "value": "id" }
                 },
                 "fields": [
                     "creatorID",
