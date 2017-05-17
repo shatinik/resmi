@@ -8,9 +8,6 @@ const events = require('./events');
 
 module.exports = function(port) {
     var app = express();
-    app.listen(port, function () {
-        log.info('system', `Server is running on port ${port} in ${global.env} mode.`);
-    });
     app.use(events.before);
     for (let i in routes) {
         let route = routes[i];
@@ -33,4 +30,7 @@ module.exports = function(port) {
         }
     }
     app.use(events.after);
+    app.listen(port, function () {
+        log.info('system', `Server is running on port ${port} in ${global.env} mode.`);
+    });
 }
