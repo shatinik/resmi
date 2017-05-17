@@ -11,5 +11,9 @@
   "router": {
     "level": 2,
     "writers": [ "console" ]
+  },
+  "mongo": {
+    "level": 2,
+    "writers": [ "console", "file" ]
   }
 }

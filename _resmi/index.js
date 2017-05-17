@@ -5,7 +5,7 @@ const express = require('express');
 const log = require('./logger');
 const routes = require('../configs/routes');
 const events = require('./events');
-
+const mongo = require('./database/mongo');
 module.exports = function(port) {
     var app = express();
     app.use(events.before);
