@@ -1,4 +1,4 @@
-let config = require('../../../../configs/' + (process.env.NODE_ENV || 'development') + '/mysql');
+let config = require(`../../configs/${global.env}/mysql`);
 module.exports = require('knex')({
     client: 'mysql',
     connection: {

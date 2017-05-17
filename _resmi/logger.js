@@ -1,5 +1,5 @@
-const writers = require('./configs/writers');
-const listeners = require('./configs/listeners');
+const writers = require(`../configs/${global.env}/writers`);
+const listeners = require(`../configs/${global.env}/listeners`);
 const util = require('util');
 const fs = require('fs');
 

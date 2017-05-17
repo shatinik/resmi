@@ -1,7 +1,19 @@
-const mysql = require('storages').db.mysql;
-const json = require('storages').json;
+const mysql = require('./database/mysql');
+const requests = require('../configs/requests');
 
 let requester = {
+    getRequest: function (api, method) {
+        for (let i = 0; i < requests.length; i++) {
+            if (requests[i].api === api) {
+                for (let j = 0; j < requests[i].methods.length; j++) {
+                    if (requests[i].methods[j].method === method) {
+                        return requests[i].methods[j];
+                    }
+                }
+            }
+        }
+        return false;
+    },
     /**
     * Функция преобразования полей(получения значений) типа 'variable' и 'request' в 'static'.
     * Замена "путей к значениям" на сами значения.
@@ -71,7 +83,7 @@ let requester = {
         }
         
         if (subquery) {
-            if (json.read.reqest(subquery.value)) {
+            if (requester.getReqest(subquery.value)) {
                 this.query(subquery.value, req, res, next, function (req, res, next, rows) {
                     static[subquery_field].rows = rows;
                     requester.query(title, req, res, next, callback, static);
@@ -89,7 +101,7 @@ let requester = {
         let str = title.split("#");
         let api = str[0];
         let method = str[1];
-        let request = json.read.reqest(api, method);
+        let request = requester.getRequest(api, method);
         if (request) {
             let table = request.table;
             let type = request.type;
@@ -200,6 +212,7 @@ module.exports = {
     query: function(query, req, res, next, callback) {
         requester.query(query, req, res, next, callback);
     },
+    
     /*
         Генерирует ответ API согласно шаблону Resmi из входных данных
     */

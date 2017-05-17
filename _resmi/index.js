@@ -1,14 +1,15 @@
+global.env = global.process.env.NODE_ENV || 'development';
+global.service = 'videosos';
+
 const express = require('express');
-const log = require('logger');
+const log = require('./logger');
 const routes = require('../configs/routes');
 const events = require('./events');
-
-global.service = 'videosos';
 
 module.exports = function(port) {
     var app = express();
     app.listen(port, function () {
-        log.info('system', `Server is running on port ${port} in ${app.get('env')} mode.`);
+        log.info('system', `Server is running on port ${port} in ${global.env} mode.`);
     });
     app.use(events.before);
     for (let i in routes) {
