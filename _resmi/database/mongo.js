@@ -5,10 +5,10 @@ const log = require('../logger');
 mongoose.connect(config.url);
 var db = mongoose.connection;
 db.on('error', function (Error) {
-    log.error('mongo', `MongoDB connection error: ${Error.message}`);
+    log.error('mongo', `Connection error: ${Error.message}`);
 });
 db.once('open', function () {
-    log.info('mongo', "Successfully connected to MongoDB.");
+    log.info('mongo', "Successfully connected.");
 });
 
 var roomsSchema = new Schema({
