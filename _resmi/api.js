@@ -216,20 +216,24 @@ module.exports = {
     /*
         Генерирует ответ API согласно шаблону Resmi из входных данных
     */
-    generateApiResult: function(res) {
-        var reqObject = {};
+    generateApiResult: function(apiData) {
+        var apiResult = {};
 
-        reqObject.kind            = res.kind;
-        reqObject.responseMessage = res.responseMessage;
-        reqObject.totalResults    = res.totalResults;
-
-        if (res.items !== undefined) { 
-            reqObject.items = res.items; 
-        } 
-        else { 
-            reqObject.items = {}; 
+        apiResult.kind            = apiData.kind;
+        apiResult.responseMessage = apiData.responseMessage;
+        
+        if (apiData.items === undefined) {
+            apiResult.totalResults = 0;
+            apiResult.items = [];
+        } else {
+            if (apiData.totalResults === undefined) {
+                apiResult.totalRetults = apiData.items.length;
+            } else {
+                apiResult.totalResults = apiData.totalResults;
+            }
+            apiResult.items = apiData.items;
         }
-
-        return JSON.parse(reqObject);
+            
+        return apiResult;
     }
 }
