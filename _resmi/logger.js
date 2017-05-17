@@ -8,12 +8,19 @@ const fs = require('fs');
     Сообщения уровня ниже заданного в конфиге - отсеиваются
 */
 function process(_listener, message, level) {
+    if (!listeners[_listener]) {
+        log.error('logger', `Try to write with undefined listener '${_listener}'`);
+        return;
+    }
     let listener = listeners[_listener];
     let filename = fileFormat(listener.file);
 
     if (level >= listener.level) {
         for (let i = 0; i < listener.writers.length; i++) {
-
+            if (!writers[listener.writers[i]]) {
+                log.error('logger', `Try to write with undefined writer '${listener.writers[i]}'`);
+                return;
+            }
             let writer = writers[listener.writers[i]];
 
             if (level >= writer.level) {
@@ -31,6 +38,8 @@ function process(_listener, message, level) {
                             log.error('logger', `Listener '${_listener}' haven't a valid filename to write logs into a file`);
                         }
                         break;
+                    default:
+                        log.error('logger', `Unknown writer.level in '${listener.writers[i]}'`)
                 }
             }
         }
@@ -132,3 +141,7 @@ let log = {
 };
 
 module.exports = log;
+if (!fs.existsSync('logs')) {
+    fs.mkdirSync('logs');
+    log.info('logger', 'Created \'/logs\' folder');
+}
