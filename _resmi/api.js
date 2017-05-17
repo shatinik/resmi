@@ -199,5 +199,24 @@ module.exports = {
     */
     query: function(query, req, res, next, callback) {
         requester.query(query, req, res, next, callback);
+    },
+    /*
+        Генерирует ответ API согласно шаблону Resmi из входных данных
+    */
+    generateApiResult: function(res) {
+        var reqObject = {};
+
+        reqObject.kind            = res.kind;
+        reqObject.responseMessage = res.responseMessage;
+        reqObject.totalResults    = res.totalResults;
+
+        if (res.items !== undefined) { 
+            reqObject.items = res.items; 
+        } 
+        else { 
+            reqObject.items = {}; 
+        }
+
+        return JSON.parse(reqObject);
     }
 }
