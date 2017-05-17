@@ -116,27 +116,27 @@ function writeDB(message) {
 
 let log = {
     trace: function (listener, message) {
-        process(listener, '[TRACE] ' + message, 1);
+        process(listener, `[TRACE:/${listener}] ${message}`, 1);
     },
 
     debug: function (listener, message) {
-        process(listener, '[DEBUG] ' + message, 2);
+        process(listener, `[DEBUG:/${listener}] ${message}`, 2);
     },
 
     info: function (listener, message) {
-        process(listener, '[INFO] ' + message, 3);
+        process(listener, `[INFO:/${listener}] ${message}`, 3);
     },
 
     warn: function (listener, message) {
-        process(listener, '[WARN] ' + message, 4);
+        process(listener, `[WARN:/${listener}] ${message}`, 4);
     },
 
     error: function (listener, message) {
-        process(listener, '[ERROR] ' + message, 5);
+        process(listener, `[ERROR:/${listener}] ${message}`, 5);
     },
 
     fatal: function (listener, message) {
-        process(listener, '[FATAL] ' + message, 6);
+        process(listener, `[FATAL:/${listener}] ${message}`, 6);
     }
 };
 
