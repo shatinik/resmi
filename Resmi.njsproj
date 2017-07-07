@@ -37,8 +37,8 @@
     <Compile Include="configs\routes.json" />
     <Compile Include="handlers\test.js" />
     <Compile Include="start.js" />
-    <Compile Include="_resmi\index.js" />
-    <Compile Include="_resmi\node_modules\logger\index.js" />
+    <Compile Include="_resmi\index2.js" />
+    <Compile Include="_resmi\node_modules\logger\index2.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->

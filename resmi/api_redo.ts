@@ -1,8 +1,11 @@
-const mysql = require('./database/mysql');
+import { MySQL as mysql } from './database/mysql';
+import { Middleware } from './services/Middleware';
+import { Request, Response, NextFunction } from 'express';
+
 const requests = require('../configs/requests');
 
-let requester = {
-    getRequest: function (api, method) {
+namespace Requester {
+    function getRequest(api, method) {
         for (let i = 0; i < requests.length; i++) {
             if (requests[i].api === api) {
                 for (let j = 0; j < requests[i].methods.length; j++) {
@@ -13,41 +16,42 @@ let requester = {
             }
         }
         return false;
-    },
+    }
+
     /**
-    * Функция преобразования полей(получения значений) типа 'variable' и 'request' в 'static'.
-    * Замена "путей к значениям" на сами значения.
-    */
-    loadConditions: function (req, res, next, where, title, callback, banQueries) {
-        let static = {};
+     * Функция преобразования полей(получения значений) типа 'variable' и 'request' в 'static'.
+     * Замена "путей к значениям" на сами значения.
+     */
+    function loadConditions(req: Request, res: Response, next: NextFunction, where: Variable, title: string, callback: (...arg) => void, banQueries: boolean) {
+        let variable: Variable;
         let subquery = false;
         let subquery_field = '';
 
         for (let field in where) {
-            let value = where[field].value;
-            let type = where[field].type;
+            let value = where.field.value;
+            let type = where.field.type;
 
             switch (type) {
                 case 'var':
                 case 'variable':
                     if (req.query[value]) {
                         // Преобразование объекта 'variable' в 'static'
-                        static[field] = { type: 'static', value: req.query[value] };
+                        variable.field = { type: 'static', value: req.query[value] };
                     } else {
                         return false; // Error::NotEnoughData
                     }
                     break;
                 case 'stat':
                 case 'static':
-                    static[field] = where[field];
+                    variable.field = where.field;
                     break;
                 case 'query':
                     if (banQueries) {
-                        console.log(`Trying to execute ${title} with subquery while subqueries are banned`); 
+                        console.log(`Trying to execute ${title} with subquery while subqueries are banned`);
                         return false; // Error::WrongField
                     }
                     if (!subquery) {
-                        let _subquery = where[field];
+                        let _subquery = where.field;
                         if (_subquery.field) {
 
                             // Параметр rows создаётся только после выполнения подзапроса
@@ -62,9 +66,9 @@ let requester = {
 
                                 // Преобразование объекта типа 'query' в 'static'
                                 if (values.length == 1) {
-                                    static[field] = { type: 'static', value: values[0] };
+                                    variable.field = { type: 'static', value: values[0] };
                                 } else {
-                                    static[field] = { type: 'static', value: values };
+                                    variable.field = { type: 'static', value: values };
                                 }
                                 _subquery.rows = undefined;
                                 break;
@@ -77,16 +81,16 @@ let requester = {
                             return false;
                         }
                     }
-                    static[field] = where[field];
+                    variable.field = where[field];
                     break;
             }
         }
-        
+
         if (subquery) {
-            if (requester.getReqest(subquery.value)) {
+            if (getRequest(subquery.value)) {
                 this.query(subquery.value, req, res, next, function (req, res, next, rows) {
-                    static[subquery_field].rows = rows;
-                    requester.query(title, req, res, next, callback, static);
+                    variable[subquery_field].rows = rows;
+                    query(title, req, res, next, callback, variable);
                 }, subquery.where);
                 return;
             } else {
@@ -94,10 +98,10 @@ let requester = {
                 return false;
             }
         }
-        return static;
-    },
+        return variable;
+    }
 
-    query: function (title, req, res, next, callback, _w) {
+    function query(title, req, res, next, callback, _w) {
         let str = title.split("#");
         let api = str[0];
         let method = str[1];
@@ -199,7 +203,7 @@ let requester = {
             next();
         }
     }
-};
+}
 
 module.exports = {
     /*
