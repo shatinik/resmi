@@ -50,9 +50,6 @@ export namespace Core {
     instance.use(Events.before);
     for (let i in routes) {
       let route = routes[i];
-      console.log(require(`../app/handlers/${route.handler}`));
-      console.log(`${route.handler}Handler`);
-      console.log(require(`../app/handlers/${route.handler}`)[`${route.handler}Handler`]);
       let action = require(`../app/handlers/${route.handler}`)[`${route.handler}Handler`][route.action];
       switch (route.method) {
         case 'get':
