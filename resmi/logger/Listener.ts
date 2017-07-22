@@ -1,13 +1,9 @@
 import { Writer } from './Writer'
 import { LogLevel } from './LogLevel'
+import { IListener } from './interfaces/IListener'
 import { safeLogger as log } from './'
 
 const listeners: IListener[] = require(`../../configs/${process.env.NODE_ENV}/listeners`);
-
-export interface IListener {
-  level: number;
-  writers: string[];
-}
 
 export class Listener {
   private _name: string;

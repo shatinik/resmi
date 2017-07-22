@@ -1,14 +1,10 @@
 import { LogLevel } from './LogLevel'
 import { Listener } from './Listener'
+import { IWriter } from './interfaces/IWriter'
 import { safeLogger as log } from './'
 import * as fs from 'fs'
 
 const writers: IWriter[] = require(`../../configs/${process.env.NODE_ENV}/writers`);
-
-export interface IWriter {
-  level: number;
-  type: number;
-}
 
 export class Writer {
   private _name: string;
