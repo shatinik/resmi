@@ -5,7 +5,6 @@
 * Created: 7.7.17
 */
 
-import {route} from './index.d'; // !!!
 require('./services/Environment');
 process.env.service = 'resmi';
 
@@ -13,24 +12,31 @@ import * as Express from 'express'
 import { Events } from '../app/events'
 import { Logger as log } from './logger'
 
+declare interface route {
+  method: string,
+  uri: string,
+  handler: string,
+  action: string
+}
+
 const git = require('git-rev-sync');
 const routes: route[] = require('../configs/routes');
 
-export namespace Core {
-  let instance: Express.Application;
+export class Core {
+  instance: Express.Application;
 
-  export function start(port: number) {
-    instance = Express();
-    loadRoutes();
-    instance.listen(port, function(){
-      hello(port);
+  constructor(port: number) {
+    this.instance = Express();
+    this.loadRoutes();
+
+    this.instance.listen(port, function(){
+      Core.hello(port);
     });
   }
 
-  function hello(port) {
+  private static hello(port: number): void {
     log.info('system', `Framework name: resmi(typescript)`);
     try {
-      // throw Error('test');
       log.info('system', `Current branch: ${git.branch()}`);
       log.info('system', `Last commit: ${git.date()}`);
       log.info('system', `Build hash: ${git.long()}`);
@@ -46,28 +52,28 @@ export namespace Core {
     log.info('system', `NODE_MODE: ${process.env.NODE_ENV}`);
   }
 
-  function loadRoutes() {
-    instance.use(Events.before);
+  private loadRoutes(): void {
+    this.instance.use(Events.before);
     for (let i in routes) {
       let route = routes[i];
       let action = require(`../app/handlers/${route.handler}`)[`${route.handler}Handler`][route.action];
       switch (route.method) {
         case 'get':
-          instance.get(route.uri, action);
+          this.instance.get(route.uri, action);
           break;
         case 'post':
-          instance.post(route.uri, action);
+          this.instance.post(route.uri, action);
           break;
         case 'put':
-          instance.put(route.uri, action);
+          this.instance.put(route.uri, action);
           break;
         case 'delete':
-          instance.delete(route.uri, action);
+          this.instance.delete(route.uri, action);
           break;
         default:
           log.warn('router', `Route(id: ${i}) assigned to wrong http-method`);
       }
     }
-    instance.use(Events.after);
+    this.instance.use(Events.after);
   }
 }

@@ -1,5 +1,5 @@
-import { Core as Resmi } from "./resmi"
+import { Core } from "./resmi"
 
 (function(port: number){
-  Resmi.start(port);
+  new Core(port);
 })(1337);
