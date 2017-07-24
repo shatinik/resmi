@@ -2,6 +2,7 @@
   "author": "ex-Miples",
   "dependencies": {
     "@types/knex": "0.0.56",
+    "@types/mongoose": "^4.7.19",
     "compression": "^1.6.2",
     "cron": "^1.2.1",
     "express": "^4.14.0",
