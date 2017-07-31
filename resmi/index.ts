@@ -56,7 +56,7 @@ export class Core {
     this.instance.use(Events.before);
     for (let i in routes) {
       let route = routes[i];
-      let action = require(`../app/handlers/${route.handler}`)[`${route.handler}Handler`][route.action];
+      let action = Core.buildAction(route);
       switch (route.method) {
         case 'get':
           this.instance.get(route.uri, action);
@@ -75,5 +75,17 @@ export class Core {
       }
     }
     this.instance.use(Events.after);
+  }
+
+  private static buildAction(route: route) {
+    let fileName = `../app/handlers/${route.handler}`;
+    let handlerName = `${route.handler}Handler`;
+    let actionName = route.action;
+    let action = require(fileName)[handlerName][actionName];
+
+    return function (req, res, next) {
+      log.debug('router', `Call ${handlerName}::${actionName} from ${req.connection.remoteAddress}`);
+      action(req, res, next);
+    }
   }
 }
