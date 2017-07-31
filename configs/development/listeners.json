@@ -9,7 +9,7 @@
     "writers": [ "console" ]
   },
   "router": {
-    "level": 2,
+    "level": 1,
     "writers": [ "console" ]
   },
   "mongo": {
