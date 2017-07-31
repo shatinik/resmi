@@ -1,6 +1,8 @@
 {
   "author": "ex-Miples",
   "dependencies": {
+    "@types/knex": "0.0.56",
+    "@types/mongoose": "^4.7.19",
     "compression": "^1.6.2",
     "cron": "^1.2.1",
     "express": "^4.14.0",
@@ -8,7 +10,9 @@
     "knex": "^0.12.6",
     "mongoose": "^4.9.9",
     "mysql": "^2.12.0",
-    "nconf": "^0.8.4"
+    "nconf": "^0.8.4",
+    "reflect-metadata": "^0.1.10",
+    "typeorm": "0.1.0-alpha.33"
   },
   "scripts": {
     "start": "node start.js"

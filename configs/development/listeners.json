@@ -16,5 +16,9 @@
     "level": 2,
     "writers": [ "console", "file" ],
     "file": "db-%s.log"
+  },
+  "typeorm": {
+    "level": 2,
+    "writers": [ "console" ]
   }
 }
