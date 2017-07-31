@@ -20,5 +20,9 @@
   "typeorm": {
     "level": 2,
     "writers": [ "console" ]
+  },
+  "net": {
+    "level": 1,
+    "writers": [ "console" ]
   }
 }
