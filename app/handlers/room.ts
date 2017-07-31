@@ -2,7 +2,8 @@ import { connect } from '../../resmi/database/typeorm'
 import { Room } from '../entity/Room'
 import { Connection } from 'typeorm';
 import { Packet } from '../../resmi/services/Packet';
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction  } from 'express'
+import { Logger as log } from '../../resmi/logger'
 
 export namespace roomHandler {
     export function getInfo(req: Request, res: Response, next: NextFunction) {
@@ -15,16 +16,20 @@ export namespace roomHandler {
               let roomRepository = connection.getRepository(Room);
               packet.first = await roomRepository.findOneById(id);
               if (!packet.first) {
-                packet.error = `No room with ID ${id}`
+                packet.error = `No room with ID ${id}`;
               }
             } else {
-              packet.error = 'DBConnection error';
+              log.error('typeorm', 'DBConnection error');
+              packet.error = 'Internal error';
             }
           } else {
             packet.error = 'ID is NaN';
           }
         } else {
           packet.error = 'ID is empty';
+        }
+        if (packet.error) {
+          log.debug('net', packet.error);
         }
         res.json(packet);
         next();
