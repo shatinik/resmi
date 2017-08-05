@@ -4,5 +4,23 @@
         "method":"get",
         "handler":"room",
         "action":"getInfo"
+    },
+    {
+        "uri":"/auth/vk",
+        "method":"get",
+        "handler":"auth",
+        "action":"vk"
+    },
+    {
+        "uri": "/auth/vk/callback",
+        "method": "get",
+        "handler": "auth",
+        "action": "vkCallback"
+    },
+    {
+        "uri":"/auth/logout",
+        "method":"get",
+        "handler":"auth",
+        "action":"logout"
     }
 ]

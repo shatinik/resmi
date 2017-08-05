@@ -11,6 +11,8 @@ process.env.service = 'resmi';
 import * as Express from 'express'
 import { Events } from '../app/events'
 import { Logger as log } from './logger'
+import * as Passport from 'passport'
+import { Authenticate } from './services/Authenticate'
 
 declare interface route {
   method: string,
@@ -27,8 +29,8 @@ export class Core {
 
   constructor(port: number) {
     this.instance = Express();
+    new Authenticate(this.instance);
     this.loadRoutes();
-
     this.instance.listen(port, function(){
       Core.hello(port);
     });
