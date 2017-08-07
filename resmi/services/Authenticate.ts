@@ -21,36 +21,6 @@ export class Authenticate {
     app.use(Passport.initialize());
     app.use(Passport.session());
 
-    Passport.use(new VKontakteStrategy(
-      {
-        clientID: 6044938, // VK.com docs call it 'API ID', 'app_id', 'api_id', 'client_id' or 'apiId'
-        clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
-        callbackURL: "http://localhost:1337/auth/vkontakte/callback",
-        lang: 'ru'
-      },
-      function myVerifyCallbackFn(accessToken, refreshToken, params, profile, done) {
-
-        // Now that we have user's `profile` as seen by VK, we can
-        // use it to find corresponding database records on our side.
-        // Also we have user's `params` that contains email address (if set in
-        // scope), token lifetime, etc.
-        // Here, we have a hypothetical `User` class which does what it says.
-        connect.then(async connection => {
-          if (connection instanceof Connection && connection.isConnected) {
-            let userRepository = connection.getRepository(User);
-            let currentUser = await userRepository.find({id: profile.id, service: SERVICE.VK});
-            if (!currentUser) {
-              log.debug('auth', `No user with ID ${profile.id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`)
-              return
-            }
-            done(null, currentUser)
-          }  else {
-            log.error('auth/db', 'DBConnection error');
-          }
-        });
-      }
-    ));
-
     // User session support for our hypothetical `user` objects.
     Passport.serializeUser(function (user: User, done) {
       done(null, user.id);
@@ -67,9 +37,39 @@ export class Authenticate {
           }
           done(null, currentUser)
         }  else {
-          log.error('auth/db', 'DBConnection error');
+          log.error('auth', 'DBConnection error');
         }
       });
     });
+
+    Passport.use(new VKontakteStrategy({
+        clientID: 6044938, // VK.com docs call it 'API ID', 'app_id', 'api_id', 'client_id' or 'apiId'
+        clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
+        callbackURL: "/auth/vk/callback",
+        lang: 'ru'
+      },
+      function myVerifyCallbackFn(accessToken, refreshToken, params, profile, done) {
+        connect.then(async connection => {
+          if (connection instanceof Connection && connection.isConnected) {
+            let userRepository = connection.getRepository(User);
+            let currentUser: User = await userRepository.findOne({service_uid: profile.id, service: SERVICE.VK});
+            if (!currentUser) {
+              log.debug('auth', `No user with service ${SERVICE.VK.toString()}(id: ${SERVICE.VK} and service_uid ${profile.id}`);
+              currentUser = new User();
+              currentUser.service = SERVICE.VK;
+              currentUser.service_uid = profile.id;
+              userRepository.save(currentUser).then(user => {
+                log.debug('auth', `Added new user (id=${currentUser.id}, service=${SERVICE.VK}, service_uid=${currentUser.service_uid}`);
+                done(null, currentUser)
+              });
+              return;
+            }
+            done(null, currentUser)
+          }  else {
+            log.error('auth/db', 'DBConnection error');
+          }
+        });
+      }
+    ));
   }
 }

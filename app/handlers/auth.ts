@@ -4,13 +4,14 @@ import { Request, Response, NextFunction  } from 'express'
 
 export namespace authHandler {
   export function vk(req: Request, res: Response, next: NextFunction) {
-    Passport.authenticate('vkontakte');
-    // res.redirect('/');
+    Passport.authenticate('vkontakte')(req,res,next);
   }
 
   export function vkCallback(req: Request, res: Response, next: NextFunction) {
-    Passport.authenticate('vkontakte', { failureRedirect: '/login' });
-    // res.redirect('/');
+    Passport.authenticate('vkontakte', {
+      successRedirect: '/',
+      failureRedirect: '/login'
+    })(req,res,next)
   }
 
   export function logout(req: Request, res: Response, next: NextFunction) {

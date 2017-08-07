@@ -19,6 +19,7 @@ export let connect = createConnection({
   database: 'videosos',
   entities: [
     __dirname + "/../../app/entity/*.js",
+    __dirname + "/../entity/*.js",
   ],
   autoSchemaSync: true,
 }).catch(error => log.error('typeorm', error));
