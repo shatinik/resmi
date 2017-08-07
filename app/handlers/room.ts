@@ -77,4 +77,49 @@ export class roomHandler extends Application {
       next();
     })
   }
+
+  edit(req: Request, res: Response, next: NextFunction) {
+    if (!req.user) {
+      log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
+      return;
+    }
+    connect.then(async connection => {
+      let packet = new Packet('room', 'getInfo');
+      if (req.query.title && req.query.urlAdress) {
+        let id: number = req.query.id;
+        let title: string = req.query.title;
+        let urlAdress: string = req.query.urlAdress;
+        if (id && title && urlAdress) {
+          if (connection instanceof Connection && connection.isConnected) {
+            let roomRepository = connection.getRepository(Room);
+            let room: Room = await roomRepository.findOneById(id);
+            if (!room) {
+              packet.error = `No room with ID ${id}`;
+            } else {
+              room.title = req.query.title || title;
+              room.urlAdress = req.query.urlAdress || urlAdress;
+              roomRepository.save(room).then(room => {
+                packet.first = 'Ok';
+                res.json(packet);
+                next();
+              });
+              return;
+            }
+          } else {
+            log.error('typeorm', 'DBConnection error');
+            packet.error = 'Internal error';
+          }
+        } else {
+          packet.error = 'ID is NaN';
+        }
+      } else {
+        packet.error = 'Not enough data';
+      }
+      if (packet.error) {
+        log.debug('net', packet.error);
+      }
+      res.json(packet);
+      next();
+    })
+  }
 }

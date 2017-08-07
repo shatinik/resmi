@@ -46,5 +46,11 @@
         "method":"get",
         "handler":"room",
         "action":"add"
+    },
+    {
+        "uri":"/room/edit",
+        "method":"get",
+        "handler":"room",
+        "action":"edit"
     }
 ]
