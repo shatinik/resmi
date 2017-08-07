@@ -9,6 +9,6 @@ export class User {
   @Column("int")
   service: number;
 
-  @Column("int")
+  @Column("varchar")
   service_uid: number;
 }

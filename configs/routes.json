@@ -18,6 +18,18 @@
         "action": "vkCallback"
     },
     {
+        "uri":"/auth/facebook",
+        "method":"get",
+        "handler":"auth",
+        "action":"facebook"
+    },
+    {
+        "uri": "/auth/facebook/callback",
+        "method": "get",
+        "handler": "auth",
+        "action": "facebookCallback"
+    },
+    {
         "uri":"/auth/logout",
         "method":"get",
         "handler":"auth",

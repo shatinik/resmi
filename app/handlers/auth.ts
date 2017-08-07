@@ -14,6 +14,17 @@ export namespace authHandler {
     })(req,res,next)
   }
 
+  export function facebook(req: Request, res: Response, next: NextFunction) {
+    Passport.authenticate('facebook')(req,res,next);
+  }
+
+  export function facebookCallback(req: Request, res: Response, next: NextFunction) {
+    Passport.authenticate('facebook', {
+      successRedirect: '/',
+      failureRedirect: '/login'
+    })(req,res,next)
+  }
+
   export function logout(req: Request, res: Response, next: NextFunction) {
     req.logout();
     res.redirect('/');
