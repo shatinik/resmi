@@ -83,11 +83,10 @@ export class Core {
     let fileName = `../app/handlers/${route.handler}`;
     let handlerName = `${route.handler}Handler`;
     let actionName = route.action;
-    let action = require(fileName)[handlerName][actionName];
 
     return function (req, res, next) {
+      let handler = new (require(fileName)[handlerName])(req, res, next, actionName);
       log.debug('router', `Call ${handlerName}::${actionName} from ${req.connection.remoteAddress}`);
-      action(req, res, next);
     }
   }
 }

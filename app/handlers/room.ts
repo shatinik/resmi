@@ -4,9 +4,10 @@ import { Connection } from 'typeorm';
 import { Packet } from '../../resmi/services/Packet';
 import { Request, Response, NextFunction  } from 'express'
 import { Logger as log } from '../../resmi/logger'
+import {Application} from '../application';
 
-export namespace roomHandler {
-    export function getInfo(req: Request, res: Response, next: NextFunction) {
+export class roomHandler extends Application {
+    getInfo(req: Request, res: Response, next: NextFunction) {
       connect.then(async connection => {
         let packet = new Packet('room', 'getInfo');
         if (req.query.id) {

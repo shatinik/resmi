@@ -34,5 +34,11 @@
         "method":"get",
         "handler":"auth",
         "action":"logout"
+    },
+    {
+        "uri":"/test",
+        "method":"get",
+        "handler":"test",
+        "action":"main"
     }
 ]
