@@ -4,7 +4,7 @@ import { Logger as log } from '../../resmi/logger'
 import {User} from '../../resmi/entity/User';
 
 export class testHandler extends Application {
-  before_action(req: Request, res: Response, next: NextFunction) {
+  before_action(req: Request, res: Response, next: NextFunction, action: string) {
     if (req.user) {
       let user: User = req.user[0];
       log.debug('auth', `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`)

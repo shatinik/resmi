@@ -40,5 +40,11 @@
         "method":"get",
         "handler":"test",
         "action":"main"
+    },
+    {
+        "uri":"/room/add",
+        "method":"get",
+        "handler":"room",
+        "action":"add"
     }
 ]
