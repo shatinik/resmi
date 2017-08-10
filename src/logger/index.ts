@@ -1,4 +1,4 @@
-import { Logger, safeLogger as x } from './Logger'
-
-export default Logger;
-export let safeLogger = x;
+import Logger from './Logger'
+export let log = Logger.instance;
+export let safeLogger = Logger.safe;
+export default log;
