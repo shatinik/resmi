@@ -1,0 +1,20 @@
+{
+  "system": {
+    "level": 3,
+    "writers": [ "console", "file" ],
+    "file": "system-%s.log"
+  },
+  "logger": {
+    "level": 3,
+    "writers": [ "console" ]
+  },
+  "router": {
+    "level": 3,
+    "writers": [ "console" ]
+  },
+  "mongo": {
+    "level": 3,
+    "writers": [ "console", "file" ],
+    "file": "db-%s.log"
+  }
+}

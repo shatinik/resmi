@@ -1,0 +1,56 @@
+[
+    {
+        "uri":"/room/getInfo",
+        "method":"get",
+        "handler":"room",
+        "action":"getInfo"
+    },
+    {
+        "uri":"/auth/vk",
+        "method":"get",
+        "handler":"auth",
+        "action":"vk"
+    },
+    {
+        "uri": "/auth/vk/callback",
+        "method": "get",
+        "handler": "auth",
+        "action": "vkCallback"
+    },
+    {
+        "uri":"/auth/facebook",
+        "method":"get",
+        "handler":"auth",
+        "action":"facebook"
+    },
+    {
+        "uri": "/auth/facebook/callback",
+        "method": "get",
+        "handler": "auth",
+        "action": "facebookCallback"
+    },
+    {
+        "uri":"/auth/logout",
+        "method":"get",
+        "handler":"auth",
+        "action":"logout"
+    },
+    {
+        "uri":"/test",
+        "method":"get",
+        "handler":"test",
+        "action":"main"
+    },
+    {
+        "uri":"/room/add",
+        "method":"get",
+        "handler":"room",
+        "action":"add"
+    },
+    {
+        "uri":"/room/edit",
+        "method":"get",
+        "handler":"room",
+        "action":"edit"
+    }
+]

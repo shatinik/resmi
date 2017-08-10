@@ -1,9 +1,13 @@
 import * as http from 'http';
 import * as express from 'express';
+import Application from './application';
+import Routes from './routes'
 
-export class Server {
-    
-    private httpServer: http.Server;
+export default class Server {
+
+    private express: express.Application;
+    private port: number;
+    private static httpServer: http.Server;
 
     private onError(error: NodeJS.ErrnoException): void {
         if (error.syscall !== 'listen') { 
@@ -12,18 +16,24 @@ export class Server {
     }
 
     private onListening(): void {
-        let serverAddr = this.httpServer.address();
+        let serverAddr = Server.httpServer.address();
         console.log(`Server is running on port ${serverAddr.port}`);
     } 
 
     private loadEventListeners(): void {
-        this.httpServer.on('error', this.onError);
-        this.httpServer.on('listening', this.onListening);
+        Server.httpServer.on('error', this.onError);
+        Server.httpServer.on('listening', this.onListening);
     }
 
-    constructor(app: express.Application, port: number) {
-        this.httpServer = http.createServer(app);
+    public start(): void {
+        Routes.load(this.express);
         this.loadEventListeners();
-        this.httpServer.listen(port);
+        Server.httpServer.listen(this.port);
+    }
+
+    constructor(app: Application, port: number) {
+        this.express = app.express;
+        this.port = port;
+        Server.httpServer = http.createServer(this.express);
     }
 }
