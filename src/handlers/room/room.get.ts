@@ -2,7 +2,7 @@ import { Handler } from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
 import connect from '../../mysql'
 import { Connection } from 'typeorm';
-import { Room } from '../../models/Room';
+import { Room } from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
 

@@ -18,7 +18,7 @@ let connect = createConnection({
     password: '',
     database: 'videosos',
     entities: [
-        __dirname + "/models/*.js",
+        __dirname + "/models/mysql/*.js",
     ],
     autoSchemaSync: true,
 }).catch(error => log.error('typeorm', error));
