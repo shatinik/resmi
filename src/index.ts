@@ -1,5 +1,6 @@
 import { Server } from './server';
-import { Core } from './core';
+import { Application } from './application';
 
-let core: Core = new Core();
-new Server(core.app, 1337);
+/*
+Здесь собирается и запускается движок
+*/
