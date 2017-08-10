@@ -1,9 +1,9 @@
 [
     {
-        "uri":"/room/getInfo",
+        "uri":"/room/getById",
         "method":"get",
-        "handler":"room",
-        "action":"getInfo"
+        "handler":"Room",
+        "action":"getById"
     },
     {
         "uri":"/auth/vk",
