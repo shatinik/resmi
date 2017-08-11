@@ -5,6 +5,12 @@
         "handler":"Room",
         "action":"getInfoById"
     },
+    {
+    "uri":"/room/isRoomExist",
+    "method":"get",
+    "handler":"Room",
+    "action":"isRoomExist"
+    },
 
 
 

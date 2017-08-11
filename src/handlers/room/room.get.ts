@@ -13,6 +13,32 @@ export class RoomGet extends Handler {
             Существует ли комната
             api.site.com/v1/room/isRoomExist?id=1
         */
+        connect.then(async connection => {
+            let packet = new Packet('room', 'getInfo');
+            if (req.query.id && req.query.items) {
+                let id: number = Number(req.query.id);
+                let items: string[] = req.query.items.split(',');
+                if (!isNaN(id)) {
+                    if (connection instanceof Connection && connection.isConnected) {
+                        let roomRepository = connection.getRepository(Room);
+                        let data = await roomRepository.findOneById(id);
+                        packet.first = !!data;
+                    } else {
+                        log.error('typeorm', 'DBConnection error');
+                        packet.error = 'Internal error';
+                    }
+                } else {
+                    packet.error = 'ID is NaN';
+                }
+            } else {
+                packet.error = 'Not enough data';
+            }
+            if (packet.error) {
+                log.debug('net', packet.error);
+            }
+            res.json(packet);
+            next();
+        })
     }
     
     public getInfoById(req: Request, res: Response, next: NextFunction): void {
@@ -30,7 +56,7 @@ export class RoomGet extends Handler {
                         let roomRepository = connection.getRepository(Room);
                         let data = await roomRepository.findOneById(id);
                         if (!data) {
-                            packet.error = `No room with ID ${id}`;
+                            packet.first = `No room with ID ${id}`;
                         }
                         packet.first = {};
                         for (let i = 0; i < items.length; i++) {
