@@ -36,10 +36,10 @@
         "action":"logout"
     },
     {
-        "uri":"/test",
+        "uri":"/test/login",
         "method":"get",
         "handler":"test",
-        "action":"main"
+        "action":"login"
     },
     {
         "uri":"/room/add",

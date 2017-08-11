@@ -1,5 +1,5 @@
 import * as express from 'express';
-
+import Auth from './authenticate'
 export default class Application {
 
     private app: express.Application;
@@ -18,8 +18,12 @@ export default class Application {
         return this._env = node_env;
     }
 
+    initAuth(): void {
+        new Auth(this.express);
+    }
     constructor() {
         this.app = express();
         this.initEnv();
+        this.initAuth();
     }
 }

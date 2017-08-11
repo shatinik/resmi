@@ -20,7 +20,6 @@ export class RoomGet extends Handler {
             Берётся информация о комнате
             api.site.com/v1/room/getInfoById?id=1&items=title,photo,author,currentVideo ...
         */
-        console.log(1);
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
             if (req.query.id) {
