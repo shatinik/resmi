@@ -59,7 +59,6 @@ export class RoomGet extends Handler {
                         }
                         packet.first = {};
                         for (let i = 0; i < items.length; i++) {
-                            console.log(`packet.first[${items[i]}] = ${data[items[i]]}`);
                             packet.first[items[i]] = data[items[i]]; // insecure. need to filter accessible fields
                         }
                     } else {
@@ -101,7 +100,6 @@ export class RoomGet extends Handler {
                         for (let i = 0; i < data.length; i++) {
                             packet.items[i] = {};
                             for (let j = 0; j < items.length; j++) {
-                                console.log(`packet.items[${i}][${items[j]}] = ${data[i][items[j]]}`);
                                 packet.items[i][items[j]] = data[i][items[j]]; // insecure. need to filter accessible fields
                             }
                         }
