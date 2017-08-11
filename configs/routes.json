@@ -11,8 +11,12 @@
         "handler":"Room",
         "action":"isRoomExist"
     },
-
-
+    {
+        "uri":"/room/getAllByCreatorId",
+        "method":"get",
+        "handler":"Room",
+        "action":"getAllByCreatorId"
+    },
 
 
     {

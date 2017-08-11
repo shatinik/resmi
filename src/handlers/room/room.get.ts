@@ -43,7 +43,7 @@ export class RoomGet extends Handler {
     public getInfoById(req: Request, res: Response, next: NextFunction): void {
         /*
             Берётся информация о комнате
-            api.site.com/v1/room/getInfoById?id=1&items=title,photo,author,currentVideo ...
+            api.site.com/v1/room/getInfoById?id=1&items=title,photo,creator_id,currentVideo ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
@@ -85,6 +85,43 @@ export class RoomGet extends Handler {
             Возвращается список всех комнат по id создателя
             api.site.com/v1/room/getAllByCreatorId?creator_id=1&items=title,photo,author,currentVideo ...
         */
+        connect.then(async connection => {
+            let packet = new Packet('room', 'getInfo');
+            if (req.query.creator_id && req.query.items) {
+                let creator_id: number = Number(req.query.creator_id);
+                let items: string[] = req.query.items.split(',');
+                if (!isNaN(creator_id)) {
+                    if (connection instanceof Connection && connection.isConnected) {
+                        let roomRepository = connection.getRepository(Room);
+                        let data = await roomRepository.find({creator_id: creator_id});
+                        if (!data || data.length == 0) {
+                            packet.error = `No rooms with creator_id ${creator_id}`;
+                        }
+                        packet.items = [];
+                        for (let i = 0; i < data.length; i++) {
+                            packet.items[i] = {};
+                            for (let j = 0; j < items.length; j++) {
+                                console.log(`packet.items[${i}][${items[j]}] = ${data[i][items[j]]}`);
+                                packet.items[i][items[j]] = data[i][items[j]]; // insecure. need to filter accessible fields
+                            }
+                        }
+
+                    } else {
+                        log.error('typeorm', 'DBConnection error');
+                        packet.error = 'Internal error';
+                    }
+                } else {
+                    packet.error = 'ID is NaN';
+                }
+            } else {
+                packet.error = 'Not enough data';
+            }
+            if (packet.error) {
+                log.debug('net', packet.error);
+            }
+            res.json(packet);
+            next();
+        })
     }
 
 }

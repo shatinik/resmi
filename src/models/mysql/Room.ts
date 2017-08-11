@@ -16,5 +16,11 @@ export class Room {
   title: string;
 
   @Column("int")
-  author: string;
+  creator_id: number;
+
+  @Column("text")
+  photo: string;
+
+  @Column("text")
+  currentVideo: string;
 }
