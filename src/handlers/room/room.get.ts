@@ -17,7 +17,6 @@ export class RoomGet extends Handler {
             let packet = new Packet('room', 'getInfo');
             if (req.query.id && req.query.items) {
                 let id: number = Number(req.query.id);
-                let items: string[] = req.query.items.split(',');
                 if (!isNaN(id)) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
