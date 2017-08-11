@@ -16,5 +16,5 @@ export class Room {
   title: string;
 
   @Column("int")
-  creatorId: string;
+  author: string;
 }

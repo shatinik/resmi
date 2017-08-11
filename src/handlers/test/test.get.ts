@@ -4,7 +4,7 @@ import User from '../../models/mysql/User'
 import log from '../../logger'
 
 export class TestGet extends Handler {
-    login(req: Request, res: Response, next: NextFunction){
+    login(req, res: Response, next: NextFunction){
         if (req.user) {
             let user: User = req.user[0];
             log.debug('auth', `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`)

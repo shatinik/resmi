@@ -15,21 +15,27 @@ export class RoomGet extends Handler {
         */
     }
     
-    public getById(req: Request, res: Response, next: NextFunction): void {
+    public getInfoById(req: Request, res: Response, next: NextFunction): void {
         /*
             Берётся информация о комнате
             api.site.com/v1/room/getInfoById?id=1&items=title,photo,author,currentVideo ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
-            if (req.query.id) {
+            if (req.query.id && req.query.items) {
                 let id: number = Number(req.query.id);
+                let items: string[] = req.query.items.split(',');
                 if (!isNaN(id)) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
-                        packet.first = await roomRepository.findOneById(id);
-                        if (!packet.first) {
+                        let data = await roomRepository.findOneById(id);
+                        if (!data) {
                             packet.error = `No room with ID ${id}`;
+                        }
+                        packet.first = {};
+                        for (let i = 0; i < items.length; i++) {
+                            console.log(`packet.first[${items[i]}] = ${data[items[i]]}`);
+                            packet.first[items[i]] = data[items[i]]; // insecure. need to filter accessible fields
                         }
                     } else {
                         log.error('typeorm', 'DBConnection error');
@@ -39,7 +45,7 @@ export class RoomGet extends Handler {
                     packet.error = 'ID is NaN';
                 }
             } else {
-                packet.error = 'ID is empty';
+                packet.error = 'Not enough data';
             }
             if (packet.error) {
                 log.debug('net', packet.error);
