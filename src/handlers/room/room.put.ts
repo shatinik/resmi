@@ -12,6 +12,41 @@ export class RoomPut extends Handler {
         /*
             Обновление информации о комнате по её Id
         */
-
+        connect.then(async connection => {
+            let packet = new Packet('room', 'getInfo');
+            if (req.query.id) {
+                let id: number = Number(req.query.id);
+                let title: string = req.query.title || undefined;
+                let urlAdress: string = req.query.urlAdress || undefined;
+                let photo: string = req.query.photo || undefined;
+                if (!isNaN(id)) {
+                    if (connection instanceof Connection && connection.isConnected) {
+                        let roomRepository = connection.getRepository(Room);
+                        let room = await roomRepository.findOneById(id);
+                        room.title = title;
+                        room.urlAdress = urlAdress;
+                        room.photo = photo;
+                        roomRepository.save(room).then(room => {
+                            packet.first = 'Ok';
+                            res.json(packet);
+                            next();
+                        });
+                        return;
+                    } else {
+                        log.error('typeorm', 'DBConnection error');
+                        packet.error = 'Internal error';
+                    }
+                } else {
+                    packet.error = 'ID is NaN';
+                }
+            } else {
+                packet.error = 'Not enough data';
+            }
+            if (packet.error) {
+                log.debug('net', packet.error);
+            }
+            res.json(packet);
+            next();
+        })
     }
 }

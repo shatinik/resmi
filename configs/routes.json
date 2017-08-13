@@ -17,6 +17,12 @@
         "handler":"Room",
         "action":"getAllByCreatorId"
     },
+    {
+        "uri":"/room/editById",
+        "method":"put",
+        "handler":"Room",
+        "action":"editById"
+    },
 
 
     {
