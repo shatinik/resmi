@@ -23,6 +23,24 @@
         "handler":"Room",
         "action":"editById"
     },
+    {
+        "uri":"/room/deleteById",
+        "method":"delete",
+        "handler":"Room",
+        "action":"deleteById"
+    },
+    {
+        "uri":"/room/deleteAllByCreatorId",
+        "method":"delete",
+        "handler":"Room",
+        "action":"deleteAllByCreatorId"
+    },
+    {
+        "uri":"/room/addNew",
+        "method":"post",
+        "handler":"Room",
+        "action":"addNew"
+    },
 
 
     {
