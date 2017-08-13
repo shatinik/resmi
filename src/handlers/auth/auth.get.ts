@@ -1,4 +1,4 @@
-import { Handler } from '../../handler';
+import Handler from '../../handler';
 import * as Passport from 'passport'
 import log from '../../logger'
 import { Request, Response, NextFunction  } from 'express'

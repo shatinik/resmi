@@ -1,4 +1,4 @@
-import { Handler } from '../../handler';
+import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
 import User from '../../models/mysql/User'
 import log from '../../logger'
