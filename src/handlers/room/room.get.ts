@@ -1,8 +1,8 @@
-import { Handler } from '../../handler';
+import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
 import connect from '../../mysql'
 import { Connection } from 'typeorm';
-import { Room } from '../../models/mysql/Room';
+import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
 
@@ -43,7 +43,7 @@ export class RoomGet extends Handler {
     public getInfoById(req: Request, res: Response, next: NextFunction): void {
         /*
             Берётся информация о комнате
-            api.site.com/v1/room/getInfoById?id=1&items=title,photo,creator_id,currentVideo ...
+            api.site.com/v1/room/getInfoById?id=1&items=title,photo,creatorId,currentVideo ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
@@ -82,19 +82,19 @@ export class RoomGet extends Handler {
     public getAllByCreatorId(req: Request, res: Response, next: NextFunction): void {
         /*
             Возвращается список всех комнат по id создателя
-            api.site.com/v1/room/getAllByCreatorId?creator_id=1&items=title,photo,author,currentVideo ...
+            api.site.com/v1/room/getAllByCreatorId?creatorId=1&items=title,photo,author,currentVideo ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
-            if (req.query.creator_id && req.query.items) {
-                let creator_id: number = Number(req.query.creator_id);
+            if (req.query.creatorId && req.query.items) {
+                let creatorId: number = Number(req.query.creatorId);
                 let items: string[] = req.query.items.split(',');
-                if (!isNaN(creator_id)) {
+                if (!isNaN(creatorId)) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
-                        let data = await roomRepository.find({creator_id: creator_id});
+                        let data = await roomRepository.find({creatorId: creatorId});
                         if (!data || data.length == 0) {
-                            packet.error = `No rooms with creator_id ${creator_id}`;
+                            packet.error = `No rooms with creatorId ${creatorId}`;
                         }
                         packet.items = [];
                         for (let i = 0; i < data.length; i++) {

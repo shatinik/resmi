@@ -1,7 +1,7 @@
 import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
-export class Room {
+export default class Room {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,7 +16,7 @@ export class Room {
   title: string;
 
   @Column("int")
-  creator_id: number;
+  creatorId: number;
 
   @Column("text")
   photo: string;

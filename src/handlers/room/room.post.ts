@@ -1,8 +1,8 @@
-import { Handler } from '../../handler';
+import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
 import connect from '../../mysql'
 import { Connection } from 'typeorm';
-import { Room } from '../../models/mysql/Room';
+import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
 
@@ -21,13 +21,15 @@ export class RoomPost extends Handler {
             if (req.query.title && req.query.urlAdress) {
                 let title: string = req.query.title;
                 let urlAdress: string = req.query.urlAdress;
+                let photo: string = req.query.photo;
                 if (title && urlAdress) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
                         let room: Room = new Room();
                         room.title = title;
                         room.urlAdress = urlAdress;
-                        room.creator_id = req.user[0].id;
+                        room.photo = photo;
+                        room.creatorId = req.user[0].id;
                         roomRepository.save(room).then(room => {
                             packet.first = 'Ok';
                             res.json(packet);

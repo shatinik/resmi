@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction  } from 'express'
 
-export class Handler {
+export default class Handler {
 
     protected static obj: Handler;
 

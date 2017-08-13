@@ -1,8 +1,8 @@
-import { Handler } from '../../handler';
+import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
 import connect from '../../mysql'
 import { Connection } from 'typeorm';
-import { Room } from '../../models/mysql/Room';
+import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
 
@@ -33,6 +33,7 @@ export class RoomDelete extends Handler {
             if (packet.error) {
                 log.debug('net', packet.error);
             }
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.json(packet);
             next();
         })
@@ -41,14 +42,14 @@ export class RoomDelete extends Handler {
     public deleteAllByCreatorId(req: Request, res: Response, next: NextFunction): void {
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
-            if (req.query.creator_id) {
-                let creator_id: number = Number(req.query.creator_id);
-                if (!isNaN(creator_id)) {
+            if (req.query.creatorId) {
+                let creatorId: number = Number(req.query.creatorId);
+                if (!isNaN(creatorId)) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
-                        let data = await roomRepository.find({creator_id: creator_id});
+                        let data = await roomRepository.find({creatorId: creatorId});
                         if (!data || data.length == 0) {
-                            packet.error = `No rooms with creator_id ${creator_id}`;
+                            packet.error = `No rooms with creator_id ${creatorId}`;
                         }
                         await roomRepository.remove(data);
                     } else {
