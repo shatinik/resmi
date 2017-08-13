@@ -15,7 +15,7 @@ export class RoomGet extends Handler {
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfo');
-            if (req.query.id && req.query.items) {
+            if (req.query.id) {
                 let id: number = Number(req.query.id);
                 if (!isNaN(id)) {
                     if (connection instanceof Connection && connection.isConnected) {
