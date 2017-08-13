@@ -13,7 +13,7 @@ export class RoomPut extends Handler {
             Обновление информации о комнате по её Id
         */
         connect.then(async connection => {
-            let packet = new Packet('room', 'getInfo');
+            let packet = new Packet('room', 'editById');
             if (req.query.id) {
                 let id: number = Number(req.query.id);
                 let title: string = req.query.title || undefined;

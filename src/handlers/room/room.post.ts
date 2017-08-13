@@ -9,7 +9,7 @@ import Packet from '../../packet';
 export class RoomPost extends Handler {
 
     public addNew(req, res: Response, next: NextFunction): void {
-        let packet = new Packet('room', 'getInfo');
+        let packet = new Packet('room', 'addNew');
         if (!req.user) {
             log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
             packet.error = 'Not logged in';

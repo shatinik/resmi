@@ -14,7 +14,7 @@ export class RoomGet extends Handler {
             api.site.com/v1/room/isRoomExist?id=1
         */
         connect.then(async connection => {
-            let packet = new Packet('room', 'getInfo');
+            let packet = new Packet('room', 'isRoomExist');
             if (req.query.id) {
                 let id: number = Number(req.query.id);
                 if (!isNaN(id)) {
@@ -46,7 +46,7 @@ export class RoomGet extends Handler {
             api.site.com/v1/room/getInfoById?id=1&items=title,photo,creatorId,currentVideo ...
         */
         connect.then(async connection => {
-            let packet = new Packet('room', 'getInfo');
+            let packet = new Packet('room', 'getInfoById');
             if (req.query.id && req.query.items) {
                 let id: number = Number(req.query.id);
                 let items: string[] = req.query.items.split(',');
@@ -85,7 +85,7 @@ export class RoomGet extends Handler {
             api.site.com/v1/room/getAllByCreatorId?creatorId=1&items=title,photo,author,currentVideo ...
         */
         connect.then(async connection => {
-            let packet = new Packet('room', 'getInfo');
+            let packet = new Packet('room', 'getAllByCreatorId');
             if (req.query.creatorId && req.query.items) {
                 let creatorId: number = Number(req.query.creatorId);
                 let items: string[] = req.query.items.split(',');

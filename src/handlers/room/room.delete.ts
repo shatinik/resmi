@@ -9,7 +9,7 @@ import Packet from '../../packet';
 export class RoomDelete extends Handler {
     public deleteById(req: Request, res: Response, next: NextFunction): void {
         connect.then(async connection => {
-            let packet = new Packet('room', 'getInfo');
+            let packet = new Packet('room', 'deleteById');
             if (req.query.id) {
                 let id: number = Number(req.query.id);
                 if (!isNaN(id)) {
@@ -41,7 +41,7 @@ export class RoomDelete extends Handler {
 
     public deleteAllByCreatorId(req: Request, res: Response, next: NextFunction): void {
         connect.then(async connection => {
-            let packet = new Packet('room', 'getInfo');
+            let packet = new Packet('room', 'deleteAllByCreatorId');
             if (req.query.creatorId) {
                 let creatorId: number = Number(req.query.creatorId);
                 if (!isNaN(creatorId)) {
