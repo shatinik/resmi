@@ -78,5 +78,17 @@
         "method":"get",
         "handler":"test",
         "action":"login"
+    },
+    {
+        "uri":"/youtube/getOneById",
+        "method":"get",
+        "handler":"youtube",
+        "action":"getOneById"
+    },
+    {
+        "uri":"/youtube/searchByQuery",
+        "method":"get",
+        "handler":"youtube",
+        "action":"searchByQuery"
     }
 ]
