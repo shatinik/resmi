@@ -12,11 +12,11 @@ interface mysqlConfig {
 let config: mysqlConfig = require(`../configs/${process.env.NODE_ENV}/mysql`);
 let connect = createConnection({
     type: "mysql",
-    host: '127.0.0.1',
+    host: config.host,
     port: 3306,
-    username: 'root',
-    password: '',
-    database: 'videosos',
+    username: config.user,
+    password: config.password,
+    database: config.database,
     entities: [
         __dirname + "/models/mysql/*.js",
     ],
