@@ -49,11 +49,7 @@ export default class Packet {
         let res: ResponseTemplate = new ResponseTemplate();
         res.kind = `${process.env.service}#${this.handler}${this.action}Response`;
         if (!this.isEmpty) {
-            if (this.items.length == 1) {
-                res.item = this.items[0];
-            } else {
-                res.items = this.items;
-            }
+            res.items = this.items;
         }
         if (this.error) {
             res.error = this.error;
