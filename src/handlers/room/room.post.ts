@@ -18,18 +18,19 @@ export class RoomPost extends Handler {
             return
         }
         connect.then(async connection => {
-            if (req.query.title && req.query.urlAdress) {
+            if (req.query.title && req.query.url_adress) {
                 let title: string = req.query.title;
-                let urlAdress: string = req.query.urlAdress;
-                let photo: string = req.query.photo;
+                let urlAdress: string = req.query.url_adress;
+                let photo: string = req.query.picture_uri;
                 if (title && urlAdress) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
                         let room: Room = new Room();
                         room.title = title;
-                        room.urlAdress = urlAdress;
-                        room.photo = photo;
-                        room.creatorId = req.user[0].id;
+                        room.views = 0;
+                        room.picture_uri = '';
+                        room.global_uri = ''; // WTF?
+                        room.creator_id = req.user[0].id;
                         roomRepository.save(room).then(room => {
                             packet.first = 'Ok';
                             res.json(packet);

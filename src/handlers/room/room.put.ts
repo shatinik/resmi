@@ -17,15 +17,14 @@ export class RoomPut extends Handler {
             if (req.query.id) {
                 let id: number = Number(req.query.id);
                 let title: string = req.query.title || undefined;
-                let urlAdress: string = req.query.urlAdress || undefined;
-                let photo: string = req.query.photo || undefined;
                 if (!isNaN(id)) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
                         let room = await roomRepository.findOneById(id);
                         room.title = title;
-                        room.urlAdress = urlAdress;
-                        room.photo = photo;
+                        room.views = 0;
+                        room.picture_uri = '';
+                        room.global_uri = ''; // WTF?
                         roomRepository.save(room).then(room => {
                             packet.first = 'Ok';
                             res.json(packet);

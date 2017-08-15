@@ -3,24 +3,21 @@ import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 @Entity()
 export default class Room {
 
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column({
-    length: 255,
-    type: 'varchar'
-  })
-  urlAdress: string;
+    @Column("varchar")
+    title: string;
 
-  @Column("text")
-  title: string;
+    @Column("int")
+    creator_id: number;
 
-  @Column("int")
-  creatorId: number;
+    @Column("int")
+    views: number;
 
-  @Column("text")
-  photo: string;
+    @Column("varchar")
+    picture_uri: string;
 
-  @Column("text")
-  currentVideo: string;
+    @Column("varchar")
+    global_uri: string;
 }

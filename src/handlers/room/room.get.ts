@@ -43,7 +43,7 @@ export class RoomGet extends Handler {
     public getInfoById(req: Request, res: Response, next: NextFunction): void {
         /*
             Берётся информация о комнате
-            api.site.com/v1/room/getInfoById?id=1&items=title,photo,creatorId,currentVideo ...
+            api.site.com/v1/room/getInfoById?id=1&items=title,picture_uri,creator_id,current_video ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfoById');
@@ -82,19 +82,19 @@ export class RoomGet extends Handler {
     public getAllByCreatorId(req: Request, res: Response, next: NextFunction): void {
         /*
             Возвращается список всех комнат по id создателя
-            api.site.com/v1/room/getAllByCreatorId?creatorId=1&items=title,photo,author,currentVideo ...
+            api.site.com/v1/room/getAllByCreatorId?creator_id=1&items=title,picture_uri,author,current_video ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getAllByCreatorId');
-            if (req.query.creatorId && req.query.items) {
-                let creatorId: number = Number(req.query.creatorId);
+            if (req.query.creator_id && req.query.items) {
+                let creator_id: number = Number(req.query.creator_id);
                 let items: string[] = req.query.items.split(',');
-                if (!isNaN(creatorId)) {
+                if (!isNaN(creator_id)) {
                     if (connection instanceof Connection && connection.isConnected) {
                         let roomRepository = connection.getRepository(Room);
-                        let data = await roomRepository.find({creatorId: creatorId});
+                        let data = await roomRepository.find({creator_id: creator_id});
                         if (!data || data.length == 0) {
-                            packet.error = `No rooms with creatorId ${creatorId}`;
+                            packet.error = `No rooms with creatorId ${creator_id}`;
                         }
                         packet.items = [];
                         for (let i = 0; i < data.length; i++) {
