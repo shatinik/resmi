@@ -17,7 +17,7 @@ export class VideoDelete extends Handler {
                         let videoRepository = connection.getRepository(Video);
                         let video = await videoRepository.findOneById(id);
                         if (!video) {
-                            packet.error = `No room with ID ${id}`;
+                            packet.error = `No video with ID ${id}`;
                         }
                         await videoRepository.remove(video);
                     } else {
