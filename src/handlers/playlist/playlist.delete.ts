@@ -2,10 +2,8 @@ import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
 import connect from '../../mysql'
 import { Connection } from 'typeorm';
-import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
-import User from '../../models/mysql/User';
 import Playlist from '../../models/mysql/Playlist';
 
 export class PlaylistDelete extends Handler {
