@@ -1,5 +1,5 @@
-import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
-
+import {Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn} from "typeorm";
+import User from './User'
 @Entity()
 export default class Room {
 
@@ -9,8 +9,9 @@ export default class Room {
     @Column("varchar")
     title: string;
 
-    @Column("int")
-    creator_id: number;
+    @OneToOne(type => User)
+    @JoinColumn()
+    creator: User;
 
     @Column("int")
     views: number;

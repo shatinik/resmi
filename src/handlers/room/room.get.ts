@@ -5,6 +5,7 @@ import { Connection } from 'typeorm';
 import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
+import User from '../../models/mysql/User';
 
 export class RoomGet extends Handler {
 
@@ -43,7 +44,7 @@ export class RoomGet extends Handler {
     public getInfoById(req: Request, res: Response, next: NextFunction): void {
         /*
             Берётся информация о комнате
-            api.site.com/v1/room/getInfoById?id=1&items=title,picture_uri,creator_id,current_video ...
+            api.site.com/v1/room/getInfoById?id=1&items=title,picture_uri,creator,current_video ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getInfoById');
@@ -82,28 +83,31 @@ export class RoomGet extends Handler {
     public getAllByCreatorId(req: Request, res: Response, next: NextFunction): void {
         /*
             Возвращается список всех комнат по id создателя
-            api.site.com/v1/room/getAllByCreatorId?creator_id=1&items=title,picture_uri,author,current_video ...
+            api.site.com/v1/room/getAllByCreatorId?creator=1&items=title,picture_uri,author,current_video ...
         */
         connect.then(async connection => {
             let packet = new Packet('room', 'getAllByCreatorId');
-            if (req.query.creator_id && req.query.items) {
-                let creator_id: number = Number(req.query.creator_id);
+            if (req.query.creator && req.query.items) {
+                let creator_id: number = Number(req.query.creator);
                 let items: string[] = req.query.items.split(',');
                 if (!isNaN(creator_id)) {
                     if (connection instanceof Connection && connection.isConnected) {
-                        let roomRepository = connection.getRepository(Room);
-                        let data = await roomRepository.find({creator_id: creator_id});
-                        if (!data || data.length == 0) {
-                            packet.error = `No rooms with creatorId ${creator_id}`;
-                        }
-                        packet.items = [];
-                        for (let i = 0; i < data.length; i++) {
-                            packet.items[i] = {};
-                            for (let j = 0; j < items.length; j++) {
-                                packet.items[i][items[j]] = data[i][items[j]]; // insecure. need to filter accessible fields
+                        let userRepository = connection.getRepository(User);
+                        let creator: User = await userRepository.findOneById(creator_id);
+                        if (creator) {
+                            let roomRepository = connection.getRepository(Room);
+                            let data = await roomRepository.find({creator: creator});
+                            if (!data || data.length == 0) {
+                                packet.error = `No rooms with creatorId ${creator_id}`;
+                            }
+                            packet.items = [];
+                            for (let i = 0; i < data.length; i++) {
+                                packet.items[i] = {};
+                                for (let j = 0; j < items.length; j++) {
+                                    packet.items[i][items[j]] = data[i][items[j]]; // insecure. need to filter accessible fields
+                                }
                             }
                         }
-
                     } else {
                         log.error('typeorm', 'DBConnection error');
                         packet.error = 'Internal error';

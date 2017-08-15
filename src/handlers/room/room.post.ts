@@ -30,7 +30,7 @@ export class RoomPost extends Handler {
                         room.views = 0;
                         room.picture_uri = '';
                         room.global_uri = ''; // WTF?
-                        room.creator_id = req.user[0].id;
+                        room.creator = req.user[0].id;
                         roomRepository.save(room).then(room => {
                             packet.first = 'Ok';
                             res.json(packet);
