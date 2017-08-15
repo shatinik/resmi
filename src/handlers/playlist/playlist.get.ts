@@ -53,7 +53,7 @@ export class PlaylistGet extends Handler {
             api.site.com/v1/room/getAllByCreatorId?creator=1&items=title,picture_uri,author,current_video ...
         */
         connect.then(async connection => {
-            let packet = new Packet('room', 'getAllByCreatorId');
+            let packet = new Packet('playlist', 'getAllByCreatorId');
             if (req.query.creator && req.query.items) {
                 let room_id: number = Number(req.query.creator);
                 let items: string[] = req.query.items.split(',');
