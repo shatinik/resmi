@@ -9,7 +9,7 @@ import Video from '../../models/mysql/Video'
 
 export class VideoPost extends Handler {
     public addNew(req, res: Response, next: NextFunction): void {
-        let packet = new Packet('playlist', 'addNew');
+        let packet = new Packet('video', 'addNew');
         connect.then(async connection => {
             if (req.query.link && req.query.preview_picture_uri && req.query.playlist && req.query.playlist) {
                 let link: string = req.query.link;
