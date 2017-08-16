@@ -11,9 +11,12 @@ export default class Video {
     @JoinColumn()
     playlist: Playlist;
 
-    @Column("int")
-    service: number;
+    @Column("varchar")
+    service: string;
 
     @Column("varchar")
-    service_uid: number;
+    link: string;
+
+    @Column("varchar")
+    preview_picture_uri: string;
 }
