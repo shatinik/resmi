@@ -1,4 +1,5 @@
-import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn} from "typeorm";
+import Playlist from './Playlist';
 
 @Entity()
 export default class Video {
@@ -6,7 +7,9 @@ export default class Video {
     @PrimaryGeneratedColumn()
     id: number;
 
-    playlist_id: number;
+    @OneToOne(type => Playlist)
+    @JoinColumn()
+    playlist: Playlist;
 
     @Column("int")
     service: number;
