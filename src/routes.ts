@@ -54,7 +54,7 @@ export default class Routes {
 
     private static buildAction(route: Route) {
         return function (req, res, next) {
-            let handler = require(route.filename)[route.className].run(req, res, next, route.action);
+            let handler = require(route.filename)[route.className].run(req, res, next, route.handler, route.action);
             log.debug('router', `Call ${route.className}::${route.action} from ${req.connection.remoteAddress}`);
         }
     }
