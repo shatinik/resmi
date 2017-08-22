@@ -21,6 +21,7 @@ export default class Handler {
             if (packet.error) {
                 log.debug('net', packet.error);
             }
+            res.status(packet.status).json(packet);
             next();
         }, packet);
     }
