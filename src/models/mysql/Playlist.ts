@@ -13,6 +13,7 @@ export default class Playlist {
     @OneToOne(type => Room)
     @JoinColumn()
     room: Room;
+    roomId: number;
 
     @Column("int")
     delete_ban: boolean;

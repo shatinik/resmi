@@ -10,8 +10,8 @@ export class AuthGet extends Handler {
 
     vkCallback(req: Request, res: Response, next: NextFunction) {
         Passport.authenticate('vkontakte', {
-            successRedirect: '/',
-            failureRedirect: '/login'
+            successRedirect: '/test/login',
+            failureRedirect: '/test/login'
         })(req,res,next)
     }
 
@@ -21,8 +21,8 @@ export class AuthGet extends Handler {
 
     facebookCallback(req: Request, res: Response, next: NextFunction) {
         Passport.authenticate('facebook', {
-            successRedirect: '/',
-            failureRedirect: '/login'
+            successRedirect: '/test/login',
+            failureRedirect: '/test/login'
         })(req,res,next)
     }
 

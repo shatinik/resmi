@@ -8,46 +8,47 @@ import Packet from '../../packet';
 import Playlist from '../../models/mysql/Playlist'
 
 export class PlaylistPost extends Handler {
-    public addNew(req, res: Response, next: NextFunction): void {
-        let packet = new Packet('playlist', 'addNew');
-        connect.then(async connection => {
-            if (req.query.title && req.query.preview_picture_url && req.query.room) {
-                let title: string = req.query.title;
-                let preview_picture_url: string = req.query.preview_picture_url;
-                let room_id: number = req.query.room;
-                if (title && preview_picture_url) {
-                    if (connection instanceof Connection && connection.isConnected) {
-                        let userRepository = connection.getRepository(Room);
-                        let room: Room = await userRepository.findOneById(room_id);
-                        if (room) {
-                            let roomRepository = connection.getRepository(Playlist);
-                            let playlist: Playlist = new Playlist();
-                            playlist.title = title;
-                            playlist.delete_ban = false;
-                            playlist.preview_picture_url = preview_picture_url;
-                            playlist.room = room; // WTF?
-                            roomRepository.save(playlist).then(room => {
-                                packet.first = 'Ok';
-                                res.json(packet);
-                                next();
-                            });
-                            return;
-                        }
-                    } else {
-                        log.error('typeorm', 'DBConnection error');
-                        packet.error = 'Internal error';
-                    }
+    public addNew(req, res: Response, next: NextFunction, packet: Packet): void {
+        let room_id: number = NaN;
+        let title: string = '';
+        let preview_picture_url: string = '';
+
+        if (!req.query.title || !req.query.preview_picture_url || !req.query.room) {
+            packet.error = 'Not enough data';
+        } else {
+            room_id = req.query.room;
+            title = req.query.title;
+            preview_picture_url = req.query.preview_picture_url;
+            if (isNaN(room_id)) {
+                packet.error = 'ID is NaN';
+            }
+        }
+
+        if (packet.error) {
+            next(packet);
+        } else {
+            connect.then(async connection => {
+                if (!connection || connection instanceof Connection && !connection.isConnected) {
+                    log.error('typeorm', 'DBConnection error');
+                    packet.error = 'Internal error';
                 } else {
-                    packet.error = 'ID is NaN';
+                    let userRepository = connection.getRepository(Room);
+                    let room: Room = await userRepository.findOneById(room_id);
+                    if (!room) {
+                        packet.error = `No room with ID ${room_id}`;
+                    } else {
+                        let roomRepository = connection.getRepository(Playlist);
+                        let playlist: Playlist = new Playlist();
+                        playlist.title = title;
+                        playlist.delete_ban = false;
+                        playlist.preview_picture_url = preview_picture_url;
+                        playlist.room = room; // WTF?
+                        await roomRepository.save(playlist);
+                        packet.first = 'Ok';
+                    }
                 }
-            } else {
-                packet.error = 'Not enough data';
-            }
-            if (packet.error) {
-                log.debug('net', packet.error);
-            }
-            res.json(packet);
-            next();
-        })
+                next(packet);
+            })
+        }
     }
 }

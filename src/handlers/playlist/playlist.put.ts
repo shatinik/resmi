@@ -8,43 +8,46 @@ import Packet from '../../packet';
 
 export class PlaylistPut extends Handler {
 
-    public editById(req: Request, res: Response, next: NextFunction): void {
+    public editById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
         /*
             Обновление информации о комнате по её Id
         */
-        connect.then(async connection => {
-            let packet = new Packet('playlist', 'editById');
-            if (req.query.id) {
-                let id: number = Number(req.query.id);
-                let title: string = req.query.title || undefined;
-                let preview_picture_url: string = req.query.preview_picture_url;
-                if (!isNaN(id)) {
-                    if (connection instanceof Connection && connection.isConnected) {
-                        let playlistRepository = connection.getRepository(Playlist);
-                        let playlist = await playlistRepository.findOneById(id);
-                        playlist.title = playlist.title || title;
-                        playlist.preview_picture_url = playlist.preview_picture_url || preview_picture_url;
-                        playlistRepository.save(playlist).then(room => {
-                            packet.first = 'Ok';
-                            res.json(packet);
-                            next();
-                        });
-                        return;
-                    } else {
-                        log.error('typeorm', 'DBConnection error');
-                        packet.error = 'Internal error';
-                    }
+        let id: number = NaN;
+        let title: string = '';
+        let preview_picture_url: string = '';
+
+        if (!req.query.id) {
+            packet.error = 'Not enough data';
+        } else {
+            id = Number(req.query.id);
+            title = req.query.title;
+            preview_picture_url = req.query.preview_picture_url;
+            if (isNaN(id)) {
+                packet.error = 'ID is NaN';
+            }
+        }
+
+        if (packet.error) {
+            next(packet)
+        } else {
+            connect.then(async connection => {
+                if (!connection || connection instanceof Connection && !connection.isConnected) {
+                    log.error('typeorm', 'DBConnection error');
+                    packet.error = 'Internal error';
                 } else {
-                    packet.error = 'ID is NaN';
+                    let playlistRepository = connection.getRepository(Playlist);
+                    let playlist = await playlistRepository.findOneById(id);
+                    if (!playlist) {
+                        packet.error = `No playlist with ID ${id}`;
+                    } else {
+                        playlist.title = title || playlist.title;
+                        playlist.preview_picture_url = preview_picture_url || playlist.preview_picture_url;
+                        await playlistRepository.save(playlist);
+                        packet.first = 'Ok';
+                    }
                 }
-            } else {
-                packet.error = 'Not enough data';
-            }
-            if (packet.error) {
-                log.debug('net', packet.error);
-            }
-            res.json(packet);
-            next();
-        })
+                next(packet);
+            })
+        }
     }
 }

@@ -7,39 +7,40 @@ import Packet from '../../packet';
 import Playlist from '../../models/mysql/Playlist';
 
 export class PlaylistDelete extends Handler {
-    public deleteById(req: Request, res: Response, next: NextFunction): void {
-        connect.then(async connection => {
-            let packet = new Packet('playlist', 'deleteById');
-            if (req.query.id) {
-                let id: number = Number(req.query.id);
-                if (!isNaN(id)) {
-                    if (connection instanceof Connection && connection.isConnected) {
-                        let playlistRepository = connection.getRepository(Playlist);
-                        let playlist = await playlistRepository.findOneById(id);
-                        if (!playlist) {
-                            packet.error = `No room with ID ${id}`;
-                        }
-                        if (!playlist.delete_ban) {
-                            await playlistRepository.remove(playlist);
-                        } else {
-                            packet.error = `This playlist isn't removable`;
-                        }
-                    } else {
-                        log.error('typeorm', 'DBConnection error');
-                        packet.error = 'Internal error';
-                    }
+    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+        let id: number = NaN;
+
+        if (!req.query.id) {
+            packet.error = 'Not enough data';
+        } else {
+            id = req.query.id;
+            if (isNaN(id)) {
+                packet.error = 'ID is NaN';
+            }
+        }
+
+        if (packet.error) {
+            next(packet);
+        } else {
+            connect.then(async connection => {
+                if (!connection || connection instanceof Connection && !connection.isConnected) {
+                    log.error('typeorm', 'DBConnection error');
+                    packet.error = 'Internal error';
                 } else {
-                    packet.error = 'ID is NaN';
+                    let playlistRepository = connection.getRepository(Playlist);
+                    let playlist = await playlistRepository.findOneById(id);
+                    if (!playlist) {
+                        packet.error = `No playlist with ID ${id}`;
+                    } else {
+                        if (playlist.delete_ban) {
+                            packet.error = `This playlist isn't removable`;
+                        } else {
+                            await playlistRepository.remove(playlist);
+                        }
+                    }
                 }
-            } else {
-                packet.error = 'Not enough data';
-            }
-            if (packet.error) {
-                log.debug('net', packet.error);
-            }
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.json(packet);
-            next();
-        })
+                next(packet);
+            })
+        }
     }
 }

@@ -37,7 +37,9 @@ export class RoomPut extends Handler {
             }
         }
 
-        if (!packet.error) {
+        if (packet.error) {
+            next(packet);
+        } else {
             connect.then(async connection => {
                 if (!connection || connection instanceof Connection && !connection.isConnected) {
                     log.error('typeorm', 'DBConnection error');
@@ -45,20 +47,22 @@ export class RoomPut extends Handler {
                 } else {
                     let roomRepository = connection.getRepository(Room);
                     let room: Room = await roomRepository.findOneById(id);
-                    if (room.creator !== user) {
-                        packet.error = 'Access denied';
+                    if (!room) {
+                       packet.error = `No room with id ${id}`;
                     } else {
-                        room.title = room.title || title;
-                        room.picture_uri = room.picture_uri || picture_uri;
-                        room.global_uri = room.global_uri || global_uri; // VIP-only
-                        await roomRepository.save(room);
-                        packet.first = 'Ok';
+                        if (room.creator !== user) {
+                            packet.error = 'Access denied';
+                        } else {
+                            room.title = title || room.title;
+                            room.picture_uri = picture_uri || room.picture_uri;
+                            room.global_uri = global_uri || room.global_uri; // VIP-only
+                            await roomRepository.save(room);
+                            packet.first = 'Ok';
+                        }
                     }
                 }
                 next(packet);
             })
-        } else {
-            next(packet);
         }
     }
 }

@@ -29,7 +29,9 @@ export class RoomPost extends Handler {
             }
         }
 
-        if (!packet.error) {
+        if (packet.error) {
+            next(packet);
+        } else {
             connect.then(async connection => {
                 if (!connection || connection instanceof Connection && !connection.isConnected) {
                     log.error('typeorm', 'DBConnection error');
@@ -47,8 +49,6 @@ export class RoomPost extends Handler {
                 }
                 next(packet);
             })
-        } else {
-            next(packet);
         }
     }
 }

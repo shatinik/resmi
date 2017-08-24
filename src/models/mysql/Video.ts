@@ -10,6 +10,7 @@ export default class Video {
     @OneToOne(type => Playlist)
     @JoinColumn()
     playlist: Playlist;
+    playlistId: number;
 
     @Column("varchar")
     service: string;
