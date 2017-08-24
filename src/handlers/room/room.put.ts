@@ -5,47 +5,60 @@ import { Connection } from 'typeorm';
 import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
+import User from '../../models/mysql/User';
 
 export class RoomPut extends Handler {
 
-    public editById(req: Request, res: Response, next: NextFunction): void {
+    public editById(req, res: Response, next: NextFunction, packet: Packet): void {
         /*
             Обновление информации о комнате по её Id
         */
-        connect.then(async connection => {
-            let packet = new Packet('room', 'editById');
-            if (req.query.id) {
-                let id: number = Number(req.query.id);
-                let title: string = req.query.title || undefined;
-                if (!isNaN(id)) {
-                    if (connection instanceof Connection && connection.isConnected) {
-                        let roomRepository = connection.getRepository(Room);
-                        let room = await roomRepository.findOneById(id);
-                        room.title = title;
-                        room.views = 0;
-                        room.picture_uri = '';
-                        room.global_uri = ''; // WTF?
-                        roomRepository.save(room).then(room => {
-                            packet.first = 'Ok';
-                            res.json(packet);
-                            next();
-                        });
-                        return;
-                    } else {
-                        log.error('typeorm', 'DBConnection error');
-                        packet.error = 'Internal error';
-                    }
-                } else {
+        let user: User;
+        let id: number = NaN;
+        let title: string = '';
+        let picture_uri: string = '';
+        let global_uri: string = '';
+
+        if (!req.user) {
+            log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
+            packet.error = 'Not logged in';
+        } else {
+            user = req.user;
+            if (!req.query.id) {
+                packet.error = 'Not enough data';
+            } else {
+                id = Number(req.query.id);
+                title = req.query.title;
+                picture_uri = req.query.picture_uri;
+                global_uri = req.query.global_uri;
+                if (isNaN(id)) {
                     packet.error = 'ID is NaN';
                 }
-            } else {
-                packet.error = 'Not enough data';
             }
-            if (packet.error) {
-                log.debug('net', packet.error);
-            }
-            res.json(packet);
-            next();
-        })
+        }
+
+        if (!packet.error) {
+            connect.then(async connection => {
+                if (!connection || connection instanceof Connection && !connection.isConnected) {
+                    log.error('typeorm', 'DBConnection error');
+                    packet.error = 'Internal error';
+                } else {
+                    let roomRepository = connection.getRepository(Room);
+                    let room: Room = await roomRepository.findOneById(id);
+                    if (room.creator !== user) {
+                        packet.error = 'Access denied';
+                    } else {
+                        room.title = room.title || title;
+                        room.picture_uri = room.picture_uri || picture_uri;
+                        room.global_uri = room.global_uri || global_uri; // VIP-only
+                        await roomRepository.save(room);
+                        packet.first = 'Ok';
+                    }
+                }
+                next(packet);
+            })
+        } else {
+            next(packet);
+        }
     }
 }

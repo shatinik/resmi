@@ -12,6 +12,7 @@ export default class Room {
     @OneToOne(type => User)
     @JoinColumn()
     creator: User;
+    creatorId: number; // typeorm don't use this field but it is the hack that hides warning in IDE
 
     @Column("int")
     views: number;
