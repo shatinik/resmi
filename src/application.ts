@@ -1,5 +1,6 @@
 import * as express from 'express';
 import Auth from './authenticate'
+
 export default class Application {
 
     private app: express.Application;
@@ -9,7 +10,7 @@ export default class Application {
     get env(): string { return this._env }
 
 
-    initEnv(): string {
+    private initEnv(): string {
         let node_env = process.env.NODE_ENV ? process.env.NODE_ENV.toLocaleLowerCase() : '';
         if (!node_env || ( node_env != 'production' && node_env != 'test')) {
             node_env = 'development';
@@ -18,9 +19,10 @@ export default class Application {
         return this._env = node_env;
     }
 
-    initAuth(): void {
+    private initAuth(): void {
         new Auth(this.express);
     }
+
     constructor() {
         this.app = express();
         this.app.use(function(req,res,next) {
