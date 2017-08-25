@@ -38,6 +38,10 @@ export default class Authenticate {
                             currentUser = new User();
                             currentUser.service = SERVICE.VK;
                             currentUser.service_uid = profile.id;
+                            currentUser.name = '';
+                            currentUser.email = '';
+                            currentUser.picture_cut_uri = '';
+                            currentUser.picture_full_uri = '';
                             userRepository.save(currentUser).then(user => {
                                 log.debug('auth', `Added new user (id=${currentUser.id}, service=${SERVICE.VK}, service_uid=${currentUser.service_uid}`);
                                 done(null, currentUser)
@@ -68,6 +72,10 @@ export default class Authenticate {
                             console.log(profile);
                             currentUser.service = SERVICE.FB;
                             currentUser.service_uid = profile.id;
+                            currentUser.name = '';
+                            currentUser.email = '';
+                            currentUser.picture_cut_uri = '';
+                            currentUser.picture_full_uri = '';
                             userRepository.save(currentUser).then(user => {
                                 log.debug('auth', `Added new user (id=${currentUser.id}, service=${SERVICE.FB}, service_uid=${currentUser.service_uid}`);
                                 done(null, currentUser)
