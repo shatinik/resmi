@@ -41,8 +41,6 @@
         "handler":"Room",
         "action":"addNew"
     },
-
-
     {
         "uri":"/auth/vk",
         "method":"get",

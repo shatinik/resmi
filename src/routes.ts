@@ -1,6 +1,10 @@
 import * as express  from 'express';
 import log from './logger'
 import * as SocketIO from 'socket.io'
+import * as fs from 'fs'
+import * as path from 'path'
+
+const ROUTES_PATH = '/configs/routes/';
 
 class Route {
     private _method: string;
@@ -26,11 +30,10 @@ class Route {
     }
 }
 
-const routes: Route[] = require('../configs/routes');
-
 export default class Routes {
 
     public static load(app: express.Application, socket: SocketIO.Server): void {
+        let routes = Routes.loadRoutes();
         let socketRoutes = [];
         for (let i in routes) {
             let route = new Route(routes[i]);
@@ -88,5 +91,30 @@ export default class Routes {
                 socket.on(arr[i].uri, action);
             }
         });
+    }
+
+    private static loadRoutes(): Routes[] {
+        let data: Routes[] = [],
+            parent = path.normalize(__dirname + `/../${ROUTES_PATH}`);
+        log.info('system', `Loading routes from ${parent}`);
+        function walkDir(dir) {
+            let files = fs.readdirSync(dir);
+            for (let i in files) {
+                let file = path.join(dir, files[i]);
+                if (fs.statSync(file).isFile() && path.extname(file) == '.json') {
+                    Array.prototype.push.apply(data,require(file));
+                    let asd = file.replace(parent, '');
+                    log.info('system', `File ${file.replace(parent, '')} loaded as router`);
+                } else if (fs.statSync(file).isDirectory()) {
+                    walkDir(file);
+                }
+            }
+        }
+        walkDir(parent);/*
+        fs.readdirSync(dir).forEach(function (file) {
+            Array.prototype.push.apply(data,require(dir + file));
+            log.info('system', `File ${file} loaded as router`);
+        });*/
+        return data;
     }
 }
