@@ -90,5 +90,11 @@
         "method":"get",
         "handler":"youtube",
         "action":"searchByQuery"
+    },
+    {
+        "uri":"/room/test",
+        "method":"socket",
+        "handler":"room",
+        "action":"test"
     }
 ]

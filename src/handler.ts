@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction  } from 'express'
 import Packet from './packet';
 import log from './logger'
+import * as SocketIO from 'socket.io'
 
 export default class Handler {
 
@@ -24,5 +25,13 @@ export default class Handler {
             res.status(packet.status).json(packet);
             next();
         }, packet);
+    }
+
+    public static runSocket(data: object, handler: string, action: string, socket: SocketIO.Socket) {
+        if (!this.obj) {
+            this.obj = new this();
+        }
+        let packet = new Packet(handler, action);
+        this.obj[action](data, packet, socket);
     }
 }

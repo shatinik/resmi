@@ -1,5 +1,6 @@
 import * as express  from 'express';
 import log from './logger'
+import * as SocketIO from 'socket.io'
 
 class Route {
     private _method: string;
@@ -29,33 +30,46 @@ const routes: Route[] = require('../configs/routes');
 
 export default class Routes {
 
-    public static load(app: express.Application): void {
+    public static load(app: express.Application, socket: SocketIO.Server): void {
+        let socketRoutes = [];
         for (let i in routes) {
             let route = new Route(routes[i]);
-            let action = Routes.buildAction(route);
-            switch (route.method) {
-                case 'get':
-                    app.get(route.uri, action);
-                    break;
-                case 'post':
-                    app.post(route.uri, action);
-                    break;
-                case 'put':
-                    app.put(route.uri, action);
-                    break;
-                case 'delete':
-                    app.delete(route.uri, action);
-                    break;
-                default:
-                    log.warn('router', `Route(id: ${i}) assigned to wrong http-method`);
+            if (route.method == 'socket') {
+                socketRoutes.push(route);
+            } else {
+                let action = Routes.buildAction(route);
+                switch (route.method) {
+                    case 'get':
+                        app.get(route.uri, action);
+                        break;
+                    case 'post':
+                        app.post(route.uri, action);
+                        break;
+                    case 'put':
+                        app.put(route.uri, action);
+                        break;
+                    case 'delete':
+                        app.delete(route.uri, action);
+                        break;
+                    default:
+                        log.warn('router', `Route(id: ${i}) assigned to wrong http-method/socket`);
+                }
             }
         }
+        Routes.loadSocket(socket, socketRoutes);
     }
 
-    private static buildAction(route: Route) {
-        return function (req, res, next) {
-            let handler = require(route.filename)[route.className].run(req, res, next, route.handler, route.action);
-            log.debug('router', `Call ${route.className}::${route.action} from ${req.connection.remoteAddress}`);
+    private static buildAction(route: Route, socket?: SocketIO.Socket) {
+        if (socket) {
+            return function (data) {
+                log.debug('router', `Call ${route.className}::${route.action} from ${socket.request.connection.remoteAddress}`);
+                let handler = require(route.filename)[route.className].runSocket(data, route.handler, route.action, socket);
+            }
+        } else {
+            return function (req, res, next) {
+                log.debug('router', `Call ${route.className}::${route.action} from ${req.connection.remoteAddress}`);
+                let handler = require(route.filename)[route.className].run(req, res, next, route.handler, route.action);
+            }
         }
     }
 
@@ -65,5 +79,14 @@ export default class Routes {
             text += args[i].charAt(0).toUpperCase() + args[i].slice(1).toLowerCase();
         }
         return text;
+    }
+
+    private static loadSocket(socket: SocketIO.Server, arr: Route[]) {
+        socket.on('connection', (socket: SocketIO.Socket) => {
+            for (let i = 0; i < arr.length; i++) {
+                let action = Routes.buildAction(arr[i], socket);
+                socket.on(arr[i].uri, action);
+            }
+        });
     }
 }

@@ -2,10 +2,11 @@ import * as http from 'http';
 import * as express from 'express';
 import Application from './application';
 import Routes from './routes'
-
+import * as socket from 'socket.io'
 export default class Server {
 
     private express: express.Application;
+    private socket: SocketIO.Server;
     private port: number;
     private static httpServer: http.Server;
 
@@ -26,7 +27,7 @@ export default class Server {
     }
 
     public start(): void {
-        Routes.load(this.express);
+        Routes.load(this.express, this.socket);
         this.loadEventListeners();
         Server.httpServer.listen(this.port);
     }
@@ -35,5 +36,6 @@ export default class Server {
         this.express = app.express;
         this.port = port;
         Server.httpServer = http.createServer(this.express);
+        this.socket = socket(Server.httpServer);
     }
 }
