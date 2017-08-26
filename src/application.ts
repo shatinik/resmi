@@ -4,23 +4,26 @@ import Auth from './authenticate'
 export default class Application {
 
     private app: express.Application;
-    private _env: string;
+    private static _env: string;
 
     get express(): express.Application { return this.app }
-    get env(): string { return this._env }
+    static get env(): string { return Application._env }
 
-
-    private initEnv(): string {
+    private static initEnv(): string {
         let node_env = process.env.NODE_ENV ? process.env.NODE_ENV.toLocaleLowerCase() : '';
         if (!node_env || ( node_env != 'production' && node_env != 'test')) {
             node_env = 'development';
         }
         process.env.NODE_ENV = node_env;
-        return this._env = node_env;
+        return Application._env = node_env;
     }
 
     private initAuth(): void {
-        new Auth(this.express);
+        this.express.use(require('morgan')('combined'));
+        this.express.use(require('cookie-parser')());
+        this.express.use(require('body-parser').urlencoded({ extended: true }));
+        this.express.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+        Auth.init(this.express);
     }
 
     constructor() {
@@ -30,7 +33,7 @@ export default class Application {
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
             next();
         });
-        this.initEnv();
+        Application.initEnv();
         this.initAuth();
     }
 }
