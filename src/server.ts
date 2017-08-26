@@ -37,7 +37,7 @@ export default class Server {
             log.info('system', `Current branch: ${git.branch()}`);
             log.info('system', `Last commit: ${git.date()}`);
             log.info('system', `Build hash: ${git.long()}`);
-            log.info('system', `Current version: ${git.tag()}.${_git.countTag(git.tag())}.${git.count()}${git.isTagDirty()?'-dirty':''}`);
+            log.info('system', `Current version: ${git.tag()}.${_git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
         }
         catch (e) {
             log.warn('system', `Current branch: <no git repository found>`);
