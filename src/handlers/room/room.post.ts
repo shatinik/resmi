@@ -19,7 +19,7 @@ export class RoomPost extends Handler {
             log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
             packet.error = 'Not logged in';
         } else {
-            user = req.user[0];
+            user = req.user;
             if (!req.body.title || !req.body.picture_uri || !req.body.global_uri) {
                 packet.error = 'Not enough data';
             } else {

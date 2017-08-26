@@ -19,24 +19,26 @@ export default class Authenticate {
             if (!connection || connection instanceof Connection && !connection.isConnected) {
                 log.error('typeorm', 'DBConnection error');
             } else {
-                console.log(profile);
                 let userRepository = connection.getRepository(User);
                 let user: User = await userRepository.findOne({
                     service: SERVICE.VK,
                     service_uid: profile.id
                 });
-                console.log(user);
                 if (!user) {
                     log.debug('auth', `No user with service ${SERVICE.VK.toString()}(id: ${SERVICE.VK} and service_uid ${profile.id})`);
                     user = new User();
                     user.service = SERVICE.VK;
                     user.service_uid = profile.id;
-                    user.name = '';//profile.displayName;
-                    user.email = `${profile.id}@vk.com`;
+                    user.name = ''; //profile.displayName;
+                    // user.email = `${profile.id}@vk.com`;
                     user.picture_cut_uri = profile.photos[1].value; // photo_100
                     user.picture_full_uri = profile.photos[2].value; // photo_200
+                    user.created_at = (new Date()).toString();
                     await userRepository.save(user);
                     log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.VK}, service_uid=${user.service_uid})`);
+                } else {
+                    user.last_auth = (new Date()).toString();
+                    await userRepository.save(user);
                 }
                 done(null, user)
             }
@@ -59,11 +61,15 @@ export default class Authenticate {
                     user.service = SERVICE.Facebook;
                     user.service_uid = profile.id;
                     user.name = profile.displayName;
-                    user.email = profile.emails[0].value;
+                    // user.email = profile.emails[0].value;
                     user.picture_cut_uri = profile.photos[0].value;
                     user.picture_full_uri = profile.photos[0].value;
+                    user.created_at = (new Date()).toString();
                     await userRepository.save(user);
                     log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.Facebook}, service_uid=${user.service_uid})`);
+                } else {
+                    user.last_auth = (new Date()).toString();
+                    await userRepository.save(user);
                 }
                 done(null, user)
             }
@@ -80,10 +86,16 @@ export default class Authenticate {
                 log.error('typeorm', 'DBConnection error');
             } else {
                 let userRepository = connection.getRepository(User);
-                let user = await userRepository.find({id: id});
+                let user: User = await userRepository.findOneById(id);
                 if (!user) {
                     log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
                 } else {
+                    ////////
+                    // -> LAST ACTIVITY TIME
+                    // UPDATES AT EVERY API CALL
+                    // user.last_auth = (new Date()).toString();
+                    // await userRepository.save(user);
+                    ////////
                     done(null, user)
                 }
             }

@@ -9,17 +9,17 @@ export default class User {
     @Column("varchar")
     name: string;
 
-    @Column("varchar")
-    email: string;
+    // @Column("varchar")
+    // email: string;
 
-    @CreateDateColumn()
+    @Column("datetime")
     created_at: string;
 
-    // @Column({
-    //     type: "datetime",
-    //     default: 'CURRENT_TIMESTAMP(6)'
-    // })
-    // last_auth: string;
+    @Column({
+        type: "datetime",
+        default: "1970-01-01 03:00:00"
+    })
+    last_auth: string;
 
     @Column("varchar")
     picture_full_uri: string;

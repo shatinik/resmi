@@ -36,12 +36,14 @@ export default class Server {
         try {
             log.info('system', `Current branch: ${git.branch()}`);
             log.info('system', `Last commit: ${git.date()}`);
+            log.info('system', `Last commit comment: ${git.message()}`);
             log.info('system', `Build hash: ${git.long()}`);
             log.info('system', `Current version: ${git.tag()}.${_git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
         }
         catch (e) {
             log.warn('system', `Current branch: <no git repository found>`);
             log.warn('system', `Last commit: ${new Date(0)}`);
+            log.warn('system', `Last commit comment: <no git repository found>`);
             log.warn('system', `Build hash: <no git repository found>`);
             log.warn('system', `Current version: <no git repository found>}`);
         }
