@@ -58,8 +58,13 @@ export class AuthGet extends Handler {
         Passport.authenticate('facebook')(req,res,next);
     }
 
-    logout(req, res: Response, next: NextFunction) {
-        req.logout();
-        res.redirect('/');
+    logout(req, res: Response, next: NextFunction, packet: Packet) {
+        if (req.user) {
+            req.logout();
+            packet.first = 'Ok';
+        } else {
+            packet.error = 'You are not logged in';
+        }
+        next(packet);
     }
 }
