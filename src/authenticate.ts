@@ -19,22 +19,24 @@ export default class Authenticate {
             if (!connection || connection instanceof Connection && !connection.isConnected) {
                 log.error('typeorm', 'DBConnection error');
             } else {
+                console.log(profile);
                 let userRepository = connection.getRepository(User);
                 let user: User = await userRepository.findOne({
                     service: SERVICE.VK,
                     service_uid: profile.id
                 });
+                console.log(user);
                 if (!user) {
-                    log.debug('auth', `No user with service ${SERVICE.VK.toString()}(id: ${SERVICE.VK} and service_uid ${profile.id}`);
+                    log.debug('auth', `No user with service ${SERVICE.VK.toString()}(id: ${SERVICE.VK} and service_uid ${profile.id})`);
                     user = new User();
                     user.service = SERVICE.VK;
                     user.service_uid = profile.id;
-                    user.name = '';
-                    user.email = '';
-                    user.picture_cut_uri = '';
-                    user.picture_full_uri = '';
+                    user.name = '';//profile.displayName;
+                    user.email = `${profile.id}@vk.com`;
+                    user.picture_cut_uri = profile.photos[1].value; // photo_100
+                    user.picture_full_uri = profile.photos[2].value; // photo_200
                     await userRepository.save(user);
-                    log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.VK}, service_uid=${user.service_uid}`);
+                    log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.VK}, service_uid=${user.service_uid})`);
                 }
                 done(null, user)
             }
@@ -52,16 +54,16 @@ export default class Authenticate {
                     service_uid: profile.id
                 });
                 if (!user) {
-                    log.debug('auth', `No user with service ${SERVICE.Facebook.toString()}(id: ${SERVICE.Facebook} and service_uid ${profile.id}`);
+                    log.debug('auth', `No user with service ${SERVICE.Facebook.toString()}(id: ${SERVICE.Facebook} and service_uid ${profile.id})`);
                     user = new User();
                     user.service = SERVICE.Facebook;
                     user.service_uid = profile.id;
-                    user.name = '';
-                    user.email = '';
-                    user.picture_cut_uri = '';
-                    user.picture_full_uri = '';
+                    user.name = profile.displayName;
+                    user.email = profile.emails[0].value;
+                    user.picture_cut_uri = profile.photos[0].value;
+                    user.picture_full_uri = profile.photos[0].value;
                     await userRepository.save(user);
-                    log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.Facebook}, service_uid=${user.service_uid}`);
+                    log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.Facebook}, service_uid=${user.service_uid})`);
                 }
                 done(null, user)
             }
@@ -96,14 +98,15 @@ export default class Authenticate {
                 clientID: 6044938,
                 clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
                 callbackURL: "/auth/vk/callback",
-                lang: 'ru'
+                profileFields: ['photo_200', 'photo_100']
             },
             Authenticate.VkCallback
         ));
         Passport.use(new FacebookStrategy({
                 clientID: 320501398380272,
                 clientSecret: '52721c304bebcc5380ef47e4b2e28432',
-                callbackURL: "/auth/facebook/callback"
+                callbackURL: "/auth/facebook/callback",
+                profileFields: ['id', 'displayName', 'photos', 'emails', 'name']
             },
             Authenticate.FacebookCallback
         ));

@@ -35,6 +35,7 @@ export class AuthGet extends Handler {
             } else {
                 if (!user) {
                     packet.error = 'Login error';
+                    res.json(packet);
                 } else {
                     req.logIn(user, err => {
                         if (err) {
@@ -42,10 +43,10 @@ export class AuthGet extends Handler {
                         } else {
                             packet.first = 'Ok';
                         }
+                        res.json(packet);
                     });
                 }
             }
-            res.json(packet);
         })(req,res,next)
     }
 
@@ -56,7 +57,7 @@ export class AuthGet extends Handler {
     facebook(req: Request, res: Response, next: NextFunction) {
         Passport.authenticate('facebook')(req,res,next);
     }
-    
+
     logout(req, res: Response, next: NextFunction) {
         req.logout();
         res.redirect('/');
