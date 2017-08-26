@@ -72,6 +72,12 @@
         "action":"logout"
     },
     {
+        "uri":"/auth/currentUser",
+        "method":"get",
+        "handler":"auth",
+        "action":"currentUser"
+    },
+    {
         "uri":"/test/login",
         "method":"get",
         "handler":"test",

@@ -5,7 +5,14 @@ import { Request, Response, NextFunction  } from 'express'
 import Packet from '../../packet'
 
 export class AuthGet extends Handler {
-
+    currentUser(req, res: Response, next: NextFunction, packet: Packet) {
+        if (!req.user) {
+            packet.error = 'You are not logged in';
+        } else {
+            packet.first = req.user;
+        }
+        next(packet);
+    }
 
     vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
         Passport.authenticate('vkontakte', (err, user, info) => {
