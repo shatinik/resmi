@@ -2,6 +2,7 @@ class ResponseTemplate {
     kind: string;
     item: any;
     items: any[];
+    token?: string;
     error?: string;
 }
 
@@ -12,10 +13,19 @@ export default class Packet {
     private action: string;
     private _error: string;
     private _status: number = 200;
+    private _token: string;
 
     constructor(handler: string, action: string) {
         this.handler = handler;
         this.action = action;
+    }
+
+    get token(): string {
+        return this._token;
+    }
+
+    set token(value: string) {
+        this._token = value;
     }
 
     get error(): string {
@@ -62,8 +72,9 @@ export default class Packet {
         }
         if (this.error) {
             res.error = this.error;
-        } else {
-            res.error = undefined;
+        }
+        if (this.token) {
+            res.token = this.token;
         }
         return res;
     }

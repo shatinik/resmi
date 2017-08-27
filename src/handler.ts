@@ -13,7 +13,7 @@ export default class Handler {
 
     protected constructor() {}
 
-    public static async run(req: Request, res: Response, next: NextFunction, handler: string, action: string) {
+    public static async run(req, res: Response, next: NextFunction, handler: string, action: string) {
         if (!this.obj) {
             this.obj = new this();
         }
@@ -21,6 +21,9 @@ export default class Handler {
         this.obj[action](req, res, function(packet: Packet) {
             if (packet.error) {
                 log.debug('net', packet.error);
+            }
+            if (req.new_token) {
+                packet.token = req.new_token;
             }
             res.status(packet.status).json(packet);
             next();

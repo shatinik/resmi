@@ -5,6 +5,7 @@ import connect from './mysql'
 import log from './logger'
 import { Connection } from 'typeorm';
 import * as jwt from 'jsonwebtoken'
+import Packet from './packet';
 
 export const JWTSecret = 'SAd23jvbfbaecieajwodjdewfcWDxD';
 
@@ -118,15 +119,49 @@ export default class Authenticate {
                 if (typeof payload === 'string') {
                     log.error('auth', payload);
                 } else {
-                    let jwt: JWTObject = payload;
-                    let id: number = Number(jwt.data);
+                    let token: JWTObject = payload;
+                    let id: number = Number(token.data);
                     if (isNaN(id)) {
-                        log.error('auth', `Wrong data written to JWT ${jwt} when number expected`);
+                        log.error('auth', `Wrong data written to JWT ${token} when number expected`);
                     } else {
                         req.user = await Authenticate.deserialize(id);
                     }
                 }
             } catch (e) {
+                if (e instanceof jwt.TokenExpiredError) {
+                    let connection = await connect;
+                    if (!connection || connection instanceof Connection && !connection.isConnected) {
+                        log.error('typeorm', 'DBConnection error');
+                    } else {
+                        try {
+                            let payload: any = jwt.verify(JWT, JWTSecret, {ignoreExpiration: true});
+                            if (typeof payload === 'string') {
+                                log.error('auth', payload);
+                            } else {
+                                let token: JWTObject = payload;
+                                let id: number = Number(token.data);
+                                let userRepository = connection.getRepository(User);
+                                let user = await userRepository.findOne({token: JWT});
+                                if (!user) {
+                                    user = await userRepository.findOneById(id);
+                                    if (!user) {
+                                        log.warn('auth', 'Wrong token accepted. User deleted or token is fake(secret key had been stolen?)')
+                                    } else {
+                                        log.warn('auth', 'Wrong token accepted. It is old or fake(secret key had been stolen?)')
+                                        // Старым он может быть только в случае, если в базе хранится только токен для одной последней сессии. Иначе - однозначно фейк
+                                    }
+                                } else {
+                                    user.token = req.new_token = jwt.sign({ data: user.id }, JWTSecret, { expiresIn: '24h' });
+                                    log.debug('auth', `New token generated for user ${user.id}`);
+                                    await userRepository.save(user);
+                                    req.user = user;
+                                }
+                            }
+                        } catch (e) {
+                            log.error('auth', `${e} from ${req.connection.remoteAddress}`);
+                        }
+                    }
+                }
                 log.debug('auth', `${e} from ${req.connection.remoteAddress}`);
             }
         }
