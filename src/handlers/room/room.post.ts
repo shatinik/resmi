@@ -6,6 +6,7 @@ import Room from '../../models/mysql/Room';
 import log from '../../logger'
 import Packet from '../../packet';
 import User from '../../models/mysql/User'
+import Word from '../../word'
 
 export class RoomPost extends Handler {
 
@@ -13,19 +14,18 @@ export class RoomPost extends Handler {
         let user: User;
         let title: string = '';
         let picture_uri: string = '';
-        let global_uri: string = '';
+        let global_uri: string = Word.generate()+Math.round(Math.random()*1000);
         packet.first = [req.query, req.body];
         if (!req.user) {
             log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
             packet.error = 'Not logged in';
         } else {
             user = req.user;
-            if (!req.body.title || !req.body.picture_uri || !req.body.global_uri) {
+            if (!req.body.title) { // || !req.body.picture_uri) {
                 packet.error = 'Not enough data';
             } else {
                 title = req.body.title;
                 picture_uri = req.body.picture_uri;
-                global_uri = req.body.global_uri;
             }
         }
 
