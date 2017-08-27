@@ -31,7 +31,7 @@ export class AuthGet extends Handler {
                             packet.first = jwt.sign({
                                 data: user.id
                             }, JWTSecret, {
-                                expiresIn: '1h',
+                                expiresIn: '24h',
                             });
                         }
                     });
