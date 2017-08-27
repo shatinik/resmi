@@ -13,7 +13,7 @@ export default class Handler {
 
     protected constructor() {}
 
-    public static run(req: Request, res: Response, next: NextFunction, handler: string, action: string) {
+    public static async run(req: Request, res: Response, next: NextFunction, handler: string, action: string) {
         if (!this.obj) {
             this.obj = new this();
         }
@@ -27,11 +27,11 @@ export default class Handler {
         }, packet);
     }
 
-    public static runSocket(data: object, handler: string, action: string, socket: SocketIO.Socket) {
+    public static async runSocket(data: object, handler: string, action: string, socket: SocketIO.Socket) {
         if (!this.obj) {
             this.obj = new this();
         }
         let packet = new Packet(handler, action);
-        this.obj[action](data, packet, socket);
+        await this.obj[action](data, packet, socket);
     }
 }

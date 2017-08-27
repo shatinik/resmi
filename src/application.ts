@@ -18,22 +18,18 @@ export default class Application {
         return Application._env = node_env;
     }
 
-    private initAuth(): void {
-        this.express.use(require('morgan')('combined'));
-        this.express.use(require('cookie-parser')());
-        this.express.use(require('body-parser').urlencoded({ extended: true }));
-        this.express.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
-        Auth.init(this.express);
-    }
-
     constructor() {
-        this.app = express();
-        this.app.use(function(req,res,next) {
+        Application.initEnv();
+        let app = this.app = express();
+        app.use(function(req,res,next) {
             res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             next();
         });
-        Application.initEnv();
-        this.initAuth();
+        app.use(require('morgan')('combined'));
+        app.use(require('cookie-parser')());
+        app.use(require('body-parser').urlencoded({ extended: true }));
+        app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+        Auth.init(app);
     }
 }

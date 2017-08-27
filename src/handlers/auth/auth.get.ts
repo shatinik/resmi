@@ -3,6 +3,8 @@ import * as Passport from 'passport'
 import log from '../../logger'
 import { Request, Response, NextFunction  } from 'express'
 import Packet from '../../packet'
+import * as jwt from 'jsonwebtoken'
+import { JWTSecret } from '../../authenticate';
 
 export class AuthGet extends Handler {
     currentUser(req, res: Response, next: NextFunction, packet: Packet) {
@@ -15,18 +17,22 @@ export class AuthGet extends Handler {
     }
 
     vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
-        Passport.authenticate('vkontakte', (err, user, info) => {
+        Passport.authenticate('vkontakte', { session: false },(err, user, info) => {
             if (err) {
                 packet.error = err;
             } else {
                 if (!user) {
-                    packet.error = 'Login error';
+                    packet.error = 'Unknown error';
                 } else {
                     req.logIn(user, err => {
                         if (err) {
                             packet.error = err;
                         } else {
-                            packet.first = 'Ok';
+                            packet.first = jwt.sign({
+                                data: user.id
+                            }, JWTSecret, {
+                                expiresIn: '1h',
+                            });
                         }
                     });
                 }
@@ -36,26 +42,29 @@ export class AuthGet extends Handler {
     }
 
     facebookCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
-        Passport.authenticate('facebook', (err, user, info) => {
+        Passport.authenticate('facebook', { session: false },(err, user, info) => {
             if (err) {
                 packet.error = err;
             } else {
                 if (!user) {
-                    packet.error = 'Login error';
-                    res.json(packet);
+                    packet.error = 'Unknown error';
                 } else {
                     req.logIn(user, err => {
                         if (err) {
                             packet.error = err;
                         } else {
-                            packet.first = 'Ok';
+                            packet.first = jwt.sign({
+                                exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                                data: user.id
+                            }, JWTSecret);
                         }
-                        res.json(packet);
                     });
                 }
             }
+            res.json(packet);
         })(req,res,next)
     }
+
 
     vk(req: Request, res: Response, next: NextFunction) {
         Passport.authenticate('vkontakte')(req,res,next);

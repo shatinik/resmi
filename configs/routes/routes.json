@@ -84,6 +84,12 @@
         "action":"login"
     },
     {
+        "uri":"/test/webtoken",
+        "method":"get",
+        "handler":"test",
+        "action":"webtoken"
+    },
+    {
         "uri":"/youtube/getOneById",
         "method":"get",
         "handler":"youtube",

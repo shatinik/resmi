@@ -4,6 +4,9 @@ import User from './models/mysql/User'
 import connect from './mysql'
 import log from './logger'
 import { Connection } from 'typeorm';
+import * as jwt from 'jsonwebtoken'
+
+export const JWTSecret = 'SAd23jvbfbaecieajwodjdewfcWDxD';
 
 const VKontakteStrategy = require('passport-vkontakte').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
@@ -11,6 +14,12 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 enum SERVICE {
     VK,
     Facebook
+}
+
+export class JWTObject {
+    exp: string;
+    data: any;
+    iat: string;
 }
 
 export default class Authenticate {
@@ -80,31 +89,89 @@ export default class Authenticate {
         done(null, user.id);
     }
 
-    private static deserialize(id: number, done) {
-        connect.then(async connection => {
-            if (!connection || connection instanceof Connection && !connection.isConnected) {
-                log.error('typeorm', 'DBConnection error');
+    public static async deserialize(id: number) {
+        let connection = await connect;
+        if (!connection || connection instanceof Connection && !connection.isConnected) {
+            log.error('typeorm', 'DBConnection error');
+        } else {
+            let userRepository = connection.getRepository(User);
+            let user: User = await userRepository.findOneById(id);
+            if (!user) {
+                log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
             } else {
-                let userRepository = connection.getRepository(User);
-                let user: User = await userRepository.findOneById(id);
-                if (!user) {
-                    log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
-                } else {
-                    ////////
-                    // -> LAST ACTIVITY TIME
-                    // UPDATES AT EVERY API CALL
-                    // user.last_auth = (new Date()).toString();
-                    // await userRepository.save(user);
-                    ////////
-                    done(null, user)
-                }
+                ////////
+                // -> LAST ACTIVITY TIME
+                // UPDATES AT EVERY API CALL
+                // user.last_auth = (new Date()).toString();
+                // await userRepository.save(user);
+                ////////
+                return user;
             }
-        });
+        }
     }
+
+    public static async checkLogin(req, JWT) {
+        req.user = undefined;
+        if (JWT) {
+            try {
+                let payload: any = jwt.verify(JWT, JWTSecret);
+                if (typeof payload === 'string') {
+                    log.error('auth', payload);
+                } else {
+                    let jwt: JWTObject = payload;
+                    let id: number = Number(jwt.data);
+                    if (isNaN(id)) {
+                        log.error('auth', `Wrong data written to JWT ${jwt} when number expected`);
+                    } else {
+                        req.user = await Authenticate.deserialize(id);
+                    }
+                }
+            } catch (e) {
+                log.debug('auth', `${e} from ${req.connection.remoteAddress}`);
+            }
+        }
+    }
+
+    // private static deserialize(id: number, done) {
+    //     connect.then(async connection => {
+    //         if (!connection || connection instanceof Connection && !connection.isConnected) {
+    //             log.error('typeorm', 'DBConnection error');
+    //         } else {
+    //             let userRepository = connection.getRepository(User);
+    //             let user: User = await userRepository.findOneById(id);
+    //             if (!user) {
+    //                 log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
+    //             } else {
+    //                 ////////
+    //                 // -> LAST ACTIVITY TIME
+    //                 // UPDATES AT EVERY API CALL
+    //                 // user.last_auth = (new Date()).toString();
+    //                 // await userRepository.save(user);
+    //                 ////////
+    //                 done(null, user)
+    //             }
+    //         }
+    //     });
+    // }
 
     public static init(app: Express.Application) {
         app.use(Passport.initialize());
-        app.use(Passport.session());
+        app.use(async (req, res, next) => {
+            let authorization: string = req.header('Authorization');
+            if (authorization) {
+                let type: string;
+                let token: string;
+                [type, token] = authorization.split(' ');
+                if (type == 'JWT') {
+                    await Authenticate.checkLogin(req, token);
+                }
+            }
+            next();
+        });
+
+        // app.use(Passport.session());
+        Passport.serializeUser(Authenticate.serialize);
+        // Passport.deserializeUser(Authenticate.deserialize);
 
         Passport.use(new VKontakteStrategy({
                 clientID: 6044938,
@@ -122,7 +189,5 @@ export default class Authenticate {
             },
             Authenticate.FacebookCallback
         ));
-        Passport.serializeUser(Authenticate.serialize);
-        Passport.deserializeUser(Authenticate.deserialize);
     }
 }

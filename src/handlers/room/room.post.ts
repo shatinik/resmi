@@ -14,7 +14,7 @@ export class RoomPost extends Handler {
         let title: string = '';
         let picture_uri: string = '';
         let global_uri: string = '';
-
+        packet.first = [req.query, req.body];
         if (!req.user) {
             log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
             packet.error = 'Not logged in';
