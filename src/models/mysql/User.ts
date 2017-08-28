@@ -33,6 +33,9 @@ export default class User {
     @Column("varchar")
     service_uid: number;
 
-    @Column("varchar")
+    @Column({
+        type: "varchar",
+        default: ''
+    })
     token: string;
 }
