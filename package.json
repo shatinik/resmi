@@ -11,6 +11,7 @@
     "dependencies": {
         "@types/jsonwebtoken": "^7.2.3",
         "@types/passport": "^0.3.4",
+        "@types/passport-facebook-token": "^0.4.30",
         "@types/socket.io": "^1.4.30",
         "body-parser": "^1.17.2",
         "cookie-parser": "^1.4.3",
@@ -22,7 +23,7 @@
         "morgan": "^1.8.2",
         "mysql": "^2.14.1",
         "passport": "^0.3.2",
-        "passport-facebook": "^2.1.1",
+        "passport-facebook-token": "^3.3.0",
         "passport-vkontakte": "^0.3.2",
         "socket.io": "^2.0.3",
         "typeorm": "^0.1.0-alpha.34"

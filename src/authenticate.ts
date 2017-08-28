@@ -10,7 +10,7 @@ import Packet from './packet';
 export const JWTSecret = 'SAd23jvbfbaecieajwodjdewfcWDxD';
 
 const VKontakteStrategy = require('passport-vkontakte').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
+const FacebookTokenStrategy = require('passport-facebook-token');
 
 enum SERVICE {
     VK,
@@ -55,7 +55,7 @@ export default class Authenticate {
         });
     }
 
-    private static FacebookCallback(accessToken, refreshToken, params, profile, done) {
+    private static FacebookCallback(accessToken, refreshToken, profile, done) {
         connect.then(async connection => {
             if (!connection || connection instanceof Connection && !connection.isConnected) {
                 log.error('typeorm', 'DBConnection error');
@@ -216,10 +216,9 @@ export default class Authenticate {
             },
             Authenticate.VkCallback
         ));
-        Passport.use(new FacebookStrategy({
+        Passport.use(new FacebookTokenStrategy({
                 clientID: 320501398380272,
                 clientSecret: '52721c304bebcc5380ef47e4b2e28432',
-                callbackURL: "/auth/facebook/callback",
                 profileFields: ['id', 'displayName', 'photos', 'emails', 'name']
             },
             Authenticate.FacebookCallback

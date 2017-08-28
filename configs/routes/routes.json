@@ -54,12 +54,6 @@
         "action": "vkCallback"
     },
     {
-        "uri":"/auth/facebook",
-        "method":"get",
-        "handler":"auth",
-        "action":"facebook"
-    },
-    {
         "uri": "/auth/facebook/callback",
         "method": "get",
         "handler": "auth",

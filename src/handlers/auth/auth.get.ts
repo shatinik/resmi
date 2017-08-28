@@ -42,7 +42,7 @@ export class AuthGet extends Handler {
     }
 
     facebookCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
-        Passport.authenticate('facebook', { session: false },(err, user, info) => {
+        Passport.authenticate('facebook-token', { session: false },(err, user, info) => {
             if (err) {
                 packet.error = err;
             } else {
@@ -68,10 +68,6 @@ export class AuthGet extends Handler {
 
     vk(req: Request, res: Response, next: NextFunction) {
         Passport.authenticate('vkontakte')(req,res,next);
-    }
-
-    facebook(req: Request, res: Response, next: NextFunction) {
-        Passport.authenticate('facebook')(req,res,next);
     }
 
     logout(req, res: Response, next: NextFunction, packet: Packet) {
