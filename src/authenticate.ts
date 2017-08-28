@@ -10,6 +10,7 @@ import Packet from './packet';
 export const JWTSecret = 'SAd23jvbfbaecieajwodjdewfcWDxD';
 
 const VKontakteStrategy = require('passport-vkontakte').Strategy;
+const VKontakteTokenStrategy = require('passport-vkontakte-token');
 const FacebookTokenStrategy = require('passport-facebook-token');
 
 enum SERVICE {
@@ -212,6 +213,13 @@ export default class Authenticate {
                 clientID: 6044938,
                 clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
                 callbackURL: "/auth/vk/callback",
+                profileFields: ['photo_200', 'photo_100']
+            },
+            Authenticate.VkCallback
+        ));
+        Passport.use(new VKontakteTokenStrategy({
+                clientID: 6044938,
+                clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
                 profileFields: ['photo_200', 'photo_100']
             },
             Authenticate.VkCallback

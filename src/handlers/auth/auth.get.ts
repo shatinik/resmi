@@ -17,6 +17,7 @@ export class AuthGet extends Handler {
     }
 
     vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
+        // Passport.authenticate('vkontakte-token', { session: false },(err, user, info) => {
         Passport.authenticate('vkontakte', { session: false },(err, user, info) => {
             if (err) {
                 packet.error = err;
