@@ -21,72 +21,11 @@ export class AuthGet extends Handler {
     }
 
     vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
-        // Passport.authenticate('vkontakte-token', { session: false },(err, user, info) => {
-        Passport.authenticate('vkontakte', { session: false },(err, user: User, info) => {
-            if (err) {
-                packet.error = err;
-            } else {
-                if (!user) {
-                    packet.error = 'Unknown error';
-                } else {
-                    req.logIn(user, async (err) => {
-                        if (err) {
-                            packet.error = err;
-                        } else {
-                            user.token = jwt.sign({
-                                data: user.id
-                            }, JWTSecret, {
-                                expiresIn: '24h',
-                            });
-                            packet.first = user.token;
-                            let connection = await connect;
-                            if (!connection || connection instanceof Connection && !connection.isConnected) {
-                                log.error('typeorm', 'DBConnection error');
-                                packet.error = 'Internal error';
-                            } else {
-                                let userRepository = connection.getRepository(User);
-                                userRepository.save(user);
-                            }
-                        }
-                    });
-                }
-            }
-            res.json(packet);
-        })(req,res,next)
+        Passport.authenticate('vkontakte'/*-token*/, { session: false }, this.authCallback(req, res, next, packet))(req,res,next)
     }
 
     facebookCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
-        Passport.authenticate('facebook-token', { session: false },(err, user: User, info) => {
-            if (err) {
-                packet.error = err;
-            } else {
-                if (!user) {
-                    packet.error = 'Unknown error';
-                } else {
-                    req.logIn(user, async (err) => {
-                        if (err) {
-                            packet.error = err;
-                        } else {
-                            user.token = jwt.sign({
-                                data: user.id
-                            }, JWTSecret, {
-                                expiresIn: '24h',
-                            });
-                            packet.first = user.token;
-                            let connection = await connect;
-                            if (!connection || connection instanceof Connection && !connection.isConnected) {
-                                log.error('typeorm', 'DBConnection error');
-                                packet.error = 'Internal error';
-                            } else {
-                                let userRepository = connection.getRepository(User);
-                                userRepository.save(user);
-                            }
-                        }
-                    });
-                }
-            }
-            res.json(packet);
-        })(req,res,next)
+        Passport.authenticate('facebook-token', { session: false }, this.authCallback(req, res, next, packet))(req,res,next)
     }
 
 
@@ -102,5 +41,39 @@ export class AuthGet extends Handler {
             packet.error = 'You are not logged in';
         }
         next(packet);
+    }
+
+    private authCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
+        return (err, user, info) => {
+            if (err) {
+                packet.error = err;
+            } else {
+                if (!user) {
+                    packet.error = 'Unknown error';
+                } else {
+                    req.logIn(user, async (err) => {
+                        if (err) {
+                            packet.error = err;
+                        } else {
+                            user.token = jwt.sign({
+                                data: user.id
+                            }, JWTSecret, {
+                                expiresIn: '24h',
+                            });
+                            packet.first = user.token;
+                            let connection = await connect;
+                            if (!connection || connection instanceof Connection && !connection.isConnected) {
+                                log.error('typeorm', 'DBConnection error');
+                                packet.error = 'Internal error';
+                            } else {
+                                let userRepository = connection.getRepository(User);
+                                userRepository.save(user);
+                            }
+                        }
+                    });
+                }
+            }
+            res.json(packet);
+        }
     }
 }
