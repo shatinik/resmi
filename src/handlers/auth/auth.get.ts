@@ -20,6 +20,11 @@ export class AuthGet extends Handler {
         next(packet);
     }
 
+    check(req, res: Response, next: NextFunction, packet: Packet) {
+        packet.first = !!req.user;
+        next(packet);
+    }
+
     vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
         Passport.authenticate('vkontakte'/*-token*/, { session: false }, this.authCallback(req, res, next, packet))(req,res,next)
     }
