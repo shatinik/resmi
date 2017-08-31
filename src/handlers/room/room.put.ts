@@ -13,27 +13,21 @@ export class RoomPut extends Handler {
         /*
             Обновление информации о комнате по её Id
         */
-        let user: User;
+        let user: User = req.user;
         let id: number = NaN;
         let title: string = '';
         let picture_uri: string = '';
         let global_uri: string = '';
 
-        if (!req.user) {
-            log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
-            packet.error = 'Not logged in';
+        if (!req.query.id) {
+            packet.error = 'Not enough data';
         } else {
-            user = req.user;
-            if (!req.query.id) {
-                packet.error = 'Not enough data';
-            } else {
-                id = Number(req.query.id);
-                title = req.query.title;
-                picture_uri = req.query.picture_uri;
-                global_uri = req.query.global_uri;
-                if (isNaN(id)) {
-                    packet.error = 'ID is NaN';
-                }
+            id = Number(req.query.id);
+            title = req.query.title;
+            picture_uri = req.query.picture_uri;
+            global_uri = req.query.global_uri;
+            if (isNaN(id)) {
+                packet.error = 'ID is NaN';
             }
         }
 

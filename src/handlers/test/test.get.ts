@@ -11,13 +11,10 @@ import connect from '../../mysql'
 
 export class TestGet extends Handler {
     login(req, res: Response, next: NextFunction, packet: Packet){
-        let user: User;
         if (!req.user) {
-            log.debug('auth', 'You are not logged in');
             packet.first = 'You are not logged in';
         } else {
-            user = req.user;
-            log.debug('auth', `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`);
+            let user: User = req.user;
             packet.first = `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`;
         }
         next(packet);
@@ -25,7 +22,9 @@ export class TestGet extends Handler {
 
     async webtoken(req, res: Response, next: NextFunction, packet: Packet) {
         let JWT = req.query.JWT; // req.header('JWT');
-        if (JWT) {
+        if (!JWT) {
+            packet.error = 'Blank JWT'
+        } else {
             try {
                 let payload: any = jwt.verify(JWT, JWTSecret);
                 if (typeof payload === 'string') {
@@ -77,18 +76,7 @@ export class TestGet extends Handler {
                 }
                 log.debug('auth', `${e} from ${req.connection.remoteAddress}`);
             }
-        } else {
-            packet.first = 'Blank JWT'
         }
-        let user: User;
-        if (!req.user) {
-            log.debug('auth', 'You are not logged in');
-            packet.first = 'You are not logged in';
-        } else {
-            user = req.user;
-            log.debug('auth', `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`);
-            packet.first = `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`;
-        }
-        next(packet);
+        this.login(req,res,next,packet);
     }
 }

@@ -7,26 +7,22 @@ import log from '../../logger'
 import Packet from '../../packet';
 import User from '../../models/mysql/User'
 import Word from '../../word'
+import {authorized_only} from '../../decorators';
 
 export class RoomPost extends Handler {
 
+    @authorized_only()
     public addNew(req, res: Response, next: NextFunction, packet: Packet): void {
-        let user: User;
+        let user: User = req.user;
         let title: string = '';
         let picture_uri: string = '';
         let global_uri: string = Word.generate()+Math.round(Math.random()*1000);
-        packet.first = [req.query, req.body];
-        if (!req.user) {
-            log.fatal('system', 'ATTENTION! Authenticate before calling room::add. Remove this message after enabling RBAC');
-            packet.error = 'Not logged in';
+
+        if (!req.body.title) { // || !req.body.picture_uri) {
+            packet.error = 'Not enough data';
         } else {
-            user = req.user;
-            if (!req.body.title) { // || !req.body.picture_uri) {
-                packet.error = 'Not enough data';
-            } else {
-                title = req.body.title;
-                picture_uri = req.body.picture_uri;
-            }
+            title = req.body.title;
+            picture_uri = req.body.picture_uri;
         }
 
         if (packet.error) {

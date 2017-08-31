@@ -8,15 +8,13 @@ import { JWTSecret } from '../../authenticate';
 import connect from '../../mysql'
 import User from '../../models/mysql/User';
 import { Connection } from 'typeorm';
+import {authorized_only} from '../../decorators';
 
 
 export class AuthGet extends Handler {
+    @authorized_only()
     currentUser(req, res: Response, next: NextFunction, packet: Packet) {
-        if (!req.user) {
-            packet.error = 'You are not logged in';
-        } else {
-            packet.first = req.user;
-        }
+        packet.first = req.user;
         next(packet);
     }
 
