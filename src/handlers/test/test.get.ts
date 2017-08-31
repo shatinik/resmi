@@ -80,6 +80,15 @@ export class TestGet extends Handler {
         } else {
             packet.first = 'Blank JWT'
         }
+        let user: User;
+        if (!req.user) {
+            log.debug('auth', 'You are not logged in');
+            packet.first = 'You are not logged in';
+        } else {
+            user = req.user;
+            log.debug('auth', `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`);
+            packet.first = `You are logged in (id=${user.id}, service=${user.service}, service_uid=${user.service_uid})`;
+        }
         next(packet);
     }
 }
