@@ -17,9 +17,33 @@ export default class Room {
     @Column("int")
     views: number;
 
+    @Column("int")
+    type: RoomTypes;
+
+    @Column("int")
+    visibility: RoomVisibility;
+
+    @Column("int")
+    access: RoomAccess;
+
     @Column("varchar")
     picture_uri: string;
 
     @Column("varchar")
     global_uri: string;
+}
+
+export enum RoomTypes {
+    Temporary,
+    Permanent
+}
+
+export enum RoomVisibility {
+    Public,
+    Private
+}
+
+export enum RoomAccess {
+    All,
+    Staff
 }
