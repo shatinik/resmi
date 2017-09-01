@@ -12,7 +12,6 @@ export default class Packet {
     private handler: string;
     private action: string;
     private _error: string;
-    private _status: number = 200;
     private _token: string;
 
     constructor(handler: string, action: string) {
@@ -34,14 +33,6 @@ export default class Packet {
 
     set error(text: string) {
         this._error = text;
-    }
-
-    get status(): number {
-        return this._status;
-    }
-
-    set status(code: number) {
-        this._status = code;
     }
 
     get items(): any[] {

@@ -25,7 +25,7 @@ export default class Handler {
             if (req.new_token) {
                 packet.token = req.new_token;
             }
-            res.status(packet.status).json(packet);
+            res.status(200).json(packet);
             next();
         }, packet);
     }

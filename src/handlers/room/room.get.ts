@@ -72,7 +72,6 @@ export class RoomGet extends Handler {
                     let room: Room = await roomRepository.findOneById(id);
                     if (!room) {
                         packet.error = `No room with ID ${id}`;
-                        packet.status = 404;
                     } else {
                         packet.first = {};
                         for (let i = 0; i < items.length; i++) {
