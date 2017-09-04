@@ -44,7 +44,7 @@ export class RoomDelete extends Handler {
     public deleteAllByCreatorId(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         let creator_id: number = NaN;
 
-        if (!req.query.creator_id) {
+        if (!req.query.creator) {
             packet.error = 'Not enough data';
         } else {
             creator_id = Number(req.query.creator);
