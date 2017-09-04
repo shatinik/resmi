@@ -9,7 +9,7 @@ import User from '../../models/mysql/User';
 
 export class RoomPut extends Handler {
 
-    public editById(req, res: Response, next: NextFunction, packet: Packet): void {
+    public editById(req, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Обновление информации о комнате по её Id
         */

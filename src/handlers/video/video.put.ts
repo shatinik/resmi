@@ -7,7 +7,7 @@ import log from '../../logger'
 import Packet from '../../packet';
 
 export class VideoPut extends Handler {
-    public editById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public editById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Обновление информации о комнате по её Id
         */

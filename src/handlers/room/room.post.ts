@@ -12,7 +12,7 @@ import {authorized_only} from '../../decorators';
 export class RoomPost extends Handler {
 
     @authorized_only()
-    public addNew(req, res: Response, next: NextFunction, packet: Packet): void {
+    public addNew(req, res: Response, next: NextFunction, packet: Packet<any>): void {
         let user: User = req.user;
         let title: string = '';
         let picture_uri: string = '';

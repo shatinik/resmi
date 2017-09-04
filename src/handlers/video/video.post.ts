@@ -8,7 +8,7 @@ import Packet from '../../packet';
 import Video from '../../models/mysql/Video'
 
 export class VideoPost extends Handler {
-    public addNew(req, res: Response, next: NextFunction, packet: Packet): void {
+    public addNew(req, res: Response, next: NextFunction, packet: Packet<any>): void {
         let playlist_id: number = NaN;
         let link: string = '';
         let service: string = '';

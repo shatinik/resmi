@@ -1,13 +1,13 @@
-class ResponseTemplate {
+class ResponseTemplate<T> {
     kind: string;
-    item: any;
-    items: any[];
+    item: T;
+    items: T[];
     token?: string;
     error?: string;
 }
 
-export default class Packet {
-    private _items: any[];
+export default class Packet<T> {
+    private _items: T[];
 
     private handler: string;
     private action: string;
@@ -35,19 +35,19 @@ export default class Packet {
         this._error = text;
     }
 
-    get items(): any[] {
+    get items(): T[] {
         return this._items;
     }
 
-    set items(items: any[]) {
+    set items(items: T[]) {
         this._items = items;
     }
 
-    set first(item: any) {
+    set first(item: T) {
         this._items = [item];
     }
 
-    get first(): any {
+    get first(): T {
         return this._items[0];
     }
 
@@ -56,7 +56,7 @@ export default class Packet {
     }
 
     toJSON(): object {
-        let res: ResponseTemplate = new ResponseTemplate();
+        let res: ResponseTemplate<any> = new ResponseTemplate();
         res.kind = `${process.env.service}#${this.handler}${this.action}Response`;
         if (!this.isEmpty) {
             res.items = this.items;

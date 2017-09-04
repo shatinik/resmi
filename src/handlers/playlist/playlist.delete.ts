@@ -7,7 +7,7 @@ import Packet from '../../packet';
 import Playlist from '../../models/mysql/Playlist';
 
 export class PlaylistDelete extends Handler {
-    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         let id: number = NaN;
 
         if (!req.query.id) {

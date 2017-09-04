@@ -7,7 +7,7 @@ import * as SocketIO from 'socket.io'
 
 export class RoomSocket extends Handler {
 
-    public test(data: object, packet: Packet, socket: SocketIO.Socket): void {
+    public test(data: object, packet: Packet<any>, socket: SocketIO.Socket): void {
         packet.first = data;
         socket.emit('res', packet.toJSON());
     }

@@ -13,21 +13,21 @@ import {authorized_only} from '../../decorators';
 
 export class AuthGet extends Handler {
     @authorized_only()
-    currentUser(req, res: Response, next: NextFunction, packet: Packet) {
+    currentUser(req, res: Response, next: NextFunction, packet: Packet<any>) {
         packet.first = req.user;
         next(packet);
     }
 
-    check(req, res: Response, next: NextFunction, packet: Packet) {
+    check(req, res: Response, next: NextFunction, packet: Packet<any>) {
         packet.first = !!req.user;
         next(packet);
     }
 
-    vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
+    vkCallback(req: Request, res: Response, next: NextFunction, packet: Packet<any>) {
         Passport.authenticate('vkontakte'/*-token*/, { session: false }, this.authCallback(req, res, next, packet))(req,res,next)
     }
 
-    facebookCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
+    facebookCallback(req: Request, res: Response, next: NextFunction, packet: Packet<any>) {
         Passport.authenticate('facebook-token', { session: false }, this.authCallback(req, res, next, packet))(req,res,next)
     }
 
@@ -36,7 +36,7 @@ export class AuthGet extends Handler {
         Passport.authenticate('vkontakte')(req,res,next);
     }
 
-    logout(req, res: Response, next: NextFunction, packet: Packet) {
+    logout(req, res: Response, next: NextFunction, packet: Packet<any>) {
         if (req.user) {
             req.logout();
             packet.first = 'Ok';
@@ -46,7 +46,7 @@ export class AuthGet extends Handler {
         next(packet);
     }
 
-    private authCallback(req: Request, res: Response, next: NextFunction, packet: Packet) {
+    private authCallback(req: Request, res: Response, next: NextFunction, packet: Packet<any>) {
         return (err, user, info) => {
             if (err) {
                 packet.error = err;

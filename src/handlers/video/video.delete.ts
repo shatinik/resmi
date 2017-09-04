@@ -7,7 +7,7 @@ import Packet from '../../packet';
 import Video from '../../models/mysql/Video';
 
 export class VideoDelete extends Handler {
-    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         let id: number = NaN;
 
         if (!req.query.id) {

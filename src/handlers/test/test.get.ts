@@ -10,7 +10,7 @@ import { Connection } from 'typeorm';
 import connect from '../../mysql'
 
 export class TestGet extends Handler {
-    login(req, res: Response, next: NextFunction, packet: Packet){
+    login(req, res: Response, next: NextFunction, packet: Packet<any>){
         if (!req.user) {
             packet.first = 'You are not logged in';
         } else {
@@ -20,7 +20,7 @@ export class TestGet extends Handler {
         next(packet);
     }
 
-    async webtoken(req, res: Response, next: NextFunction, packet: Packet) {
+    async webtoken(req, res: Response, next: NextFunction, packet: Packet<any>) {
         let JWT = req.query.JWT; // req.header('JWT');
         if (!JWT) {
             packet.error = 'Blank JWT'

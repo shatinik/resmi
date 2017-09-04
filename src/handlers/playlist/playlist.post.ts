@@ -8,7 +8,7 @@ import Packet from '../../packet';
 import Playlist from '../../models/mysql/Playlist'
 
 export class PlaylistPost extends Handler {
-    public addNew(req, res: Response, next: NextFunction, packet: Packet): void {
+    public addNew(req, res: Response, next: NextFunction, packet: Packet<any>): void {
         let room_id: number = NaN;
         let title: string = '';
         let preview_picture_url: string = '';

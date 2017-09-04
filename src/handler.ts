@@ -17,8 +17,8 @@ export default class Handler {
         if (!this.obj) {
             this.obj = new this();
         }
-        let packet = new Packet(handler, action);
-        this.obj[action](req, res, function(packet: Packet) {
+        let packet: Packet<any> = new Packet(handler, action);
+        this.obj[action](req, res, function(packet: Packet<any>) {
             if (packet.error) {
                 log.debug('net', packet.error);
             }
@@ -34,7 +34,7 @@ export default class Handler {
         if (!this.obj) {
             this.obj = new this();
         }
-        let packet = new Packet(handler, action);
+        let packet: Packet<any> = new Packet(handler, action);
         await this.obj[action](data, packet, socket);
     }
 }

@@ -8,7 +8,7 @@ import Video from '../../models/mysql/Video';
 import Playlist from '../../models/mysql/Playlist';
 
 export class VideoGet extends Handler {
-    public getInfoById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public getInfoById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Берётся информация о комнате
             api.site.com/v1/video/getInfoById?id=1&items=title,picture_uri,creator,current_video ...
@@ -49,7 +49,7 @@ export class VideoGet extends Handler {
         }
     }
 
-    public getAllByPlaylistId(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public getAllByPlaylistId(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Возвращается список всех комнат по id создателя
             api.site.com/v1/room/getAllByCreatorId?creator=1&items=title,picture_uri,author,current_video ...

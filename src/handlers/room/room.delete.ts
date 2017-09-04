@@ -8,7 +8,7 @@ import Packet from '../../packet';
 import User from '../../models/mysql/User';
 
 export class RoomDelete extends Handler {
-    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public deleteById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         let id: number = NaN;
 
         if (!req.query.id) {
@@ -41,7 +41,7 @@ export class RoomDelete extends Handler {
         }
     }
 
-    public deleteAllByCreatorId(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public deleteAllByCreatorId(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         let creator_id: number = NaN;
 
         if (!req.query.creator_id) {

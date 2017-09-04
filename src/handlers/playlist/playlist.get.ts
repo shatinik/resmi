@@ -8,7 +8,7 @@ import Packet from '../../packet';
 import Room from '../../models/mysql/Room';
 
 export class PlaylistGet extends Handler {
-    public getInfoById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public getInfoById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Берётся информация о комнате
             api.site.com/v1/playlist/getInfoById?id=1&items=title,picture_uri,creator,current_video ...
@@ -50,7 +50,7 @@ export class PlaylistGet extends Handler {
         }
     }
 
-    public getAllByRoomId(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public getAllByRoomId(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Возвращается список всех комнат по id создателя
             api.site.com/v1/room/getAllByCreatorId?creator=1&items=title,picture_uri,author,current_video ...

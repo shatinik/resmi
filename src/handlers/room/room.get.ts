@@ -9,7 +9,7 @@ import User from '../../models/mysql/User';
 
 export class RoomGet extends Handler {
 
-    public isRoomExist(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public isRoomExist(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Существует ли комната
             api.site.com/v1/room/isRoomExist?id=1
@@ -42,7 +42,7 @@ export class RoomGet extends Handler {
         }
     }
     
-    public getInfoById(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public getInfoById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Берётся информация о комнате
             api.site.com/v1/room/getInfoById?id=1&items=title,picture_uri,creator,current_video ...
@@ -84,7 +84,7 @@ export class RoomGet extends Handler {
         }
     }
 
-    public getAllByCreatorId(req: Request, res: Response, next: NextFunction, packet: Packet): void {
+    public getAllByCreatorId(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {
         /*
             Возвращается список всех комнат по id создателя
             api.site.com/v1/room/getAllByCreatorId?creator=1&items=title,picture_uri,author,current_video ...
