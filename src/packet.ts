@@ -1,21 +1,11 @@
-interface IPacket<T> {
-    kind: string
-    items: T[]
-    error?: string
-    token?: string
-}
+import IPacket from './shared/packet'
 
-export default class Packet<T> implements IPacket<T> {
-    public kind: string;
-    public items: T[] = [];
-    public error: string;
-    public token: string;
-
+export default class Packet<T> extends IPacket<T> {
     constructor(
-        private handler: string,
-        private action: string
+        handler: string,
+        action: string
     ) {
-        this.kind = `${process.env.service}#${this.handler}${this.action}Response`;
+        super(`${process.env.service}#${handler}${action}Response`);
     }
 
     set first(item: T) {
@@ -28,7 +18,7 @@ export default class Packet<T> implements IPacket<T> {
 
     toJSON(): IPacket<T> {
         return {
-            kind: this.kind,
+            kind:  this.kind,
             items: this.items,
             error: this.error,
             token: this.token

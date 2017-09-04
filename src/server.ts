@@ -3,9 +3,8 @@ import * as express from 'express';
 import Application from './application';
 import Routes from './routes'
 import * as socket from 'socket.io'
-import * as git from 'git-rev-sync';
+import * as git from './shared/git';
 import log from './logger';
-import * as _git from './git';
 
 export default class Server {
 
@@ -38,7 +37,7 @@ export default class Server {
             log.info('system', `Last commit: ${git.date()}`);
             log.info('system', `Last commit comment: ${git.message()}`);
             log.info('system', `Build hash: ${git.long()}`);
-            log.info('system', `Current version: ${git.tag()}.${_git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
+            log.info('system', `Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
         }
         catch (e) {
             log.warn('system', `Current branch: <no git repository found>`);
