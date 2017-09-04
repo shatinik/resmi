@@ -1,7 +1,10 @@
 import {Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn} from "typeorm";
+import IRoom from '../../shared/interfaces/models/IRoom'
+import {RoomTypes, RoomVisibility, RoomAccess} from '../../shared/interfaces/models/IRoom'
 import User from './User'
+
 @Entity()
-export default class Room {
+export default class Room extends IRoom {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -12,7 +15,6 @@ export default class Room {
     @OneToOne(type => User)
     @JoinColumn()
     creator: User;
-    creatorId: number; // typeorm don't use this field but it is the hack that hides warning in IDE
 
     @Column("int")
     views: number;
@@ -31,19 +33,4 @@ export default class Room {
 
     @Column("varchar")
     global_uri: string;
-}
-
-export enum RoomTypes {
-    Temporary,
-    Permanent
-}
-
-export enum RoomVisibility {
-    Public,
-    Private
-}
-
-export enum RoomAccess {
-    All,
-    Staff
 }

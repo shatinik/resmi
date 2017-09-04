@@ -1,8 +1,9 @@
 import {Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn} from "typeorm";
+import IVideo from '../../shared/interfaces/models/IVideo'
 import Playlist from './Playlist';
 
 @Entity()
-export default class Video {
+export default class Video extends IVideo {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -10,7 +11,6 @@ export default class Video {
     @OneToOne(type => Playlist)
     @JoinColumn()
     playlist: Playlist;
-    playlistId: number;
 
     @Column("varchar")
     service: string;

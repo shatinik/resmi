@@ -1,7 +1,8 @@
 import {Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import IUser from '../../shared/interfaces/models/IUser'
 
 @Entity()
-export default class User {
+export default class User extends IUser {
 
     @PrimaryGeneratedColumn()
     id: number;
