@@ -1,11 +1,21 @@
-import IPacket from './shared/packet'
+class IPacket<T> {
+    items: T[];
+    error?: string;
+    token?: string;
+    kind: string;
+}
 
-export default class Packet<T> extends IPacket<T> {
+export default class Packet<T> implements IPacket<T> {
+    items: T[];
+    error?: string;
+    token?: string;
+    kind: string;
+
     constructor(
         handler: string,
         action: string
     ) {
-        super(`${process.env.service}#${handler}${action}Response`);
+        this.kind = `${process.env.service}#${handler}${action}Response`;
     }
 
     set first(item: T) {

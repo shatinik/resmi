@@ -3,7 +3,7 @@ import * as express from 'express';
 import Application from './application';
 import Routes from './routes'
 import * as socket from 'socket.io'
-import * as git from './shared/git';
+import * as git from './git';
 import log from './logger';
 
 export default class Server {
