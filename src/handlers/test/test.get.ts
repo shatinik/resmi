@@ -1,13 +1,13 @@
-import Handler from '../../handler';
+import Handler from '../../resmi/handler';
 import { Request, Response, NextFunction  } from 'express'
 import User from '../../models/mysql/User'
 import log from '../../logger'
-import Packet from '../../packet'
+import Packet from '../../resmi/packet'
 import Authenticate from '../../authenticate';
 import { JWTSecret, JWTObject } from '../../authenticate';
 import * as jwt from 'jsonwebtoken'
 import { Connection } from 'typeorm';
-import connect from '../../mysql'
+import connect from '../../resmi/database/mysql'
 
 export class TestGet extends Handler {
     login(req, res: Response, next: NextFunction, packet: Packet<any>){

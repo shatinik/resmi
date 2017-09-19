@@ -1,7 +1,7 @@
 import {connect, Schema, connection} from 'mongoose';
-import log from './logger'
+import log from '../../logger/index'
 
-let config = require(`../../configs/${process.env.NODE_ENV}/mongo`);
+let config = require(`../../../configs/${process.env.NODE_ENV}/mongo`);
 
 connect(config.url);
 

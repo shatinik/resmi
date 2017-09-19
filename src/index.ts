@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'development';
 process.env.service = 'videosos';
-import Server from './server';
+import Server from './resmi/server';
 import Application from './application';
 import log from './logger'
 

@@ -1,10 +1,10 @@
-import Handler from '../../handler';
+import Handler from '../../resmi/handler';
 import { Request, Response, NextFunction  } from 'express'
-import connect from '../../mysql'
+import connect from '../../resmi/database/mysql'
 import { Connection } from 'typeorm';
 import Playlist from '../../models/mysql/Playlist';
 import log from '../../logger'
-import Packet from '../../packet';
+import Packet from '../../resmi/packet';
 import Video from '../../models/mysql/Video'
 
 export class VideoPost extends Handler {

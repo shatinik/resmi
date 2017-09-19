@@ -1,13 +1,13 @@
-import Handler from '../../handler';
+import Handler from '../../resmi/handler';
 import { Request, Response, NextFunction  } from 'express'
-import connect from '../../mysql'
+import connect from '../../resmi/database/mysql'
 import { Connection } from 'typeorm';
 import Room from '../../models/mysql/Room';
 import log from '../../logger'
-import Packet from '../../packet';
+import Packet from '../../resmi/packet';
 import User from '../../models/mysql/User'
-import Word from '../../word'
-import {authorized_only} from '../../decorators';
+import Word from '../../resmi/services/word'
+import {authorized_only} from '../../resmi/decorators';
 
 export class RoomPost extends Handler {
 

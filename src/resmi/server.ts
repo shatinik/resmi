@@ -1,10 +1,10 @@
 import * as http from 'http';
 import * as express from 'express';
-import Application from './application';
+import Application from '../application';
 import Routes from './routes'
 import * as socket from 'socket.io'
-import * as git from './git';
-import log from './logger';
+import * as git from './services/git';
+import log from '../logger/index';
 
 export default class Server {
 
