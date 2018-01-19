@@ -3,7 +3,7 @@ import Packet from './packet'
 import log from './logger'
 
 declare interface Action {
-    (req: Request, res: Response, next: NextFunction, packet: Packet<any>): void;
+    (req: Request, res: Response, next: NextFunction, packet): void;
 }
 
 declare type ActionDecorator = (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<Action>) => TypedPropertyDescriptor<Action> | void;
