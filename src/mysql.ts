@@ -1,5 +1,5 @@
 import {createConnection} from "typeorm";
-import log from '../../logger/index'
+import log from './logger'
 
 interface mysqlConfig {
     host: string
@@ -9,7 +9,7 @@ interface mysqlConfig {
     charset: string
 }
 
-let config: mysqlConfig = require(`../../../configs/${process.env.NODE_ENV}/mysql`);
+let config: mysqlConfig = require(`../configs/${process.env.NODE_ENV}/mysql`);
 let connect = createConnection({
     type: "mysql",
     host: config.host,

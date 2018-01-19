@@ -22,6 +22,7 @@
         "mongoose": "^4.11.6",
         "morgan": "^1.8.2",
         "mysql": "^2.14.1",
+        "nodemon": "^1.14.11",
         "passport": "^0.3.2",
         "passport-facebook-token": "^3.3.0",
         "passport-vkontakte": "^0.3.2",

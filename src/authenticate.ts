@@ -1,11 +1,11 @@
 import * as Passport from 'passport'
 import * as Express from 'express'
 import User from './models/mysql/User'
-import connect from './resmi/database/mysql'
-import log from './logger/index'
+import connect from './mysql'
+import log from './logger'
 import { Connection } from 'typeorm';
 import * as jwt from 'jsonwebtoken'
-import Packet from './resmi/packet';
+import Packet from './packet';
 
 export const JWTSecret = 'SAd23jvbfbaecieajwodjdewfcWDxD';
 

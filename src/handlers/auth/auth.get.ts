@@ -1,14 +1,14 @@
-import Handler from '../../resmi/handler';
+import Handler from '../../handler';
 import * as Passport from 'passport'
 import log from '../../logger'
 import { Request, Response, NextFunction  } from 'express'
-import Packet from '../../resmi/packet'
+import Packet from '../../packet'
 import * as jwt from 'jsonwebtoken'
 import { JWTSecret } from '../../authenticate';
-import connect from '../../resmi/database/mysql'
+import connect from '../../mysql'
 import User from '../../models/mysql/User';
 import { Connection } from 'typeorm';
-import {authorized_only} from '../../resmi/decorators';
+import {authorized_only} from '../../decorators';
 
 
 export class AuthGet extends Handler {

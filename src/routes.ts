@@ -1,5 +1,5 @@
 import * as express  from 'express';
-import log from '../logger/index'
+import log from './logger'
 import * as SocketIO from 'socket.io'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -95,7 +95,7 @@ export default class Routes {
 
     private static loadRoutes(): Routes[] {
         let data: Routes[] = [],
-            parent = path.normalize(__dirname + `/../../${ROUTES_PATH}`);
+            parent = path.normalize(__dirname + `/../${ROUTES_PATH}`);
         log.info('system', `Loading routes from ${parent}`);
         function walkDir(dir) {
             let files = fs.readdirSync(dir);

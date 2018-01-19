@@ -1,5 +1,5 @@
-import Handler from '../../resmi/handler';
-import Packet from '../../resmi/packet';
+import Handler from '../../handler';
+import Packet from '../../packet';
 import * as https from 'https'
 
 const YOUTUBE_API_KEY = 'AIzaSyAbIZfMG1JjJUjkGKuGaohb_u6VX109zl4';

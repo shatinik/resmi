@@ -1,9 +1,9 @@
-import Handler from '../../resmi/handler';
+import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
-import connect from '../../resmi/database/mysql'
+import connect from '../../mysql'
 import { Connection } from 'typeorm';
 import log from '../../logger'
-import Packet from '../../resmi/packet';
+import Packet from '../../packet';
 import Video from '../../models/mysql/Video';
 import Playlist from '../../models/mysql/Playlist';
 

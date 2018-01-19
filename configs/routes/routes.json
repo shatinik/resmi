@@ -54,6 +54,12 @@
         "action": "vkCallback"
     },
     {
+        "uri":"/auth/facebook",
+        "method":"get",
+        "handler":"auth",
+        "action":"facebook"
+    },
+    {
         "uri": "/auth/facebook/callback",
         "method": "get",
         "handler": "auth",
@@ -66,28 +72,10 @@
         "action":"logout"
     },
     {
-        "uri":"/auth/currentUser",
-        "method":"get",
-        "handler":"auth",
-        "action":"currentUser"
-    },
-    {
-        "uri":"/auth/check",
-        "method":"get",
-        "handler":"auth",
-        "action":"check"
-    },
-    {
         "uri":"/test/login",
         "method":"get",
         "handler":"test",
         "action":"login"
-    },
-    {
-        "uri":"/test/webtoken",
-        "method":"get",
-        "handler":"test",
-        "action":"webtoken"
     },
     {
         "uri":"/youtube/getOneById",

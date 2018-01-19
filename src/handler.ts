@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction  } from 'express'
 import Packet from './packet';
-import log from '../logger/index'
+import log from './logger'
 import * as SocketIO from 'socket.io'
 
 export default class Handler {

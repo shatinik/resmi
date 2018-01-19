@@ -1,10 +1,10 @@
-import Handler from '../../resmi/handler';
+import Handler from '../../handler';
 import { Request, Response, NextFunction  } from 'express'
-import connect from '../../resmi/database/mysql'
+import connect from '../../mysql'
 import { Connection } from 'typeorm';
 import Video from '../../models/mysql/Video';
 import log from '../../logger'
-import Packet from '../../resmi/packet';
+import Packet from '../../packet';
 
 export class VideoPut extends Handler {
     public editById(req: Request, res: Response, next: NextFunction, packet: Packet<any>): void {

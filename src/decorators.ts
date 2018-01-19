@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction  } from 'express'
 import Packet from './packet'
-import log from '../logger/index'
+import log from './logger'
 
 declare interface Action {
     (req: Request, res: Response, next: NextFunction, packet: Packet<any>): void;
