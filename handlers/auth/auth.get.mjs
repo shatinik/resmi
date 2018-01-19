@@ -1,8 +1,8 @@
 import Handler from '../../core/handler';
-import * as Passport from 'passport'
+import Passport from 'passport'
 import log from '../../core/logger'
 import Packet from '../../core/packet'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { JWTSecret } from '../../core/authenticate';
 import connect from '../../core/mysql'
 import User from '../../models/mysql/User';
