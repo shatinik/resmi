@@ -3,7 +3,7 @@ import log from './logger/index.mjs'
 import SocketIO from 'socket.io'
 import fs from 'fs'
 import path from 'path'
-import * as mappings from './mappings'
+import * as mappings from '../handlers/mappings'
 import routes from '../configs/routes/routes.json'
 
 const ROUTES_PATH = '/configs/routes/';
