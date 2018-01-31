@@ -1,9 +1,8 @@
-//import {createConnection} from "typeorm";
+import typeorm from "typeorm";
 import log from './logger'
 
 import config from '../configs/development/mysql';
-let connect = undefined;
-/*createConnection({
+let connect = typeorm.createConnection({
     type: "mysql",
     host: config.host,
     port: 3306,
@@ -11,9 +10,8 @@ let connect = undefined;
     password: config.password,
     database: config.database,
     entities: [
-        __dirname + "/models/mysql/*.js",
+        "../models/mysql/*.mjs",
     ],
     autoSchemaSync: true,
 }).catch(error => log.error('typeorm', error));
-*/
 export default connect;
