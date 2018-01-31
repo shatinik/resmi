@@ -85,7 +85,6 @@ export default class Authenticate {
     }
 
     static async checkLogin(req, JWT) {
-        console.log(1);
         req.user = undefined;
         if (JWT) {
             try {

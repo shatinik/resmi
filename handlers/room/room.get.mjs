@@ -1,9 +1,9 @@
 import Handler from '../../core/handler';
-import connect from '../../core/mysql'
-import Room from '../../models/mysql/Room';
+import Room from '../../models/mongo/Room';
 import log from '../../core/logger'
 import Packet from '../../core/packet';
-import User from '../../models/mysql/User';
+import User from '../../models/mongo/User';
+import mongoose from 'mongoose';
 
 export class RoomGet extends Handler {
 
@@ -39,7 +39,7 @@ export class RoomGet extends Handler {
             });
         }
     }
-    
+
     getInfoById(req, res, next, packet) {
         /*
             Берётся информация о комнате
@@ -82,54 +82,36 @@ export class RoomGet extends Handler {
         }
     }
 
-    getAllByCreatorId(req, res, next, packet) {
+    async getAllByCreatorId(req, res, next, packet) {
         /*
             Возвращается список всех комнат по id создателя
             api.site.com/v1/room/getAllByCreatorId?creator=1&items=title,picture_uri,author,current_video ...
         */
-        let creator_id = NaN;
-        let items = [];
 
         if (!req.query.creator || !req.query.items) {
             packet.error = 'Not enough data';
-        } else {
-            creator_id = Number(req.query.creator);
-            items = req.query.items.split(',');
-            if (isNaN(creator_id)) {
-                packet.error = 'ID is NaN';
-            }
         }
-
-        if (packet.error) {
-            next(packet);
+        else if (!mongoose.Types.ObjectId.isValid(req.query.creator)) {
+            packet.error = 'CreatorID is not valid';
         } else {
-            connect.then(async connection => {
-                if (!connection || !connection.isConnected) {
-                    log.error('typeorm', 'DBConnection error');
-                    packet.error = 'Internal error';
-                } else {
-                    let userRepository = connection.getRepository(User);
-                    let creator = await userRepository.findOneById(creator_id);
-                    if (!creator) {
-                        packet.error = `No user with id ${creator_id}`;
-                    } else {
-                        let roomRepository = connection.getRepository(Room);
-                        let rooms = await roomRepository.find({creatorId: creator.id});
-                        if (rooms.length == 0) {
-                            packet.error = `No rooms with creator ${creator_id}`;
-                        } else {
-                            packet.items = [];
-                            for (let i = 0; i < rooms.length; i++) {
-                                packet.items[i] = {};
-                                for (let j = 0; j < items.length; j++) {
-                                    packet.items[i][items[j]] = rooms[i][items[j]]; // insecure. need to filter accessible fields
-                                }
-                            }
-                        }
+            let creator_id = req.query.creator;
+            let items = req.query.items.split(',');
+            let creator = await User.findOne({ _id: creator_id }).populate('Room').exec();
+            packet.items = [];
+            if (!creator) {
+                packet.error = `User ${creator_id} not found`;
+            }
+            else if (!creator.rooms) {
+                packet.error = `There are no rooms of user ${creator_id}`;
+            } else {
+                for (let i = 0; i < creator.rooms.length; i++) {
+                    packet.items[i] = {};
+                    for (let j = 0; j < items.length; j++) {
+                        packet.items[i][items[j]] = creator.rooms[i][items[j]]; // insecure. need to filter accessible fields
                     }
                 }
-                next(packet);
-            })
+            }
         }
+        next(packet);
     }
 }

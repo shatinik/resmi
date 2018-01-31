@@ -31,7 +31,10 @@ let _fields = {
     age: Number,
     id: Number,
     title: String,
-    creator: User,
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     creatorId: Number,
     views: Number,
     type: Number,

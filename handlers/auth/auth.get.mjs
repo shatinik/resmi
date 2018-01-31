@@ -33,6 +33,10 @@ export class AuthGet extends Handler {
         Passport.authenticate('vkontakte')(req,res,next);
     }
 
+    facebook(req, res, next) {
+    //    Passport.authenticate('facebook-token')(req,res,next);
+    }
+
     logout(req, res, next, packet) {
         if (req.user) {
             req.logout();

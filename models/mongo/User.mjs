@@ -35,6 +35,10 @@ let _fields = {
     service: Number,
     service_uid: Number,
     token: String,
+    rooms: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Room'
+    }
 };
 
 class User {
