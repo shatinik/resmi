@@ -76,8 +76,6 @@ export default class Server {
         Server.httpServer.listen(this.port);
     }
 
-
-
     constructor(app, port) {
         this.express = app.express;
         this.port = port;
