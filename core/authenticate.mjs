@@ -1,6 +1,6 @@
 import Passport from 'passport'
 import Express from 'express'
-import User from '../models/mysql/User'
+import User from '../models/mongo/User'
 import connect from './mysql'
 import log from './logger'
 import * as jwt from 'jsonwebtoken'
@@ -12,102 +12,80 @@ import _VKontakteStrategy from 'passport-vkontakte';
 import VKontakteTokenStrategy from 'passport-vkontakte-token';
 import FacebookTokenStrategy  from 'passport-facebook-token';
 let VKontakteStrategy = _VKontakteStrategy.Strategy;
-
-export class JWTObject {
-    //exp
-    //data
-    //iat
+const SERVICE = {
+    VK: 0,
+    FACEBOOK: 1
 }
-
 export default class Authenticate {
-    static VkCallback(accessToken, refreshToken, params, profile, done) {
-        connect.then(async connection => {
-            if (!connection || !connection.isConnected) {
-                log.error('typeorm', 'DBConnection error');
-            } else {
-                let userRepository = connection.getRepository(User);
-                let user = await userRepository.findOne({
-                    service: SERVICE.VK,
-                    service_uid: profile.id
-                });
-                if (!user) {
-                    log.debug('auth', `No user with service ${SERVICE.VK.toString()}(id: ${SERVICE.VK} and service_uid ${profile.id})`);
-                    user = new User();
-                    user.service = SERVICE.VK;
-                    user.service_uid = profile.id;
-                    user.name = ''; //profile.displayName;
-                    // user.email = `${profile.id}@vk.com`;
-                    user.picture_cut_uri = profile.photos[1].value; // photo_100
-                    user.picture_full_uri = profile.photos[2].value; // photo_200
-                    user.created_at = (new Date()).toString();
-                    await userRepository.save(user);
-                    log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.VK}, service_uid=${user.service_uid})`);
-                } else {
-                    user.last_auth = (new Date()).toString();
-                    await userRepository.save(user);
-                }
-                done(null, user)
-            }
+    static async VkCallback(accessToken, refreshToken, params, profile, done) {
+        let user = await User.findOne({
+            service: SERVICE.VK,
+            service_uid: profile.id
         });
+        if (!user) {
+            log.debug('auth', `No user with service ${SERVICE.VK.toString()}(id: ${SERVICE.VK} and service_uid ${profile.id})`);
+            user = new User();
+            user.service = SERVICE.VK;
+            user.service_uid = profile.id;
+            user.name = ''; //profile.displayName;
+            // user.email = `${profile.id}@vk.com`;
+            user.picture_cut_uri = profile.photos[1].value; // photo_100
+            user.picture_full_uri = profile.photos[2].value; // photo_200
+            user.created_at = (new Date()).toString();
+            await user.save();
+            log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.VK}, service_uid=${user.service_uid})`);
+        } else {
+            user.last_auth = (new Date()).toString();
+            await user.save();
+        }
+        done(null, user)
     }
 
-    static FacebookCallback(accessToken, refreshToken, profile, done) {
-        connect.then(async connection => {
-            if (!connection || !connection.isConnected) {
-                log.error('typeorm', 'DBConnection error');
-            } else {
-                let userRepository = connection.getRepository(User);
-                let user = await userRepository.findOne({
-                    service: SERVICE.Facebook,
-                    service_uid: profile.id
-                });
-                if (!user) {
-                    log.debug('auth', `No user with service ${SERVICE.Facebook.toString()}(id: ${SERVICE.Facebook} and service_uid ${profile.id})`);
-                    user = new User();
-                    user.service = SERVICE.Facebook;
-                    user.service_uid = profile.id;
-                    user.name = profile.displayName;
-                    // user.email = profile.emails[0].value;
-                    user.picture_cut_uri = profile.photos[0].value;
-                    user.picture_full_uri = profile.photos[0].value;
-                    user.created_at = (new Date()).toString();
-                    await userRepository.save(user);
-                    log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.Facebook}, service_uid=${user.service_uid})`);
-                } else {
-                    user.last_auth = (new Date()).toString();
-                    await userRepository.save(user);
-                }
-                done(null, user)
-            }
+    static async FacebookCallback(accessToken, refreshToken, profile, done) {
+        let user = await User.findOne({
+            service: SERVICE.Facebook,
+            service_uid: profile.id
         });
+        if (!user) {
+            log.debug('auth', `No user with service ${SERVICE.Facebook.toString()}(id: ${SERVICE.Facebook} and service_uid ${profile.id})`);
+            user = new User();
+            user.service = SERVICE.Facebook;
+            user.service_uid = profile.id;
+            user.name = profile.displayName;
+            // user.email = profile.emails[0].value;
+            user.picture_cut_uri = profile.photos[0].value;
+            user.picture_full_uri = profile.photos[0].value;
+            user.created_at = (new Date()).toString();
+            await user.save();
+            log.debug('auth', `Added new user (id=${user.id}, service=${SERVICE.Facebook}, service_uid=${user.service_uid})`);
+        } else {
+            user.last_auth = (new Date()).toString();
+            await user.save();
+        }
+        done(null, user)
     }
 
     static serialize(user, done) {
-        done(null, user.id);
+        done(null, user._id);
     }
 
     static async deserialize(id) {
-        let connection = await connect;
-        if (!connection || !connection.isConnected) {
-            log.error('typeorm', 'DBConnection error');
+        let user = await User.findOne({_id: id});
+        if (!user) {
+            log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
         } else {
-            let userRepository = connection.getRepository(User);
-            let user = await userRepository.findOneById(id);
-            if (!user) {
-                log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
-            } else {
-                ////////
-                // -> LAST ACTIVITY TIME
-                // UPDATES AT EVERY API CALL
-                // user.last_auth = (new Date()).toString();
-                // await userRepository.save(user);
-                ////////
-                return user;
-            }
+            ////////
+            // -> LAST ACTIVITY TIME
+            // UPDATES AT EVERY API CALL
+            // user.last_auth = (new Date()).toString();
+            // await userRepository.save(user);
+            ////////
+            return user;
         }
     }
 
     static async checkLogin(req, JWT) {
+        console.log(1);
         req.user = undefined;
         if (JWT) {
             try {
@@ -136,10 +114,9 @@ export default class Authenticate {
                             } else {
                                 let token = payload;
                                 let id = Number(token.data);
-                                let userRepository = connection.getRepository(User);
-                                let user = await userRepository.findOne({token: JWT});
+                                let user = await User.findOne({token: JWT});
                                 if (!user) {
-                                    user = await userRepository.findOneById(id);
+                                    user = await User.findOneById(id);
                                     if (!user) {
                                         log.warn('auth', 'Wrong token accepted. User deleted or token is fake(secret key had been stolen?)')
                                     } else {
@@ -149,7 +126,7 @@ export default class Authenticate {
                                 } else {
                                     user.token = req.new_token = jwt.sign({ data: user.id }, JWTSecret, { expiresIn: '24h' });
                                     log.debug('auth', `New token generated for user ${user.id}`);
-                                    await userRepository.save(user);
+                                    await user.save();
                                     req.user = user;
                                 }
                             }
@@ -200,9 +177,9 @@ export default class Authenticate {
             next();
         });
 
-        // app.use(Passport.session());
+        //app.use(Passport.session());
         Passport.serializeUser(Authenticate.serialize);
-        // Passport.deserializeUser(Authenticate.deserialize);
+        //Passport.deserializeUser(Authenticate.deserialize);
 
         Passport.use(new VKontakteStrategy({
                 clientID: 6044938,

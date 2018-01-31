@@ -29,7 +29,6 @@ export class AuthGet extends Handler {
         Passport.authenticate('facebook-token', { session: false }, this.authCallback(req, res, next, packet))(req,res,next)
     }
 
-
     vk(req, res, next) {
         Passport.authenticate('vkontakte')(req,res,next);
     }
@@ -62,14 +61,7 @@ export class AuthGet extends Handler {
                                 expiresIn: '24h',
                             });
                             packet.first = user.token;
-                            let connection = await connect;
-                            if (!connection || !connection.isConnected) {
-                                log.error('typeorm', 'DBConnection error');
-                                packet.error = 'Internal error';
-                            } else {
-                                let userRepository = connection.getRepository(User);
-                                userRepository.save(user);
-                            }
+                            user.save();
                         }
                     });
                 }

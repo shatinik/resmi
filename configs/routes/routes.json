@@ -6,6 +6,12 @@
         "action":"testDB"
     },
     {
+        "uri":"/webtoken",
+        "method":"get",
+        "handler":"test",
+        "action":"webtoken"
+    },
+    {
         "uri":"/room/getInfoById",
         "method":"get",
         "handler":"Room",
