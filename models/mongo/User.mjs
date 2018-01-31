@@ -7,7 +7,7 @@ var options = {
     autoIndex: null, //bool - defaults to null (which means use the connection's autoIndex option)
     bufferCommands: true, //bool - defaults to true
     capped: false, //bool - defaults to false
-    //collection: '', //string - no default
+    collection: 'users', //string - no default
     emitIndexErrors: false, //bool - defaults to false.
     id: true, //bool - defaults to true
     _id: true, //bool - defaults to true
@@ -26,7 +26,6 @@ var options = {
 };
 
 let _fields = {
-    id: Number,
     name: String,
     email: String,
     created_at: String,
@@ -39,7 +38,9 @@ let _fields = {
 };
 
 class User {
-
+    getID() {
+        return this._id;
+    }
 }
 
 export let schema = new Schema(_fields, options).loadClass(User);

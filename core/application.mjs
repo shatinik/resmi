@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import expressSession from 'express-session'
+import {connect as MongoDB} from './mongodb'
 
 export default class Application {
 
@@ -32,6 +33,7 @@ export default class Application {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
         app.use(expressSession({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+        MongoDB();
         Auth.init(app);
     }
 }

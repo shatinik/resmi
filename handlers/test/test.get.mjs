@@ -6,8 +6,21 @@ import Authenticate from '../../core/authenticate';
 import { JWTSecret, JWTObject } from '../../core/authenticate';
 import * as jwt from 'jsonwebtoken'
 import connect from '../../core/mysql'
+import newUser from '../../models/mongo/User'
 
 export class TestGet extends Handler {
+    async testDB(req, res, next, packet) {
+        try {
+            newUser.findOne((error, result) => {
+                packet.first = result.getID();
+                next(packet);
+            })
+        }
+        catch(e) {
+            next(packet);
+        }
+    }
+
     login(req, res, next, packet){
         if (!req.user) {
             packet.first = 'You are not logged in';

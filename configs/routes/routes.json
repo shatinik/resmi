@@ -1,5 +1,11 @@
 [
     {
+        "uri":"/testDB",
+        "method":"get",
+        "handler":"test",
+        "action":"testDB"
+    },
+    {
         "uri":"/room/getInfoById",
         "method":"get",
         "handler":"Room",

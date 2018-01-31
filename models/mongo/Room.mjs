@@ -8,7 +8,7 @@ var options = {
     autoIndex: null, //bool - defaults to null (which means use the connection's autoIndex option)
     bufferCommands: true, //bool - defaults to true
     capped: false, //bool - defaults to false
-    //collection: '', //string - no default
+    collection: 'rooms', //string - no default
     emitIndexErrors: false, //bool - defaults to false.
     id: true, //bool - defaults to true
     _id: true, //bool - defaults to true
