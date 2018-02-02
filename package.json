@@ -24,6 +24,7 @@
         "passport-vkontakte": "^0.3.2",
         "passport-vkontakte-token": "^2.1.0",
         "socket.io": "^2.0.3",
+        "swagger-node-express": "^2.1.3",
         "typeorm": "^0.1.0-alpha.34"
     },
     "devDependencies": {

@@ -10,7 +10,6 @@ import User from '../../models/mysql/User';
 
 
 export class AuthGet extends Handler {
-    //@authorized_only()
     currentUser(req, res, next, packet) {
         packet.first = req.user;
         next(packet);

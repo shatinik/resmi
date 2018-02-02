@@ -56,6 +56,35 @@ export default class Routes {
                 }
             }
         }
+        app.get('/documentation', (req, res, next) => {
+            let body = '';
+            for (let i in routes) {
+                let route = new Route(routes[i]);
+                if (route.method == 'socket') {
+                    body += 'Socket route';
+                } else {
+                    let action = Routes.buildAction(route);
+                    switch (route.method) {
+                        case 'get':
+                            body += 'Get route<br>';
+                            break;
+                        case 'post':
+                            body += 'Post route<br>';
+                            break;
+                        case 'put':
+                            body += 'Put route<br>';
+                            break;
+                        case 'delete':
+                            body += 'Delete route<br>';
+                            break;
+                        default:
+                            body += 'Unknown route<br>';
+                    }
+                }
+            }
+            res.send(body);
+            next();
+        })
         Routes.loadSocket(socket, socketRoutes);
     }
 

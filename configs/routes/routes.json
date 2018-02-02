@@ -6,6 +6,12 @@
         "action":"testDB"
     },
     {
+        "uri":"/room/getIdByName",
+        "method":"get",
+        "handler":"Room",
+        "action":"getIdByName"
+    },
+    {
         "uri":"/webtoken",
         "method":"get",
         "handler":"test",
@@ -49,7 +55,7 @@
     },
     {
         "uri":"/room/addNew",
-        "method":"post",
+        "method":"get",
         "handler":"Room",
         "action":"addNew"
     },
@@ -88,18 +94,6 @@
         "method":"get",
         "handler":"test",
         "action":"login"
-    },
-    {
-        "uri":"/youtube/getOneById",
-        "method":"get",
-        "handler":"youtube",
-        "action":"getOneById"
-    },
-    {
-        "uri":"/youtube/searchByQuery",
-        "method":"get",
-        "handler":"youtube",
-        "action":"searchByQuery"
     },
     {
         "uri":"/room/test",

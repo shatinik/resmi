@@ -4,82 +4,84 @@ import log from '../../core/logger'
 import Packet from '../../core/packet';
 import User from '../../models/mongo/User';
 import mongoose from 'mongoose';
+import Word from '../../core/word'
 
 export class RoomGet extends Handler {
 
-    isRoomExist(req, res, next, packet) {
+    async isRoomExist(req, res, next, packet) {
         /*
             Существует ли комната
             api.site.com/v1/room/isRoomExist?id=1
         */
-        let id = NaN;
-
-        if (!req.query.id) {
+        let roomId = req.query.id;
+        if (!roomId) {
             packet.error = 'Not enough data';
-        } else {
-            id = Number(req.query.id);
-            if (isNaN(id)) {
-                packet.error = 'ID is NaN';
-            }
+        } else if (!mongoose.Types.ObjectId.isValid(RoomID)) {
+            packet.error = 'roomId is not valid';
         }
 
-        if (packet.error) {
-            next(packet);
-        } else {
-            connect.then(async connection => {
-                if (!connection || !connection.isConnected) {
-                    log.error('typeorm', 'DBConnection error');
-                    packet.error = 'Internal error';
-                } else {
-                    let roomRepository = connection.getRepository(Room);
-                    let data = await roomRepository.findOneById(id);
-                    packet.first = !!data;
-                }
-                next(packet);
-            });
+        if (!packet.error) {
+            let data = await Room.findOne({ _id: id });
+            packet.first = !!data;
         }
+        next(packet);
     }
 
-    getInfoById(req, res, next, packet) {
+
+    async getIdByName(req, res, next, packet) {
+        /*
+            Существует ли комната
+            api.site.com/v1/room/isRoomExist?uniqName=1
+        */
+        let uniqName = req.query.uniqName;
+        if (!roomId) {
+            packet.error = 'Not enough data';
+        }
+
+        if (!packet.error) {
+            let room = await Room.findOne({ uniqName: uniqName });
+            if (!room) {
+                packet.error = `No room with uniqName ${uniqName}`;
+            } else {
+                packet.first = {};
+                for (let i = 0; i < items.length; i++) {
+                    packet.first[items[i]] = room[items[i]]; // insecure. need to filter accessible fields
+                }
+            }
+        }
+        
+        next(packet);
+    }
+
+    async getInfoById(req, res, next, packet) {
         /*
             Берётся информация о комнате
             api.site.com/v1/room/getInfoById?id=1&items=title,picture_uri,creator,current_video ...
         */
-        let id = NaN;
-        let items = [];
+        let roomId = req.query.id;
+        let items = req.query.items;
 
-        if (!req.query.id || !req.query.items) {
+        if (!roomId || !items) {
             packet.error = 'Not enough data';
         } else {
-            id = Number(req.query.id);
             items = req.query.items.split(',');
-            if (isNaN(id)) {
-                packet.error = 'ID is NaN';
+            if (!mongoose.Types.ObjectId.isValid(roomId)) {
+                packet.error = 'roomId is not valid';
             }
         }
 
-        if (packet.error) {
-            next(packet)
-        } else {
-            connect.then(async connection => {
-                if (!connection || !connection.isConnected) {
-                    log.error('typeorm', 'DBConnection error');
-                    packet.error = 'Internal error';
-                } else {
-                    let roomRepository = connection.getRepository(Room);
-                    let room = await roomRepository.findOneById(id);
-                    if (!room) {
-                        packet.error = `No room with ID ${id}`;
-                    } else {
-                        packet.first = {};
-                        for (let i = 0; i < items.length; i++) {
-                            packet.first[items[i]] = room[items[i]]; // insecure. need to filter accessible fields
-                        }
-                    }
-                    next(packet);
+        if (!packet.error) {
+            let room = await Room.findOne({ _id: roomId });
+            if (!room) {
+                packet.error = `No room with _id ${roomId}`;
+            } else {
+                packet.first = {};
+                for (let i = 0; i < items.length; i++) {
+                    packet.first[items[i]] = room[items[i]]; // insecure. need to filter accessible fields
                 }
-            });
+            }
         }
+        next(packet);
     }
 
     async getAllByCreatorId(req, res, next, packet) {
@@ -111,6 +113,29 @@ export class RoomGet extends Handler {
                     }
                 }
             }
+        }
+        next(packet);
+    }
+
+    async addNew(req, res, next, packet) {
+        if (!req.query.title) {
+            packet.error = 'Not enough data';
+        }
+
+        //let user = req.user;
+        let user = await User.findOne();
+        let title = req.query.title;
+        let picture_uri = req.query.picture_uri;
+
+        if (!packet.error) {
+            let room = new Room();
+            room.title = title;
+            room.views = 0;
+            room.picture_uri = picture_uri;
+            room.uniqName = Word.generate() + Math.round(Math.random() * 1000);
+            room.creator = user;
+            await room.save();
+            packet.first = 'Ok';
         }
         next(packet);
     }

@@ -6,75 +6,46 @@ import Packet from '../../core/packet';
 import User from '../../models/mysql/User';
 
 export class RoomDelete extends Handler {
-    deleteById(req, res, next, packet) {
-        let id = NaN;
+    async deleteById(req, res, next, packet) {
+        let roomId = req.query.id;
 
-        if (!req.query.id) {
+        if (!roomId) {
             packet.error = 'Not enough data';
-        } else {
-            id = Number(req.query.id);
-            if (isNaN(id)) {
-                packet.error = 'ID is NaN';
+        }
+
+        if (!packet.error) {
+            let room = await Room.findOne({ _id: id });
+            if (!room) {
+                packet.error = `No room with ID ${id}`;
+            } else {
+                await room.remove();
             }
         }
-
-        if (packet.error) {
-            next(packet);
-        } else {
-            connect.then(async connection => {
-                if (!connection || !connection.isConnected) {
-                    log.error('typeorm', 'DBConnection error');
-                    packet.error = 'Internal error';
-                } else {
-                    let roomRepository = connection.getRepository(Room);
-                    let room = await roomRepository.findOneById(id);
-                    if (!room) {
-                        packet.error = `No room with ID ${id}`;
-                    } else {
-                        await roomRepository.remove(room);
-                    }
-                }
-                next(packet);
-            })
-        }
+        next(packet);
     }
 
-    deleteAllByCreatorId(req, res, next, packet) {
-        let creator_id = NaN;
+    async deleteAllByCreatorId(req, res, next, packet) {
+        let creatorId = req.query.creator;
 
         if (!req.query.creator) {
             packet.error = 'Not enough data';
-        } else {
-            creator_id = Number(req.query.creator);
-            if (isNaN(creator_id)) {
-                packet.error = 'ID is NaN';
-            }
+        } else if (!mongoose.Types.ObjectId.isValid(creatorId)) {
+            packet.error = 'creatorId is not valid';
         }
 
-        if (packet.error) {
-            next(packet);
-        } else {
-            connect.then(async connection => {
-                if (!connection || !connection.isConnected) {
-                    log.error('typeorm', 'DBConnection error');
-                    packet.error = 'Internal error';
-                } else {
-                    let userRepository = connection.getRepository(User);
-                    let creator = await userRepository.findOneById(creator_id);
-                    if (!creator) {
-                        packet.error = `No user with id ${creator_id}`;
-                    } else {
-                        let roomRepository = connection.getRepository(Room);
-                        let data = await roomRepository.find({creator: creator});
-                        if (data.length == 0) {
-                            packet.error = `No rooms with creator_id ${creator_id}`;
-                        } else {
-                            await roomRepository.remove(data);
-                        }
-                    }
+        if (!packet.error) {
+            let userRepository = connection.getRepository(User);
+            let creator = await User.findOne({ _id: creator_id }).populate('Room').exec();
+            if (!creator) {
+                packet.error = `No user with id ${creator_id}`;
+            } else if (!creator.rooms) {
+                packet.error = `There are no rooms of user ${creator_id}`;
+            } else{
+                for (let i = 0; i < creator.rooms.length; i++) {
+                    await creator.rooms[i].remove();
                 }
-                next(packet);
-            })
+            }
         }
+        next(packet);
     }
 }

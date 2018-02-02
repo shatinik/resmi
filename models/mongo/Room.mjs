@@ -29,7 +29,7 @@ var options = {
 let _fields = {
     name: String,
     age: Number,
-    id: Number,
+    uniqName: String,
     title: String,
     creator: {
         type: Schema.Types.ObjectId,
@@ -41,7 +41,6 @@ let _fields = {
     visibility: Boolean,
     access: Boolean,
     picture_uri: String,
-    global_uri: String,
 };
 
 class Room {
