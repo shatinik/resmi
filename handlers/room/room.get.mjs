@@ -34,7 +34,7 @@ export class RoomGet extends Handler {
             api.site.com/v1/room/isRoomExist?uniqName=1
         */
         let uniqName = req.query.uniqName;
-        if (!roomId) {
+        if (!uniqName) {
             packet.error = 'Not enough data';
         }
 
@@ -70,7 +70,7 @@ export class RoomGet extends Handler {
         if (!packet.error) {
             let room = await Room.findOne({ uniqName: uniqName });
             if (!room) {
-                packet.error = `No room with uniqName ${roomId}`;
+                packet.error = `No room with uniqName ${uniqName}`;
             } else {
                 packet.first = {};
                 for (let i = 0; i < items.length; i++) {
