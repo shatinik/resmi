@@ -6,6 +6,12 @@
         "action":"testDB"
     },
     {
+        "uri":"/version",
+        "method":"get",
+        "handler":"test",
+        "action":"version"
+    },
+    {
         "uri":"/room/getIdByName",
         "method":"get",
         "handler":"Room",

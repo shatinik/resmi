@@ -7,8 +7,28 @@ import { JWTSecret } from '../../core/authenticate';
 import jwt from 'jsonwebtoken'
 import connect from '../../core/mysql'
 import newUser from '../../models/mongo/User'
+import * as git from '../../core/git';
 
 export class TestGet extends Handler {
+    async version(req, res, next, packet) {
+        packet.items = [{}];
+        try {
+            packet.first[`Current branch`] = `${git.branch('/home/sam/resmi')}`;
+            packet.first[`Last commit`] = `${git.date()}`;
+            packet.first[`Last commit comment`] = `${git.message()}`;
+            packet.first[`Build hash`] = `${git.long('/home/sam/resmi')}`;
+            packet.first[`Current version`] = `${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`;
+        }
+        catch (e) {
+            packet.first[`Current branch`] = `<no git repository found>`;
+            packet.first[`Last commit`] = `${new Date(0)}`;
+            packet.first[`Last commit comment`] = `<no git repository found>`;
+            packet.first[`Build hash`] = `<no git repository found>`;
+            packet.first[`Current version`] = `<no git repository found>}`;
+        }
+        next(packet);
+    }
+
     async testDB(req, res, next, packet) {
         try {
             newUser.findOne((error, result) => {
