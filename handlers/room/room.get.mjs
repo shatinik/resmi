@@ -53,6 +53,40 @@ export class RoomGet extends Handler {
         next(packet);
     }
 
+    async getInfoByName(req, res, next, packet) {
+        /*
+            Берётся информация о комнате
+            api.site.com/v1/room/getInfoById?id=1&items=title,picture_uri,creator,current_video ...
+        */
+        let uniqName = req.query.uniqName;
+        let items = req.query.items;
+
+        if (!uniqName || !items) {
+            packet.error = 'Not enough data';
+        } else {
+            items = req.query.items.split(',');
+        }
+
+        if (!packet.error) {
+            let room = await Room.findOne({ uniqName: uniqName });
+            if (!room) {
+                packet.error = `No room with uniqName ${roomId}`;
+            } else {
+                packet.first = {};
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i] == '_id') {
+                        if (req.user && req.user == room.creator) {
+                            packet.first['_id'] = room._id;
+                        }
+                    } else {
+                        packet.first[items[i]] = room[items[i]]; // insecure. need to filter accessible fields
+                    }
+                }
+            }
+        }
+        next(packet);
+    }
+
     async getInfoById(req, res, next, packet) {
         /*
             Берётся информация о комнате

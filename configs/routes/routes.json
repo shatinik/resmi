@@ -12,6 +12,12 @@
         "action":"getIdByName"
     },
     {
+        "uri":"/room/getInfoByName",
+        "method":"get",
+        "handler":"Room",
+        "action":"getInfoByName"
+    },
+    {
         "uri":"/webtoken",
         "method":"get",
         "handler":"test",
