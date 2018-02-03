@@ -39,11 +39,11 @@ let _fields = {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
-    views: Number,
+    viewsCount: Number,
     type: Number,
     visibility: Boolean,
     access: Boolean,
-    picture_uri: String,
+    picture_uri: String
 };
 
 class Room {

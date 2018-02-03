@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken'
 import { JWTSecret } from '../../core/authenticate';
 import connect from '../../core/mysql'
 import User from '../../models/mysql/User';
-//import {authorized_only} from '../../decorators';
 
 
 export class AuthGet extends Handler {

@@ -18,6 +18,12 @@
         "action":"getInfoByName"
     },
     {
+        "uri":"/room/list",
+        "method":"get",
+        "handler":"Room",
+        "action":"list"
+    },
+    {
         "uri":"/webtoken",
         "method":"get",
         "handler":"test",

@@ -16,11 +16,14 @@ export class RoomDelete extends Handler {
         }
 
         if (!packet.error) {
-            let room = await Room.findOne({ _id: id });
+            let room = await Room.findOne({ _id: roomId }).populate('creator').exec();
             if (!room) {
-                packet.error = `No room with ID ${id}`;
+                packet.error = `No room with ID ${roomId}`;
             } else {
+                room.creator.rooms.remove(room);
+                await room.creator.save();
                 await room.remove();
+                packet.first = 'Ok';
             }
         }
         next(packet);
@@ -36,15 +39,25 @@ export class RoomDelete extends Handler {
         }
 
         if (!packet.error) {
-            let userRepository = connection.getRepository(User);
-            let creator = await User.findOne({ _id: creator_id }).populate('Room').exec();
+            let creator = await User.findOne({ _id: creatorId }).populate('rooms').exec();
             if (!creator) {
-                packet.error = `No user with id ${creator_id}`;
-            } else if (!creator.rooms) {
-                packet.error = `There are no rooms of user ${creator_id}`;
+                packet.error = `No user with id ${creatorId}`;
+            } else if (!creator.rooms || creator.rooms.length == 0) {
+                packet.error = `There are no rooms of user ${creatorId}`;
+                // Also will executed when all ObjectId`s are refering to nothing
             } else{
                 for (let i = 0; i < creator.rooms.length; i++) {
-                    await creator.rooms[i].remove();
+                    // Not iterating at ObjectId`s that are referring to nothing
+                    try {
+                        await creator.rooms[i].remove();
+                    } catch (e) {
+                        packet.error = `There are no room with _id ${creator.rooms[i].depopulate()}`;
+                    }
+                }
+                if (!packet.error) {
+                    creator.rooms = [];
+                    await creator.save();
+                    packet.first = 'Ok';
                 }
             }
         }

@@ -16,7 +16,7 @@ export class RoomGet extends Handler {
         let roomId = req.query.id;
         if (!roomId) {
             packet.error = 'Not enough data';
-        } else if (!mongoose.Types.ObjectId.isValid(roomID)) {
+        } else if (!mongoose.Types.ObjectId.isValid(roomId)) {
             packet.error = 'roomId is not valid';
         }
 
@@ -27,6 +27,35 @@ export class RoomGet extends Handler {
         next(packet);
     }
 
+    async list(req, res, next, packet) {
+        /*
+            Существует ли комната
+            api.site.com/v1/room/list?id=1
+        */
+
+        let items = req.query.items;
+        if (!items) {
+            packet.error = `Not enough data`;
+        } else {
+            let rooms = await Room.find().limit(10).exec();
+            if (!rooms) {
+                packet.error = `No rooms in database`;
+            } else {
+                items = items.split(',');
+                packet.items = [];
+                for (let i = 0; i < rooms.length; i++) {
+                    packet.items[i] = {};
+                    for (let j = 0; j < items.length; j++) {
+                        packet.items[i][items[j]] = rooms[i][items[j]]; // insecure. need to filter accessible fields
+                    }
+                }
+
+            }
+        }
+
+        next(packet);
+    }
+
 
     async getIdByName(req, res, next, packet) {
         /*
@@ -34,6 +63,7 @@ export class RoomGet extends Handler {
             api.site.com/v1/room/isRoomExist?uniqName=1
         */
         let uniqName = req.query.uniqName;
+
         if (!uniqName) {
             packet.error = 'Not enough data';
         }
@@ -43,13 +73,11 @@ export class RoomGet extends Handler {
             if (!room) {
                 packet.error = `No room with uniqName ${uniqName}`;
             } else {
-                packet.first = {};
-                for (let i = 0; i < items.length; i++) {
-                    packet.first[items[i]] = room[items[i]]; // insecure. need to filter accessible fields
-                }
+                packet.items = [{}];
+                packet.first['_id'] = room['_id']; // insecure. need to filter accessible fields
             }
         }
-        
+
         next(packet);
     }
 
@@ -132,14 +160,14 @@ export class RoomGet extends Handler {
         } else {
             let creator_id = req.query.creator;
             let items = req.query.items.split(',');
-            let creator = await User.findOne({ _id: creator_id }).populate('Room').exec();
-            packet.items = [];
+            let creator = await User.findOne({ _id: creator_id }).populate('rooms').exec();
             if (!creator) {
                 packet.error = `User ${creator_id} not found`;
             }
             else if (!creator.rooms) {
                 packet.error = `There are no rooms of user ${creator_id}`;
             } else {
+                packet.items = [];
                 for (let i = 0; i < creator.rooms.length; i++) {
                     packet.items[i] = {};
                     for (let j = 0; j < items.length; j++) {
@@ -147,29 +175,6 @@ export class RoomGet extends Handler {
                     }
                 }
             }
-        }
-        next(packet);
-    }
-
-    async addNew(req, res, next, packet) {
-        if (!req.query.title) {
-            packet.error = 'Not enough data';
-        }
-
-        //let user = req.user;
-        let user = await User.findOne();
-        let title = req.query.title;
-        let picture_uri = req.query.picture_uri;
-
-        if (!packet.error) {
-            let room = new Room();
-            room.title = title;
-            room.views = 0;
-            room.picture_uri = picture_uri;
-            room.uniqName = Word.generate() + Math.round(Math.random() * 1000);
-            room.creator = user;
-            await room.save();
-            packet.first = 'Ok';
         }
         next(packet);
     }
