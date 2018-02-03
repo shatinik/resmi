@@ -11,6 +11,8 @@ export class RoomDelete extends Handler {
 
         if (!roomId) {
             packet.error = 'Not enough data';
+        } else if (!mongoose.Types.ObjectId.isValid(roomId)) {
+            packet.error = 'roomId is not valid';
         }
 
         if (!packet.error) {

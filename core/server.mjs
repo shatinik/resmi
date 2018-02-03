@@ -26,7 +26,7 @@ export default class Server {
     static hello(port) {
         console.log('====================================================INFO====================================================');
 
-        log.info('system', `Framework name: resmi(typescript)`);
+        log.info('system', `Framework name: resmi`);
         try {
             log.info('system', `Current branch: ${git.branch('/home/sam/resmi')}`);
             log.info('system', `Last commit: ${git.date()}`);

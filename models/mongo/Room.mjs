@@ -35,7 +35,10 @@ let _fields = {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    creatorId: Number,
+    members: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     views: Number,
     type: Number,
     visibility: Boolean,

@@ -16,12 +16,12 @@ export class RoomGet extends Handler {
         let roomId = req.query.id;
         if (!roomId) {
             packet.error = 'Not enough data';
-        } else if (!mongoose.Types.ObjectId.isValid(RoomID)) {
+        } else if (!mongoose.Types.ObjectId.isValid(roomID)) {
             packet.error = 'roomId is not valid';
         }
 
         if (!packet.error) {
-            let data = await Room.findOne({ _id: id });
+            let data = await Room.findOne({ _id: roomId });
             packet.first = !!data;
         }
         next(packet);
