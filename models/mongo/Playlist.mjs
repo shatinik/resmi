@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
-import {schema as User} from './User'
-import {schema as VideoPlayer} from './Videoplayer'
-import {schema as Video} from './Video'
+import {model as User} from './User'
+import {model as Room} from './Room'
 
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
@@ -29,29 +28,19 @@ var options = {
 };
 
 let _fields = {
-    uniqName: String,
-    title: String,
     creator: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    pictureURL: String,
-    currentPlaylist: {
-        type: Schema.Types.ObjectId,
-        ref: 'Playlist'
-    },
-    historyPlaylist: [Video],
-    members: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
+    title: String,
     type: Number,
-    viewers: Number,
-    totalViewers: Number,
-    videoplayer: VideoPlayer,
+    videos: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Room'
+    }],
 };
 
-class Room {
+class Playlist {
     getType() {
         switch(this.type) {
             case 1:
@@ -66,6 +55,6 @@ class Room {
     }
 }
 
-export let schema = new Schema(_fields, options).loadClass(Room);
-export let model = mongoose.model('Room', schema);
+export let schema = new Schema(_fields, options).loadClass(Playlist);
+export let model = mongoose.model('Playlist', schema);
 export default model;

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import {schema as User} from './User'
-import {schema as VideoPlayer} from './Videoplayer'
-import {schema as Video} from './Video'
+import User from './User'
 
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
@@ -10,7 +9,7 @@ var options = {
     autoIndex: null, //bool - defaults to null (which means use the connection's autoIndex option)
     bufferCommands: true, //bool - defaults to true
     capped: false, //bool - defaults to false
-    collection: 'rooms', //string - no default
+    collection: 'sociallinks', //string - no default
     emitIndexErrors: false, //bool - defaults to false.
     id: true, //bool - defaults to true
     _id: true, //bool - defaults to true
@@ -29,43 +28,15 @@ var options = {
 };
 
 let _fields = {
-    uniqName: String,
-    title: String,
-    creator: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    pictureURL: String,
-    currentPlaylist: {
-        type: Schema.Types.ObjectId,
-        ref: 'Playlist'
-    },
-    historyPlaylist: [Video],
-    members: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    type: Number,
-    viewers: Number,
-    totalViewers: Number,
-    videoplayer: VideoPlayer,
+    User: User,
+    Social: String,
+    SocialID: String
 };
 
-class Room {
-    getType() {
-        switch(this.type) {
-            case 1:
-                return 'public';
-            case 2:
-                return 'private';
-            case 3:
-                return 'test';
-            default:
-                return 'Unknown type'
-        }
-    }
+class SocialLink {
+
 }
 
-export let schema = new Schema(_fields, options).loadClass(Room);
-export let model = mongoose.model('Room', schema);
+export let schema = new Schema(_fields, options).loadClass(SocialLink);
+export let model = mongoose.model('SocialLink', schema);
 export default model;

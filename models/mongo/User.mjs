@@ -38,6 +38,10 @@ let _fields = {
     rooms: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Room'
+    }],
+    favorites: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Room'
     }]
 };
 
