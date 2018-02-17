@@ -183,7 +183,7 @@ export default class Authenticate {
         Passport.use(new VKontakteStrategy({
                 clientID: 6044938,
                 clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
-                callbackURL: "/auth/vk/callback",
+                callbackURL: "http://app.local:3000/auth/vk",
                 profileFields: ['photo_200', 'photo_100']
             },
             Authenticate.VkCallback
