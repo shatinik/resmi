@@ -25,7 +25,7 @@ var options = {
     collation: null, //object - defaults to null (which means use no collation)
 };
 
-let _fields = {
+export let _fields = {
     Video: {
         type: Schema.Types.ObjectId,
         ref: 'Video'

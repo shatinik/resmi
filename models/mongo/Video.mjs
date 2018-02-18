@@ -25,7 +25,7 @@ var options = {
     collation: null, //object - defaults to null (which means use no collation)
 };
 
-let _fields = {
+export let _fields = {
     Title: String,
     Service: Number,
     ExternalID: String,
@@ -40,4 +40,5 @@ class Video {
 }
 
 export let schema = new Schema(_fields, options).loadClass(Video);
+export let model = mongoose.model('Video', schema);
 export default schema;
