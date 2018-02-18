@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import {schema as User} from './User'
-import {schema as VideoPlayer} from './Videoplayer'
-import {schema as Video} from './Video'
+import {_fields as Videoplayer} from './Videoplayer'
+import {_fields as Video} from './Video'
 
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
@@ -48,7 +48,7 @@ let _fields = {
     type: Number,
     viewers: Number,
     totalViewers: Number,
-    videoplayer: VideoPlayer,
+    videoplayer: Videoplayer,
 };
 
 class Room {
