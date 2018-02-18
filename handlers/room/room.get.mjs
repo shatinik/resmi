@@ -1,10 +1,13 @@
 import Handler from '../../core/handler';
 import Room from '../../models/mongo/Room';
+import {model as Video} from '../../models/mongo/Video';
 import log from '../../core/logger'
 import Packet from '../../core/packet';
 import User from '../../models/mongo/User';
 import mongoose from 'mongoose';
 import Word from '../../core/word'
+
+const ObjectId = mongoose.Types.ObjectId;
 
 export class RoomGet extends Handler {
 
@@ -96,18 +99,26 @@ export class RoomGet extends Handler {
         }
 
         if (!packet.error) {
-            let room = await Room.findOne({ uniqName: uniqName });
+            let room = await Room.findOne({ uniqName: uniqName }).populate('videoplayer.Video');
             if (!room) {
                 packet.error = `No room with uniqName ${uniqName}`;
             } else {
                 packet.first = {};
                 for (let i = 0; i < items.length; i++) {
-                    if (items[i] == '_id') {
-                        if (req.user && req.user == room.creator) {
-                            packet.first['_id'] = room._id;
+                    switch(items[i]) {
+                        case '_id': {
+                            if (req.user && req.user == room.creator) {
+                                packet.first['_id'] = room._id;
+                            }
+                            break;
                         }
-                    } else {
-                        packet.first[items[i]] = room[items[i]]; // insecure. need to filter accessible fields
+                        case 'videoplayer': {
+                            room = await room.populate('videoplayer.Video');
+                            packet.first['videoplayer'] = await room.videoplayer;
+                        }
+                        default: {
+                            packet.first[items[i]] = room[items[i]];
+                        }
                     }
                 }
             }
