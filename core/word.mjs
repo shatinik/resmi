@@ -1,5 +1,60 @@
-const c = ['l','p','b','t','d','m','k','g','n','f','v','s','c','z','j','ch','r','h','w','ng','th'];
-const v = ['a','ey','e','o','or','u','ir','oo','i','oy','ow','re','wer','are','iew','ye','you'];
+const c = ['l', 'p', 'b', 't', 'd', 'm', 'k', 'g', 'n', 'f', 'v', 's', 'c', 'z', 'j', 'ch', 'r', 'h', 'w', 'ng', 'th'];
+const v = ['a', 'ey', 'e', 'o', 'or', 'u', 'ir', 'oo', 'i', 'oy', 'ow', 're', 'wer', 'are', 'iew', 'ye', 'you'];
+
+﻿const Words = [
+    'yellow',
+    'blue',
+    'red',
+    'pink',
+    'green',
+    'violet',
+    'orange',
+    'sunny',
+    'skye',
+    'lemon',
+    'maxi',
+    'cisco',
+    'fidelio',
+    'moonshine',
+    'tweets',
+    'minnie',
+    'silly',
+    'pearl',
+    'penny',
+    'pirate',
+    'molly',
+    'ozzy',
+    'candy',
+    'tweety',
+    'belle',
+    'mickey',
+    'april',
+    'bibi',
+    'kiwi',
+    'willy',
+    'sweetie',
+    'tootsie',
+    'jaybird',
+    'calypso',
+    'yoda',
+    'picasso',
+    'pandora',
+    'goldie',
+    'kelly',
+    'kio',
+    'vanilla',
+    'sophie',
+    'skittles',
+    'peanut',
+    'tookie',
+    'clementine',
+    'rosie',
+    'cosmo',
+    'flash',
+    'melody'
+];
+const OtherSymbolsCount = 3;
+const OtherSymbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 export default class Word {
     static genPattern(n) {
@@ -23,8 +78,25 @@ export default class Word {
         return word;
     }
 
-    static generate() {
+    static generateOld() {
         let length = 2 + (Math.floor(Math.random() * 10) ? 1 : 0) + (Math.floor(Math.random() * 10) ? 1 : 0);
-        return Word.genWord(Word.genPattern(length));
+        return Word.genWord(Word.genPattern(length)) + Math.round(Math.random() * 1000);;
+    }
+
+    static generate() {
+        return Word.generateRoomUniqName(Words, OtherSymbols, OtherSymbolsCount)
+    }
+
+    static generateRoomUniqName(Words, OtherSymbols, OtherSymbolsCount) {
+        let word = Words[Math.floor(Math.random() * Words.length)];
+        let randomPart = '';
+
+        for (let i = 0; i < OtherSymbolsCount; i++) {
+            let randomPos = Math.floor(Math.random() * OtherSymbols.length);
+            randomPart += OtherSymbols.substring(randomPos, randomPos + 1);
+        }
+
+        let FinalWord = `${word}-${randomPart}`;
+        return FinalWord;
     }
 }

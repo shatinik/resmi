@@ -2,6 +2,8 @@ import mongoose from 'mongoose'
 import {schema as User} from './User'
 import {_fields as Videoplayer} from './Videoplayer'
 import {_fields as Video} from './Video'
+import {Playlist} from './Playlist'
+import util from 'util';
 
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
@@ -52,6 +54,23 @@ let _fields = {
 };
 
 class Room {
+    init(title, pictureURL, uniqName, creator, type) {
+        this.title = title;
+        this.pictureURL = pictureURL;
+        this.uniqName = uniqName;
+        this.creator = creator;
+        if (!isNaN(type)) {
+            this.type = type;
+        } else {
+            throw 'Type is NaN';
+        }
+        this.currentPlaylist = (new Playlist()).init(creator, type, [], title);
+        this.historyPlaylist = [];
+        this.members = [];
+        this.viewers = 0;
+        this.totalViewers = 0;
+        this.videoplayer = {};
+    }
     getType() {
         switch(this.type) {
             case 1:

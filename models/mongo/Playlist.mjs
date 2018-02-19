@@ -36,11 +36,18 @@ let _fields = {
     type: Number,
     videos: [{
         type: Schema.Types.ObjectId,
-        ref: 'Room'
+        ref: 'Video'
     }],
 };
 
-class Playlist {
+export class Playlist {
+    init(creator, type, videos, title) {
+        this.creator = creator;
+        this.type = type;
+        this.videos = [];
+        this.title = title;
+    }
+
     getType() {
         switch(this.type) {
             case 1:

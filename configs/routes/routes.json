@@ -73,7 +73,7 @@
     },
     {
         "uri":"/room/addNew",
-        "method":"get",
+        "method":"post",
         "handler":"Room",
         "action":"addNew"
     },

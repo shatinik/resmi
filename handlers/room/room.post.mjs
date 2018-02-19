@@ -7,27 +7,31 @@ import Word from '../../core/word'
 
 export class RoomPost extends Handler {
     async addNew(req, res, next, packet) {
-        if (!req.body.title) {
+        if (!req.user) {
+            // create user
+            req.user = await User.findOne(); // the kostyl. fix it
+        }
+        if (!req.body.title || !req.body.type) {
             packet.error = 'Not enough data';
         }
 
-        //let user = req.user;
-        let user = await User.findOne();
         let title = req.body.title;
-        let picture_uri = req.body.picture_uri;
-
+        let creator = await User.findOne();
+        let pictureURL = "";
+        let type = req.body.type;
 
         if (!packet.error) {
-            let room = new Room();
-            room.title = title;
-            room.views = 0;
-            room.picture_uri = picture_uri;
-            room.uniqName = Word.generate() + Math.round(Math.random() * 1000);
-            room.creator = user;
-            await room.save();
-            user.rooms.push(room);
-            await user.save();
-            packet.first = 'Ok';
+            let uniqName = Word.generate();
+            try {
+                let room = new Room();
+                room.init(title, pictureURL, uniqName, creator, type);
+                await room.save();
+                creator.rooms.push(room);
+                await creator.save();
+                packet.first = 'Ok';
+            } catch (e) {
+                packet.error = e;
+            }
         }
         next(packet);
     }
