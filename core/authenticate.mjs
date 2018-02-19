@@ -10,7 +10,7 @@ export const JWTSecret = 'SAd23jvbfbaecieajwodjdewfcWDxD';
 
 import _VKontakteStrategy from 'passport-vkontakte';
 import VKontakteTokenStrategy from 'passport-vkontakte-token';
-import FacebookTokenStrategy  from 'passport-facebook-token';
+import FacebookTokenStrategy from 'passport-facebook-token';
 let VKontakteStrategy = _VKontakteStrategy.Strategy;
 const SERVICE = {
     VK: 0,
@@ -70,7 +70,7 @@ export default class Authenticate {
     }
 
     static async deserialize(id) {
-        let user = await User.findOne({_id: id});
+        let user = await User.findOne({ _id: id });
         if (!user) {
             log.debug('auth', `No user with ID ${id} and service ${SERVICE.VK.toString()}(id: ${SERVICE.VK}`);
         } else {
@@ -85,54 +85,39 @@ export default class Authenticate {
     }
 
     static async checkLogin(req, JWT) {
-        req.user = undefined;
+        //req.user = undefined;
         if (JWT) {
             try {
                 let payload = jwt.verify(JWT, JWTSecret);
-                if (typeof payload === 'string') {
-                    log.error('auth', payload);
+                let token = payload;
+                let id = Number(token.data);
+                if (isNaN(id)) {
+                    log.error('auth', `Wrong data written to JWT ${token} when number expected`);
                 } else {
-                    let token = payload;
-                    let id = Number(token.data);
-                    if (isNaN(id)) {
-                        log.error('auth', `Wrong data written to JWT ${token} when number expected`);
-                    } else {
-                        req.user = await Authenticate.deserialize(id);
-                    }
+                    req.user = await Authenticate.deserialize(id);
                 }
             } catch (e) {
-                if (e instanceof jwt.TokenExpiredError) {
-                    let connection = await connect;
-                    if (!connection || !connection.isConnected) {
-                        log.error('typeorm', 'DBConnection error');
-                    } else {
-                        try {
-                            let payload = jwt.verify(JWT, JWTSecret, {ignoreExpiration: true});
-                            if (typeof payload === 'string') {
-                                log.error('auth', payload);
-                            } else {
-                                let token = payload;
-                                let id = Number(token.data);
-                                let user = await User.findOne({token: JWT});
-                                if (!user) {
-                                    user = await User.findOneById(id);
-                                    if (!user) {
-                                        log.warn('auth', 'Wrong token accepted. User deleted or token is fake(secret key had been stolen?)')
-                                    } else {
-                                        log.warn('auth', 'Wrong token accepted. It is old or fake(secret key had been stolen?)')
-                                        // Старым он может быть только в случае, если в базе хранится только токен для одной последней сессии. Иначе - однозначно фейк
-                                    }
-                                } else {
-                                    user.token = req.new_token = jwt.sign({ data: user.id }, JWTSecret, { expiresIn: '24h' });
-                                    log.debug('auth', `New token generated for user ${user.id}`);
-                                    await user.save();
-                                    req.user = user;
-                                }
-                            }
-                        } catch (e) {
-                            log.error('auth', `${e} from ${req.connection.remoteAddress}`);
+                try {
+                    let payload = jwt.verify(JWT, JWTSecret, { ignoreExpiration: true });
+                    let token = payload;
+                    let id = Number(token.data);
+                    let user = await User.findOne({ token: JWT });
+                    if (!user) {
+                        user = await User.findOne({ _id: id });
+                        if (!user) {
+                            log.warn('auth', 'Wrong token accepted. User deleted or token is fake(secret key had been stolen?)')
+                        } else {
+                            log.warn('auth', 'Wrong token accepted. It is old or fake(secret key had been stolen?)')
+                            // Старым он может быть только в случае, если в базе хранится только токен для одной последней сессии. Иначе - однозначно фейк
                         }
+                    } else {
+                        user.token = req.new_token = jwt.sign({ data: user.id }, JWTSecret, { expiresIn: '24h' });
+                        log.debug('auth', `New token generated for user ${user.id}`);
+                        await user.save();
+                        req.user = user;
                     }
+                } catch (e) {
+                    log.error('auth', `${e} from ${req.connection.remoteAddress}`);
                 }
                 log.debug('auth', `${e} from ${req.connection.remoteAddress}`);
             }
@@ -181,25 +166,25 @@ export default class Authenticate {
         //Passport.deserializeUser(Authenticate.deserialize);
 
         Passport.use(new VKontakteStrategy({
-                clientID: 6044938,
-                clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
-                callbackURL: "http://app.local:3000/auth/vk",
-                profileFields: ['photo_200', 'photo_100']
-            },
+            clientID: 6044938,
+            clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
+            callbackURL: "http://app.local:3000/auth/vk",
+            profileFields: ['photo_200', 'photo_100']
+        },
             Authenticate.VkCallback
         ));
         Passport.use(new VKontakteTokenStrategy({
-                clientID: 6044938,
-                clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
-                profileFields: ['photo_200', 'photo_100']
-            },
+            clientID: 6044938,
+            clientSecret: 'PIxsTUbnEn2WhVj3dqcw',
+            profileFields: ['photo_200', 'photo_100']
+        },
             Authenticate.VkCallback
         ));
         Passport.use(new FacebookTokenStrategy({
-                clientID: 320501398380272,
-                clientSecret: '52721c304bebcc5380ef47e4b2e28432',
-                profileFields: ['id', 'displayName', 'photos', 'emails', 'name']
-            },
+            clientID: 320501398380272,
+            clientSecret: '52721c304bebcc5380ef47e4b2e28432',
+            profileFields: ['id', 'displayName', 'photos', 'emails', 'name']
+        },
             Authenticate.FacebookCallback
         ));
     }
