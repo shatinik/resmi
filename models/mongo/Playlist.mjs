@@ -41,7 +41,7 @@ let _fields = {
 };
 
 export class Playlist {
-    init(creator, type, videos, title) {
+    _init(creator, type, videos, title) {
         this.creator = creator;
         this.type = type;
         this.videos = [];

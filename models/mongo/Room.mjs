@@ -54,7 +54,7 @@ let _fields = {
 };
 
 class Room {
-    init(title, pictureURL, uniqName, creator, type) {
+    _init(title, pictureURL, uniqName, creator, type) {
         this.title = title;
         this.pictureURL = pictureURL;
         this.uniqName = uniqName;
@@ -64,7 +64,7 @@ class Room {
         } else {
             throw 'Type is NaN';
         }
-        this.currentPlaylist = (new Playlist()).init(creator, type, [], title);
+        this.currentPlaylist = (new Playlist())._init(creator, type, [], title);
         this.historyPlaylist = [];
         this.members = [];
         this.viewers = 0;

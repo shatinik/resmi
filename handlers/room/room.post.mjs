@@ -24,7 +24,7 @@ export class RoomPost extends Handler {
             let uniqName = Word.generate();
             try {
                 let room = new Room();
-                room.init(title, pictureURL, uniqName, creator, type);
+                room._init(title, pictureURL, uniqName, creator, type);
                 await room.save();
                 creator.rooms.push(room);
                 await creator.save();
