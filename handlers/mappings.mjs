@@ -1,7 +1,0 @@
-export { AuthGet } from './auth/auth.get'
-export { RoomDelete } from './room/room.delete'
-export { RoomGet } from './room/room.get'
-export { RoomPost } from './room/room.post'
-export { RoomPut } from './room/room.put'
-export { RoomSocket } from './room/room.socket'
-export { TestGet } from './test/test.get'

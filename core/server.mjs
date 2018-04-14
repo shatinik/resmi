@@ -1,7 +1,6 @@
 import http from 'http';
 import * as express from 'express';
 import Application from './application';
-import Routes from './routes'
 import socket from 'socket.io'
 import * as git from './git';
 import log from './logger';
@@ -70,7 +69,6 @@ export default class Server {
     start() {
         Server.resmi();
         Server.hello(this.port);
-        Routes.load(this.express, this.socket);
         this.loadEventListeners();
         console.log('=============================================LOADING FINISHED===============================================');
         Server.httpServer.listen(this.port);

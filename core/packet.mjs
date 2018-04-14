@@ -1,11 +1,4 @@
-class IPacket {
-    //items
-    //error
-    //token
-    //kind
-}
-
-export default class Packet extends IPacket {
+export default class Packet {
     constructor(
         handler,
         action
