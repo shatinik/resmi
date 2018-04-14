@@ -99,7 +99,7 @@ export class RoomGet extends Handler {
         }
 
         if (!packet.error) {
-            let room = await Room.findOne({ uniqName: uniqName }).populate('videoplayer.Video');
+            let room = await Room.findOne({ uniqName: uniqName });
             if (!room) {
                 packet.error = `No room with uniqName ${uniqName}`;
             } else {

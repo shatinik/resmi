@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import Room from './Room'
-
+import {_fields as Video, default as _Video} from './Video';
 const Schema = mongoose.Schema;
 
 var options = {
@@ -26,15 +26,18 @@ var options = {
 };
 
 export let _fields = {
-    Video: {
-        type: Schema.Types.ObjectId,
-        ref: 'Video'
-    },
+    Video: Video,
     currentStatus: Number,
     currentPosition: String
 };
 
-class Videoplayer {
+export class Videoplayer {
+    async _init() {
+        this.Video = await _Video.findOne();
+        this.currentStatus = 0;
+        this.currentPosition = "0:00";
+    }
+
     getType() {
         switch(this.currentStatus) {
             case 1:

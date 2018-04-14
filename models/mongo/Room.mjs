@@ -54,7 +54,7 @@ let _fields = {
 };
 
 class Room {
-    _init(title, pictureURL, uniqName, creator, type) {
+    async _init(title, pictureURL, uniqName, creator, type) {
         this.title = title;
         this.pictureURL = pictureURL;
         this.uniqName = uniqName;
@@ -69,8 +69,26 @@ class Room {
         this.members = [];
         this.viewers = 0;
         this.totalViewers = 0;
-        this.videoplayer = {};
+        this.videoplayer = await (new Videoplayer())._init();
     }
+
+    static async loadByUniqName(uniqName) {
+        return await model.findOne({uniqName: uniqName});
+    }
+
+    async addAndPlayVideo(video) {
+        this.addVideo(video);
+        this.playVideo(video);
+    }
+
+    async addVideo(video) {
+        this.historyPlaylist.push(video);
+    }
+
+    async playVideo(video) {
+        this.videoplayer.Video = video;
+    }
+
     getType() {
         switch(this.type) {
             case 1:

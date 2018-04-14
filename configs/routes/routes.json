@@ -118,5 +118,11 @@
         "method":"socket",
         "handler":"room",
         "action":"test"
+    },
+    {
+        "uri":"/room/loadVideo",
+        "method":"post",
+        "handler":"room",
+        "action":"loadVideo"
     }
 ]

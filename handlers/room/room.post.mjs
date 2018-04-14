@@ -35,4 +35,24 @@ export class RoomPost extends Handler {
         }
         next(packet);
     }
+
+    async loadVideo(req, res, next, packet) {
+        if (!req.body.uniqName || !req.body.Title || !req.body.Service || !req.body.ExternalID) {
+            packet.error = 'Not enough data';
+        } else if (isNaN(req.body.Service)) {
+            packet.error = 'Service is NaN';
+        }
+
+        if (!packet.error) {
+            let uniqName = req.body.uniqName;
+            let Title = req.body.Title;
+            let Service = req.body.Service;
+            let ExternalID = req.body.ExternalID;
+            let room = await Room.loadByUniqName(uniqName);
+            room.addAndPlayVideo({Title: Title, Service: Service, ExternalID: ExternalID, creator: req.user});
+            room.save();
+            packet.first = 'Ok';
+        }
+        next(packet);
+    }
 }
