@@ -4,8 +4,6 @@ import * as SocketIO from 'socket.io'
 
 export default class Handler {
 
-    //static obj
-
     beforeAction() {
 
     }

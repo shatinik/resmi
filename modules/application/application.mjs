@@ -19,16 +19,6 @@ export default class Application {
     }
 
     constructor() {
-        Application.initEnv();
-        let app = this.app = express();
-        app.use(function(req,res,next) {
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            next();
-        });
-        app.use(morgan('combined'));
-        app.use(cookieParser());
-        app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(bodyParser.json());
+
     }
 }

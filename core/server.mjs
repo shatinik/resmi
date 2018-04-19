@@ -1,31 +1,16 @@
-import http from 'http';
-import * as express from 'express';
-import Application from './application';
 import socket from 'socket.io'
 import * as git from './git';
 import log from './logger';
+import http2 from 'http2';
+import fs from 'fs';
 
 export default class Server {
 
-    onError(error) {
-        if (error.syscall !== 'listen') { 
-            throw error; 
-        }
-    }
-
-    onListening() {
-        let serverAddr = Server.httpServer.address();
-    }
-
-    loadEventListeners() {
-        Server.httpServer.on('error', this.onError);
-        Server.httpServer.on('listening', this.onListening);
-    }
-
-    static hello(port) {
+    hello() {
         console.log('====================================================INFO====================================================');
 
         log.info('system', `Framework name: resmi`);
+        log.info('system', `Project name: ${this.project}`);
         try {
             log.info('system', `Current branch: ${git.branch('/home/sam/resmi')}`);
             log.info('system', `Last commit: ${git.date()}`);
@@ -40,12 +25,11 @@ export default class Server {
             log.warn('system', `Build hash: <no git repository found>`);
             log.warn('system', `Current version: <no git repository found>}`);
         }
-        log.info('system', `Listening port: ${port}`);
-        log.info('system', `NODE_MODE: ${process.env.NODE_ENV}`);
+        log.info('system', `Listening port: ${this.port}`);
         console.log('=================================================LOADING...=================================================');
     }
 
-    static resmi() {
+    resmi() {
         console.log('============================================================================================================');
         console.log(' RRRRRRRRRRRRRRRRR    EEEEEEEEEEEEEEEEEEEEEE    SSSSSSSSSSSSSSS  MMMMMMMM               MMMMMMMM IIIIIIIIII');
         console.log(' R::::::::::::::::R   E::::::::::::::::::::E  SS:::::::::::::::S M:::::::M             M:::::::M I::::::::I');
@@ -67,17 +51,30 @@ export default class Server {
     }
 
     start() {
-        Server.resmi();
-        Server.hello(this.port);
-        this.loadEventListeners();
+        this.resmi();
+        this.hello();
         console.log('=============================================LOADING FINISHED===============================================');
         Server.httpServer.listen(this.port);
     }
 
-    constructor(app, port) {
-        this.express = app.express;
+    constructor(project, port) {
+        this.project = project;
         this.port = port;
-        Server.httpServer = http.createServer(this.express);
-        this.socket = socket(Server.httpServer);
+
+        Server.httpServer = http2.createSecureServer({
+            key: fs.readFileSync('localhost-privkey.pem'),
+            cert: fs.readFileSync('localhost-cert.pem')
+        });
+
+        Server.httpServer.on('error', (err) => log.error(err));
+          
+        Server.httpServer.on('stream', (stream, headers) => {
+            // stream is a Duplex
+            stream.respond({
+                'content-type': 'text/html',
+                ':status': 200
+            });
+            stream.end('<h1>Hello World</h1>');
+        });
     }
 }

@@ -6,7 +6,7 @@
     "scripts": {
         "ts": "tsc -w",
         "server": "tsc && nodemon ./build/index.js",
-        "start": "node --harmony --harmony-dynamic-import --experimental-modules ./core/index.mjs"
+        "start": "node --harmony --harmony-dynamic-import --experimental-modules ./core/core.mjs"
     },
     "dependencies": {
         "body-parser": "^1.17.2",
