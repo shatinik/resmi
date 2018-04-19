@@ -1,6 +1,6 @@
 {
   "system": {
-    "level": 2,
+    "level": 0,
     "writers": [ "console", "file" ],
     "file": "system-%s.log"
   },
