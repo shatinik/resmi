@@ -1,6 +1,8 @@
-import Packet from './packet';
-import log from './logger'
+import Packet        from './packet';
+import log           from './logger'
 import * as SocketIO from 'socket.io'
+
+const logger = log ('net');
 
 export default class Handler {
 
@@ -17,7 +19,7 @@ export default class Handler {
         let packet = new Packet(handler, action);
         this.obj[action](req, res, function(packet) {
             if (packet.error) {
-                log.debug('net', packet.error);
+                logger.debug(packet.error);
             }
             if (req.new_token) {
                 packet.token = req.new_token;

@@ -1,7 +1,9 @@
-import socket from 'socket.io'
+import socket   from 'socket.io'
 import * as git from './git';
-import log from './logger';
-import http2 from 'http2';
+import log      from './logger';
+import http2    from 'http2';
+
+const logger = log('system');
 const {
     HTTP2_HEADER_METHOD,
     HTTP2_HEADER_PATH,
@@ -24,23 +26,23 @@ export default class Server {
     hello() {
         console.log('====================================================INFO====================================================');
 
-        log.info('system', `Framework name: resmi`);
-        log.info('system', `Project name: ${this.project}`);
+        logger.info(`Framework name: resmi`);
+        logger.info(`Project name: ${this.project}`);
         try {
-            log.info('system', `Current branch: ${git.branch('/home/sam/resmi')}`);
-            log.info('system', `Last commit: ${git.date()}`);
-            log.info('system', `Last commit comment: ${git.message()}`);
-            log.info('system', `Build hash: ${git.long('/home/sam/resmi')}`);
-            log.info('system', `Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
+            logger.info(`Current branch: ${git.branch('/home/sam/resmi')}`);
+            logger.info(`Last commit: ${git.date()}`);
+            logger.info(`Last commit comment: ${git.message()}`);
+            logger.info(`Build hash: ${git.long('/home/sam/resmi')}`);
+            logger.info(`Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
         }
         catch (e) {
-            log.warn('system', `Current branch: <no git repository found>`);
-            log.warn('system', `Last commit: ${new Date(0)}`);
-            log.warn('system', `Last commit comment: <no git repository found>`);
-            log.warn('system', `Build hash: <no git repository found>`);
-            log.warn('system', `Current version: <no git repository found>}`);
+            logger.warn(`Current branch: <no git repository found>`);
+            logger.warn(`Last commit: ${new Date(0)}`);
+            logger.warn(`Last commit comment: <no git repository found>`);
+            logger.warn(`Build hash: <no git repository found>`);
+            logger.warn(`Current version: <no git repository found>}`);
         }
-        log.info('system', `Listening port: ${this.port}`);
+        logger.info(`Listening port: ${this.port}`);
         console.log('=================================================LOADING...=================================================');
     }
 
@@ -85,11 +87,11 @@ export default class Server {
             cert: fs.readFileSync('localhost-cert.pem')
         });
 
-        server.on('error', (err) => log.error(err));
+        server.on('error', (err) => logger.error(err));
           
         server.on('stream', (stream, headers, flags) => {
             // stream is a Duplex
-            log.debug('system', util.inspect(headers));
+            logger.debug(util.inspect(headers));
             const myURL = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
             stream.respond({
                 'content-type': 'text/html',

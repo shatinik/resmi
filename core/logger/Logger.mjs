@@ -1,36 +1,26 @@
-import util from 'util';
-import fs from 'fs'
+import util         from 'util';
+import fs           from 'fs'
 import { Listener } from './Listener'
 import { LogLevel } from './LogLevel'
 
 export default class Logger {
-  static get instance() {
-      if (!Logger._instance) {
-          Logger._instance = new Logger();
-      }
-      return Logger._instance;
-  }
 
-  static get safe() {
-    if (!Logger._safeinstance) {
-      Logger._safeinstance = new Logger(false);
-    }
-    return Logger._safeinstance;
-  }
+  trace ( message ) { this.process(this.listener, message, 0)}
+  debug ( message ) { this.process(this.listener, message, 1)}
+  info  ( message ) { this.process(this.listener, message, 2)}
+  warn  ( message ) { this.process(this.listener, message, 3)}
+  error ( message ) { this.process(this.listener, message.toString(), 4)}
+  fatal ( message ) { this.process(this.listener, message, 5)}
 
-  trace(listener, message) { this.process(listener, message, 0)}
-  debug(listener, message) { this.process(listener, message, 1)}
-  info(listener, message) { this.process(listener, message, 2)}
-  warn(listener, message) { this.process(listener, message, 3)}
-  error(listener, message) { this.process(listener, message.toString(), 4)}
-  fatal(listener, message) { this.process(listener, message, 5)}
+  constructor(listener, errors) {
 
-  constructor(errors) {
+    this.listener = listener;  
     if (errors == false) {
       this.errors = false;
     } else {
       this.errors = true;
     }
+
     LogLevel.add('trace', 32);
     LogLevel.add('debug', 90);
     LogLevel.add('info', 37);
@@ -40,7 +30,7 @@ export default class Logger {
     if (!fs.existsSync('logs')) {
       fs.mkdirSync('logs');
       if (this.errors) {
-        this.info('logger', 'Created \'/logs\' folder');
+        this.info('Created \'/logs\' folder');
       }
     }
   }
