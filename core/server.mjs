@@ -21,32 +21,19 @@ const {
 import util from 'util';
 import fs from 'fs';
 
+/*
+*   Import core-modules
+*/
+import MongoDB  from '../modules/mongodb'
+
 export default class Server {
 
-    hello() {
-        console.log('====================================================INFO====================================================');
-
-        logger.info(`Framework name: resmi`);
-        logger.info(`Project name: ${this.project}`);
-        try {
-            logger.info(`Current branch: ${git.branch('/home/sam/resmi')}`);
-            logger.info(`Last commit: ${git.date()}`);
-            logger.info(`Last commit comment: ${git.message()}`);
-            logger.info(`Build hash: ${git.long('/home/sam/resmi')}`);
-            logger.info(`Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
-        }
-        catch (e) {
-            logger.warn(`Current branch: <no git repository found>`);
-            logger.warn(`Last commit: ${new Date(0)}`);
-            logger.warn(`Last commit comment: <no git repository found>`);
-            logger.warn(`Build hash: <no git repository found>`);
-            logger.warn(`Current version: <no git repository found>}`);
-        }
-        logger.info(`Listening port: ${this.port}`);
-        console.log('=================================================LOADING...=================================================');
+    welcomeMessage() {
+        this.showLogo();
+        this.revInfo();
     }
-
-    resmi() {
+    
+    showLogo() {
         console.log('============================================================================================================');
         console.log(' RRRRRRRRRRRRRRRRR    EEEEEEEEEEEEEEEEEEEEEE    SSSSSSSSSSSSSSS  MMMMMMMM               MMMMMMMM IIIIIIIIII');
         console.log(' R::::::::::::::::R   E::::::::::::::::::::E  SS:::::::::::::::S M:::::::M             M:::::::M I::::::::I');
@@ -67,37 +54,64 @@ export default class Server {
         console.log('============================================================================================================');
     }
 
-    start() {
-        this.resmi();
-        this.hello();
+    revInfo() {
+        console.log('====================================================INFO====================================================');
+
+        logger.info(`Framework name: resmi`);
+        logger.info(`Project name: ${this.project}`);
+        try {
+            logger.info(`Current branch: ${git.branch('/home/sam/resmi')}`);
+            logger.info(`Last commit: ${git.date()}`);
+            logger.info(`Last commit comment: ${git.message()}`);
+            logger.info(`Build hash: ${git.long('/home/sam/resmi')}`);
+            logger.info(`Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
+        }
+        catch (e) {
+            logger.warn(`Current branch: <no git repository found>`);
+            logger.warn(`Last commit: ${new Date(0)}`);
+            logger.warn(`Last commit comment: <no git repository found>`);
+            logger.warn(`Build hash: <no git repository found>`);
+            logger.warn(`Current version: <no git repository found>}`);
+        }
+        logger.info(`Listening port: ${this.port}`);
+    }
+
+    async start() {
+        this.welcomeMessage();
+        console.log('=================================================LOADING...=================================================');
+        await this.load();
         console.log('=============================================LOADING FINISHED===============================================');
         Server.httpServer.listen(this.port);
     }
 
-    call(handler, method) {
-
+    async load() {
+        await this.loadHttpServer();
+        await this.loadModules();
     }
 
-    constructor(project, port) {
-        this.project = project;
-        this.port = port;
+    async loadModules() {
+        await MongoDB();
+    }
 
-        const server = Server.httpServer = http2.createSecureServer({
+    async loadHttpServer() {
+        Server.httpServer = await http2.createSecureServer({
             key: fs.readFileSync('localhost-privkey.pem'),
             cert: fs.readFileSync('localhost-cert.pem')
         });
 
-        server.on('error', (err) => logger.error(err));
+        Server.httpServer.on('error', (err) => logger.error(err));
           
-        server.on('stream', (stream, headers, flags) => {
-            // stream is a Duplex
-            logger.debug(util.inspect(headers));
+        Server.httpServer.on('stream', (stream, headers, flags) => {
             const myURL = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
             stream.respond({
                 'content-type': 'text/html',
                 ':status': 200
             });
-            stream.end(util.inspect(myURL));
         });
+    }
+
+    constructor(project, port) {
+        this.project = project;
+        this.port = port;
     }
 }
