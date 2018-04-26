@@ -5,5 +5,5 @@ import Server        from './server';
 /*
 Здесь собирается и запускается движок
 */
-let server = new Server("resmi.ni", 1337);
-server.start();
+let server = new Server("resmi.ni");
+server.start(1337);

@@ -1,5 +1,5 @@
 import mongoose  from 'mongoose';
-import log       from '../../core/logger'
+import log       from '../../server/logger'
 import config    from '../../configs/development/mongo'
 import util from 'util'
 const logger = log('mongo');

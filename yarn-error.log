@@ -1,14 +1,14 @@
 Arguments: 
-  /home/sam/.nvm/versions/node/v9.4.0/bin/node /usr/share/yarn/bin/yarn.js start
+  /home/sam/.nvm/versions/node/v9.11.1/bin/node /usr/share/yarn/bin/yarn.js remove typeorm
 
 PATH: 
-  /home/sam/.nvm/versions/node/v9.4.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/WebStorm-172.4343.25/bin/
+  /home/sam/.nvm/versions/node/v9.11.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/WebStorm-172.4343.25/bin/
 
 Yarn version: 
   1.3.2
 
 Node version: 
-  9.4.0
+  9.11.1
 
 Platform: 
   linux x64
@@ -22,7 +22,7 @@ npm manifest:
       "scripts": {
           "ts": "tsc -w",
           "server": "tsc && nodemon ./build/index.js",
-          "start": "node --harmony --harmony-dynamic-import --experimental-modules ./core/index.mjs"
+          "start": "node --harmony --harmony-dynamic-import --experimental-modules --no-warnings ./core/core.mjs"
       },
       "dependencies": {
           "body-parser": "^1.17.2",
@@ -40,8 +40,7 @@ npm manifest:
           "passport-vkontakte": "^0.3.2",
           "passport-vkontakte-token": "^2.1.0",
           "socket.io": "^2.0.3",
-          "swagger-node-express": "^2.1.3",
-          "typeorm": "^0.1.0-alpha.34"
+          "swagger-node-express": "^2.1.3"
       },
       "devDependencies": {
           "@types/node": "^8.0.19",
@@ -3073,4 +3072,4 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
 
 Trace: 
-  Error: EACCES: permission denied, mkdir '/home/user/.yarn-cache/v1/.tmp'
+  Error: EACCES: permission denied, mkdir '/home/user/.yarn-cache/v1/npm-body-parser-1.18.2-87678a19d84b47d859b83199bd59bce222b10454'

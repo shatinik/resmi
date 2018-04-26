@@ -1,5 +1,5 @@
 import Packet        from './packet';
-import log           from './logger'
+import log           from '../logger'
 import * as SocketIO from 'socket.io'
 
 const logger = log ('net');

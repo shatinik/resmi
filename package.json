@@ -6,30 +6,11 @@
     "scripts": {
         "ts": "tsc -w",
         "server": "tsc && nodemon ./build/index.js",
-        "start": "node --harmony --harmony-dynamic-import --experimental-modules --no-warnings ./core/core.mjs"
+        "start": "node --harmony --harmony-dynamic-import --experimental-modules --no-warnings ./server"
     },
     "dependencies": {
-        "body-parser": "^1.17.2",
-        "cookie-parser": "^1.4.3",
-        "express": "^4.15.4",
-        "express-session": "^1.15.5",
         "git-rev-sync": "^1.9.1",
-        "jsonwebtoken": "^7.4.3",
-        "mongoose": "^4.11.6",
-        "morgan": "^1.8.2",
-        "mysql": "^2.14.1",
-        "nodemon": "^1.14.11",
-        "passport": "^0.3.2",
-        "passport-facebook-token": "^3.3.0",
-        "passport-vkontakte": "^0.3.2",
-        "passport-vkontakte-token": "^2.1.0",
-        "socket.io": "^2.0.3",
-        "swagger-node-express": "^2.1.3",
-        "typeorm": "^0.1.0-alpha.34"
+        "mongoose": "^4.11.6"
     },
-    "devDependencies": {
-        "@types/node": "^8.0.19",
-        "babel": "^6.23.0",
-        "typescript": "^2.4.2"
-    }
+    "devDependencies": {}
 }

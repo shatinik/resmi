@@ -3,16 +3,7 @@ export default class Packet {
         handler,
         action
     ) {
-        super();
         this.kind = `${process.env.service}#${handler}${action}Response`;
-    }
-
-    set first(item) {
-        this.items = [item];
-    }
-
-    get first() {
-        return this.items[0];
     }
 
     toJSON() {

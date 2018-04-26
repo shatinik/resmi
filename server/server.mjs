@@ -1,25 +1,10 @@
-import socket   from 'socket.io'
 import * as git from './git';
-import log      from './logger';
-import http2    from 'http2';
+import log      from './logger'
+import ResmiHTTP2 from './core'
 
 const logger = log('system');
-const {
-    HTTP2_HEADER_METHOD,
-    HTTP2_HEADER_PATH,
-    HTTP2_HEADER_STATUS,
-    HTTP2_HEADER_CONTENT_TYPE,
-    HTTP2_HEADER_SCHEME,
-    HTTP2_HEADER_AUTHORITY
-  } = http2.constants;
-import URLUtil from 'url';
-
-const {
-    URL
-} = URLUtil;
 
 import util from 'util';
-import fs from 'fs';
 
 /*
 *   Import core-modules
@@ -73,19 +58,18 @@ export default class Server {
             logger.warn(`Build hash: <no git repository found>`);
             logger.warn(`Current version: <no git repository found>}`);
         }
-        logger.info(`Listening port: ${this.port}`);
     }
 
-    async start() {
+    async start(port) {
         this.welcomeMessage();
         console.log('=================================================LOADING...=================================================');
         await this.load();
         console.log('=============================================LOADING FINISHED===============================================');
-        Server.httpServer.listen(this.port);
+        await Server.httpServer.listen(port);
     }
 
     async load() {
-        await this.loadHttpServer();
+        Server.httpServer = new ResmiHTTP2();
         await this.loadModules();
     }
 
@@ -93,25 +77,7 @@ export default class Server {
         await MongoDB();
     }
 
-    async loadHttpServer() {
-        Server.httpServer = await http2.createSecureServer({
-            key: fs.readFileSync('localhost-privkey.pem'),
-            cert: fs.readFileSync('localhost-cert.pem')
-        });
-
-        Server.httpServer.on('error', (err) => logger.error(err));
-          
-        Server.httpServer.on('stream', (stream, headers, flags) => {
-            const myURL = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
-            stream.respond({
-                'content-type': 'text/html',
-                ':status': 200
-            });
-        });
-    }
-
-    constructor(project, port) {
+    constructor(project) {
         this.project = project;
-        this.port = port;
     }
 }
