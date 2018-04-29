@@ -1,9 +1,13 @@
-import http2    from 'http2';
-import URLUtil  from 'url';
-import fs       from 'fs';
-import Packet   from './packet'
-import logger   from '../logger'
+import http2        from 'http2'
+import URLUtil      from 'url'
+import fs           from 'fs'
+import Packet       from './packet'
+import logger       from '../logger'
+import util         from 'util'
+import MainHandler  from '../handlers/main.mjs'
+
 const log = logger('system');
+const mainHandler = new MainHandler();
 const {
     HTTP2_HEADER_METHOD,
     HTTP2_HEADER_PATH,
@@ -17,17 +21,36 @@ const {
     URL
 } = URLUtil;
 
-
 export default class ResmiHTTP2 {
     get httpServer() { return this._httpServer; }
     set httpServer(value) { this._httpServer = value; return this._httpServer; }
 
     async listen(port = 1337) {
+
+        await this.httpServer.listen(port);
+        log.info(`Listening on port: ${port}`);
+
         try {
-            await this.httpServer.listen(port);
-            log.info(`Listening on port: ${port}`);
-        } catch (e) {
-            log.error(e);
+            this.httpServer.on('stream', async (stream, headers, flags) => {
+                //let Packet = new Packet();
+                const myURL = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
+
+                stream.respond({
+                    'content-type': 'text/html',
+                    ':status': 200
+                });
+
+                let query = {
+                    handler:    myURL.pathname.substring(0, myURL.pathname.length - 1),
+                    type:       headers[HTTP2_HEADER_METHOD],
+                    params:     myURL.searchParams
+                }
+
+                let response = await mainHandler.moduleConnection(query);                
+                stream.end(response);                                         
+            });            
+        } catch (err) {
+            log.error(err);
         }
     }
 
@@ -38,15 +61,6 @@ export default class ResmiHTTP2 {
                 cert: fs.readFileSync('./localhost-cert.pem')
             });
             this.httpServer.on('error', (err) => log.error(err));
-              
-            this.httpServer.on('stream', (stream, headers, flags) => {
-                let Packet = new Packet();
-                const myURL = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
-                stream.respond({
-                    'content-type': 'text/html',
-                    ':status': 200
-                });
-            });
         } catch (e) {
             log.error(e);
         }
