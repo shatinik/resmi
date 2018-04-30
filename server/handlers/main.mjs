@@ -1,22 +1,20 @@
+import logger       from '../logger'
+
+const log = logger('system');
+
 export default class Main {
 
     constructor() {}
 
     async moduleConnection(query) {
-        let {handler, type, params} = query;
-        
-        let Module = await import(`./${handler}.mjs`);
+        let {handler, method, type, params} = query;
+        let Module = await import (`./${handler}.mjs`);
+
         try {
             let module = new Module.default();
-
-            if (params.toString() == '') {
-               return await module.getAll(); 
-            }     
-            else {
-                return await module.emergency();
-            }       
+            return await module.mapping(method, params);
         } catch (err) {
-            console.log(err);
+            log.error(err);
         }
     }
 }
