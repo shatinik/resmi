@@ -39,15 +39,13 @@ export default class ResmiHTTP2 {
                     'content-type': 'text/html',
                     ':status': 200
                 });
-
-                let query = {
-                    handler:    myURL.pathname.substring(0, myURL.pathname.length - 1),
-                    type:       headers[HTTP2_HEADER_METHOD],
-                    params:     myURL.searchParams
-                }
-
-                let response = await mainHandler.moduleConnection(query);                
-                stream.end(response);                                         
+                
+                try {
+                    let response = await mainHandler.moduleConnection(myURL);  
+                    stream.end(response);
+                } catch (err) {
+                    stream.end('The request failed'); 
+                }                                    
             });            
         } catch (err) {
             log.error(err);

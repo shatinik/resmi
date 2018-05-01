@@ -4,13 +4,10 @@ const room = 'name: ROOMtest'
 
 export default class RoomGet {
 
-    getAll = async => {
-        return room
-    }
+    constructor() {}
 
-    emergency = async => {
-        //console.log(util.inspect(import.meta));
-        return 'Error in parameters'
+    getAll = async (id) => {
+        console.log('ROMM handler.. id = ' + id);
+        return room;
     }
-
 }
