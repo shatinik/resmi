@@ -7,7 +7,6 @@ export default class RoomGet {
     constructor() {}
 
     getAll = async (id) => {
-        console.log('ROMM handler.. id = ' + id);
         return room;
     }
 }

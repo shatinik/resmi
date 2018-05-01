@@ -39,6 +39,10 @@ export default class ResmiHTTP2 {
                     'content-type': 'text/html',
                     ':status': 200
                 });
+
+                stream.on('headers', (headers, flags) => {
+                    console.log(headers);
+                  });
                 
                 try {
                     let response = await mainHandler.moduleConnection(myURL);  

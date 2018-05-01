@@ -38,19 +38,18 @@ export default class Main {
             
             let param = myURL.searchParams.get(functionParameters[i]);
             if ( param != null ) {
-                params[i] = myURL.searchParams.get(functionParameters[i]);
+                params[i] = param;
             } else {
                 throw new Error('Not all parameters have been transferred'); 
+                break;
             }            
         }
         
-        console.log(params);
         return params;
     }
 
-    async moduleConnection(url) {
+    async moduleConnection(myURL) {
 
-        let myURL = new URL(url);
         let handler;
         let method;
 
