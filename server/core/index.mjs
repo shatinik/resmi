@@ -5,6 +5,7 @@ import Packet       from './packet'
 import logger       from '../logger'
 import util         from 'util'
 import MainHandler  from '../handlers/main.mjs'
+import querystring  from 'querystring'
 
 const log = logger('system');
 const mainHandler = new MainHandler();
@@ -38,18 +39,31 @@ export default class ResmiHTTP2 {
                 stream.respond({
                     'content-type': 'text/html',
                     ':status': 200
-                });
+                });                
 
-                stream.on('headers', (headers, flags) => {
-                    console.log(headers);
-                  });
-                
-                try {
-                    let response = await mainHandler.moduleConnection(myURL);  
-                    stream.end(response);
-                } catch (err) {
-                    stream.end('The request failed'); 
-                }                                    
+                if (headers[HTTP2_HEADER_METHOD] == 'GET') {
+                    try {
+                        let response = await mainHandler.moduleConnection(myURL, null);  
+                        stream.end(response);
+                    } catch (err) {
+                        stream.end('The request failed'); 
+                    }  
+                } else if (headers[HTTP2_HEADER_METHOD] == 'POST') {
+                    let body = '';                    
+                    stream.on('data', function (data) {
+                        body += data.toString();
+                    });
+    
+                    stream.on('end', () => {                        
+                        mainHandler.moduleConnection(myURL, querystring.parse(body))
+                            .then(response => {
+                                stream.end(response);
+                            })
+                            .catch(err => {
+                                stream.end('The request failed');
+                            });
+                    });
+                }                              
             });            
         } catch (err) {
             log.error(err);
@@ -59,9 +73,10 @@ export default class ResmiHTTP2 {
     constructor() {
         try {
             this.httpServer = http2.createSecureServer({
-                key: fs.readFileSync('./localhost-privkey.pem'),
-                cert: fs.readFileSync('./localhost-cert.pem')
-            });
+                    key: fs.readFileSync('./localhost-privkey.pem'),
+                    cert: fs.readFileSync('./localhost-cert.pem')}
+            );
+
             this.httpServer.on('error', (err) => log.error(err));
         } catch (e) {
             log.error(e);

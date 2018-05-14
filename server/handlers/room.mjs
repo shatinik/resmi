@@ -9,4 +9,9 @@ export default class RoomGet {
     getAll = async (id) => {
         return room;
     }
+    
+    addNote = async (room) => {
+        let response = `ROOMHANDLER: ${room.name}`;
+        return response;
+    }
 }

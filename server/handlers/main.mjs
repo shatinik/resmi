@@ -48,34 +48,47 @@ export default class Main {
         return params;
     }
 
-    async moduleConnection(myURL) {
+    async moduleConnection(myURL, body) {
 
         let handler;
         let method;
 
-        let i = myURL.pathname.length - 2;
+        let i = myURL.pathname.length - 1;
         while (i) {
             if ( myURL.pathname[i] == '/' ) {
                 handler = myURL.pathname.substring(0, i);
-                method  = myURL.pathname.substring(i + 1, myURL.pathname.length - 1);
+                method  = myURL.pathname.substring(i + 1, myURL.pathname.length);
                 break;
             } else { i--; }   
         }  
 
         let Module = await import (`./${handler}.mjs`);
+        let module = new Module.default();
 
-        try {
-            let module = new Module.default();
-            if (typeof module[method] == 'function') {
-                let functionParameters = await Main.getFunctionParameters(module[method]);
-                let params = await Main.parameterMapping(myURL, functionParameters);
-                return await module[method](...params);
-            } else { 
-                throw new Error('Incorrect method specified'); 
+        if (body == null) {
+            try {
+                if (typeof module[method] == 'function') {
+                    let functionParameters = await Main.getFunctionParameters(module[method]);
+                    let params = await Main.parameterMapping(myURL, functionParameters);
+                    return await module[method](...params);
+                } else { 
+                    throw new Error('Incorrect method specified'); 
+                }
+            } catch (err) {
+                log.error(err);
+                throw new Error(err);
             }
-        } catch (err) {
-            log.error(err);
-            throw new Error(err);
+        } else {
+            try {
+                if (typeof module[method] == 'function') {
+                    return await module[method](body);
+                } else { 
+                    throw new Error('Incorrect method specified'); 
+                }
+            } catch (err) {
+                log.error(err);
+                throw new Error(err);
+            }
         }
     }
 }
