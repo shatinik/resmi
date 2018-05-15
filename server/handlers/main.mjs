@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import logger       from '../logger'
-
-=======
 import http2        from 'http2'
 import logger       from '../logger'
 
@@ -14,24 +10,12 @@ const {
     HTTP2_HEADER_AUTHORITY
   } = http2.constants;
 
->>>>>>> remotes/origin/handler-auto-loader
 const log = logger('system');
 
 export default class Main {
 
     constructor() {}
 
-<<<<<<< HEAD
-    async moduleConnection(query) {
-        let {handler, method, type, params} = query;
-        let Module = await import (`./${handler}.mjs`);
-
-        try {
-            let module = new Module.default();
-            return await module.mapping(method, params);
-        } catch (err) {
-            log.error(err);
-=======
 
     static async getFunctionParameters (func) {
 
@@ -105,7 +89,6 @@ export default class Main {
                 log.error(err);
                 throw new Error(err);
             }
->>>>>>> remotes/origin/handler-auto-loader
         }
     }
 }

@@ -39,27 +39,6 @@ export default class ResmiHTTP2 {
                 stream.respond({
                     'content-type': 'text/html',
                     ':status': 200
-<<<<<<< HEAD
-                });
-                
-                let query;
-                let i = myURL.pathname.length - 2;
-                while (i) {
-                    if ( myURL.pathname[i] == '/' ) {
-                        query = {
-                            handler:    myURL.pathname.substring(0, i),
-                            method:     myURL.pathname.substring(i + 1, myURL.pathname.length - 1),
-                            type:       headers[HTTP2_HEADER_METHOD],
-                            params:     myURL.searchParams
-                        }
-                        break;
-                    } else { i--; }
-                    
-                }    
-
-                let response = await mainHandler.moduleConnection(query);                
-                stream.end(response);                                         
-=======
                 });                
 
                 if (headers[HTTP2_HEADER_METHOD] == 'GET') {
@@ -85,7 +64,6 @@ export default class ResmiHTTP2 {
                             });
                     });
                 }                              
->>>>>>> remotes/origin/handler-auto-loader
             });            
         } catch (err) {
             log.error(err);
