@@ -5,6 +5,7 @@ const room = 'name: ROOMtest'
 export default class RoomGet {
 
     constructor() {}
+<<<<<<< HEAD
 
     mapping = async (method, params) => {
         let success = false;
@@ -25,5 +26,15 @@ export default class RoomGet {
 
     emergency = async => {
         return 'Error in parameters'
+=======
+
+    getAll = async (id) => {
+        return room;
+    }
+    
+    addNote = async (room) => {
+        let response = `ROOMHANDLER: ${room.name}`;
+        return response;
+>>>>>>> remotes/origin/handler-auto-loader
     }
 }
