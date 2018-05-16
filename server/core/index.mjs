@@ -4,11 +4,10 @@ import fs           from 'fs'
 import Packet       from './packet'
 import logger       from '../logger'
 import util         from 'util'
-import MainHandler  from '../handlers/main.mjs'
+import Handler  from './handler'
 import querystring  from 'querystring'
 
 const log = logger('system');
-const mainHandler = new MainHandler();
 const {
     HTTP2_HEADER_METHOD,
     HTTP2_HEADER_PATH,
@@ -27,47 +26,55 @@ export default class ResmiHTTP2 {
     set httpServer(value) { this._httpServer = value; return this._httpServer; }
 
     async listen(port = 1337) {
-
         await this.httpServer.listen(port);
         log.info(`Listening on port: ${port}`);
+    }
 
-        try {
-            this.httpServer.on('stream', async (stream, headers, flags) => {
-                //let Packet = new Packet();
-                const myURL = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
+    static onError(error) {
+        log.error(error);
+    }
 
-                stream.respond({
-                    'content-type': 'text/html',
-                    ':status': 200
-                });                
-
-                if (headers[HTTP2_HEADER_METHOD] == 'GET') {
-                    try {
-                        let response = await mainHandler.moduleConnection(myURL, null);  
-                        stream.end(response);
-                    } catch (err) {
-                        stream.end('The request failed'); 
-                    }  
-                } else if (headers[HTTP2_HEADER_METHOD] == 'POST') {
-                    let body = '';                    
-                    stream.on('data', function (data) {
-                        body += data.toString();
-                    });
-    
-                    stream.on('end', () => {                        
-                        mainHandler.moduleConnection(myURL, querystring.parse(body))
-                            .then(response => {
-                                stream.end(response);
-                            })
-                            .catch(err => {
-                                stream.end('The request failed');
-                            });
-                    });
-                }                              
-            });            
-        } catch (err) {
-            log.error(err);
+    static chooseParser(content_type) {
+        switch (content_type) {
+            case 'application/x-www-form-urlencoded':
+                return querystring.parse;
+            case 'application/json': 
+                return JSON.parse;
+            default: 
+                throw new Error(`Content-type ${content_type} is not accepted`);
         }
+    }
+
+    static onEnd(stream, headers) {
+        let body = '';
+
+        stream.on('data', function (data) {
+            body += data.toString();
+        });
+
+        return async function () {
+            let response = '';
+            try {
+                if (headers[HTTP2_HEADER_CONTENT_TYPE] == undefined) {
+                    headers[HTTP2_HEADER_CONTENT_TYPE] = 'application/x-www-form-urlencoded';
+                }
+                let parse = ResmiHTTP2.chooseParser(headers[HTTP2_HEADER_CONTENT_TYPE]);
+                let parsedBody = parse(body);
+                response = await Handler.runBy(headers, parsedBody);
+            } catch (err) {
+                log.error(err);
+                response = err.toString();
+            }
+            stream.end(response);
+        }
+    }
+    
+    static onStream(stream, headers, flags) {
+        stream.respond({
+            'content-type': 'text/html',
+            ':status': 200
+        });
+        stream.on('end', ResmiHTTP2.onEnd(stream, headers));
     }
 
     constructor() {
@@ -76,8 +83,8 @@ export default class ResmiHTTP2 {
                     key: fs.readFileSync('./localhost-privkey.pem'),
                     cert: fs.readFileSync('./localhost-cert.pem')}
             );
-
-            this.httpServer.on('error', (err) => log.error(err));
+            this.httpServer.on('error', ResmiHTTP2.onError);
+            this.httpServer.on('stream', ResmiHTTP2.onStream);
         } catch (e) {
             log.error(e);
         }

@@ -1,17 +1,12 @@
 import util     from 'util'
-
 const room = 'name: ROOMtest'
 
-export default class RoomGet {
 
-    constructor() {}
+export async function getAll(id) {
+    return room;
+};
 
-    getAll = async (id) => {
-        return room;
-    }
-    
-    addNote = async (room) => {
-        let response = `ROOMHANDLER: ${room.name}`;
-        return response;
-    }
-}
+export async function addNote(room) {
+    let response = `ROOMHANDLER: ${room.name}`;
+    return response;
+};
