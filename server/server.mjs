@@ -45,10 +45,10 @@ export default class Server {
         logger.info(`Framework name: resmi`);
         logger.info(`Project name: ${this.project}`);
         try {
-            logger.info(`Current branch: ${git.branch('/home/sam/resmi')}`);
+            logger.info(`Current branch: ${git.branch('./')}`);
             logger.info(`Last commit: ${git.date()}`);
             logger.info(`Last commit comment: ${git.message()}`);
-            logger.info(`Build hash: ${git.long('/home/sam/resmi')}`);
+            logger.info(`Build hash: ${git.long('./')}`);
             logger.info(`Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
         }
         catch (e) {
