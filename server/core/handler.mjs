@@ -1,4 +1,5 @@
 import Packet        from './packet';
+import URLUtil      from 'url'
 //import * as SocketIO from 'socket.io'
 import http2        from 'http2'
 import logger       from '../logger'
@@ -12,6 +13,10 @@ const {
     HTTP2_HEADER_SCHEME,
     HTTP2_HEADER_AUTHORITY
 } = http2.constants;
+
+const {
+    URL
+} = URLUtil;
 
 const log = logger ('net');
 
