@@ -13,10 +13,10 @@ export class TestGet extends Handler {
     async version(req, res, next, packet) {
         packet.items = [{}];
         try {
-            packet.first[`Current branch`] = `${git.branch('/home/sam/resmi')}`;
+            packet.first[`Current branch`] = `${git.branch('./')}`;
             packet.first[`Last commit`] = `${git.date()}`;
             packet.first[`Last commit comment`] = `${git.message()}`;
-            packet.first[`Build hash`] = `${git.long('/home/sam/resmi')}`;
+            packet.first[`Build hash`] = `${git.long('./')}`;
             packet.first[`Current version`] = `${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`;
         }
         catch (e) {

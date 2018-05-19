@@ -28,10 +28,10 @@ export default class Server {
 
         log.info('system', `Framework name: resmi`);
         try {
-            log.info('system', `Current branch: ${git.branch('/home/sam/resmi')}`);
+            log.info('system', `Current branch: ${git.branch('./')}`);
             log.info('system', `Last commit: ${git.date()}`);
             log.info('system', `Last commit comment: ${git.message()}`);
-            log.info('system', `Build hash: ${git.long('/home/sam/resmi')}`);
+            log.info('system', `Build hash: ${git.long('./')}`);
             log.info('system', `Current version: ${git.tag()}.${git.countTag(git.tag())}.${git.count()}${git.tag(true).indexOf('-dirty') > 0?'-dirty':''}`);
         }
         catch (e) {
