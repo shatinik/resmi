@@ -102,6 +102,10 @@ export default class Handler {
             searchParams
         } = new URL(headers[HTTP2_HEADER_PATH], 'https://doesnotmatter.host');
 
+        if (pathname == '/favicon.ico') {
+            return undefined;
+        }
+        
         const {
             handler,
             method
@@ -110,7 +114,7 @@ export default class Handler {
         // possibly is a security bug
         // test via telnet or smth else by passing next URL
         // https://127.0.0.1:1337/../git?countTag=master
-        const handlerPath = `../handlers/${handler}.mjs`;
+        const handlerPath = `../application/handlers/${handler}.mjs`;
 
         let module = await import(handlerPath);
         try {
@@ -119,8 +123,9 @@ export default class Handler {
             } else if (typeof module[method] != 'function') {
                 throw new Error(`${method} in ${handlerPath} is not a Function`);
             }
+            // cache this
             let functionParameters = await Handler.getFunctionParameters(module[method]);
-            let search = Handler.searchParamsToObject(searchParams);
+            let search = Handler.searchParamsToObject(searchParams); // URLSearchParams ~> Object
             let allParams = Handler.formParamsObj(body, search, headers[HTTP2_HEADER_METHOD]);
             let expectedParams = await Handler.parameterMapping(allParams, functionParameters);
             return await module[method](...expectedParams);

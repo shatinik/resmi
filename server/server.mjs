@@ -9,7 +9,7 @@ import util from 'util';
 /*
 *   Import core-modules
 */
-import MongoDB  from '../modules/mongodb'
+import MongoDB  from './mongodb'
 
 export default class Server {
 
